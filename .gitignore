@@ -1,3 +1,12 @@
+#Python venv
+bin/
+lib/
+lib64/
+pip-selfcheck.json
+pyvenv.cfg
+logs/
+
+
 # pylint file
 googlecl-pylint.rc.txt
 assets/chromedriver
