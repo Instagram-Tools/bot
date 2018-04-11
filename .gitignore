@@ -5,6 +5,7 @@ lib64/
 pip-selfcheck.json
 pyvenv.cfg
 logs/
+env.py
 
 
 # pylint file
