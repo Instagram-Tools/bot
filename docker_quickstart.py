@@ -3,8 +3,7 @@ from instapy import InstaPy
 # Write your automation here
 # Stuck ? Look at the github page or the examples in the examples folder
 
-insta_username = ''
-insta_password = ''
+from env import insta_username,insta_password
 
 dont_like = ['food', 'girl', 'hot']
 ignore_words = ['pizza']
