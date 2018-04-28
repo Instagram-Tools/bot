@@ -3,9 +3,7 @@ from instapy import InstaPy
 # Write your automation here
 # Stuck ? Look at the github page or the examples in the examples folder
 
-dont_like = ['food', 'girl', 'hot']
-ignore_words = ['pizza']
-friend_list = ['friend1', 'friend2', 'friend3']
+from include import Settings
 
 # If you want to enter your Instagram Credentials directly just enter
 # username=<your-username-here> and password=<your-password> into InstaPy
@@ -14,11 +12,8 @@ friend_list = ['friend1', 'friend2', 'friend3']
 bot = InstaPy(selenium_local_session=False)
 bot.set_selenium_remote_session(selenium_url='http://selenium:4444/wd/hub')
 bot.login()
-bot.set_upper_follower_count(limit=2500)
-bot.set_do_comment(True, percentage=10)
-bot.set_comments(['Cool!', 'Awesome!', 'Nice!'])
-bot.set_dont_include(friend_list)
-bot.set_dont_like(dont_like)
-bot.set_ignore_if_contains(ignore_words)
-bot.like_by_tags(['dog', '#cat'], amount=100)
+
+Settings.set(bot)
+
+bot.like_by_tags(['#cat', 'dog'], interact=True)
 bot.end()
