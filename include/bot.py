@@ -49,8 +49,28 @@ class Bot(InstaPy):
 
     def act(self):
         try:
-            # actions
-            self.like_by_tags(['#cat', 'dog'], interact=True)
+            """Different tasks"""
+            # you can put in as much tags as you want, likes 100 of each tag
+            session.like_by_tags(['cat'], amount=100, interact=True)
+
+            # follows the followers of a given user
+            # The usernames can be either a list or a string
+            # The amount is for each account, in this case 30 users will be followed
+            # If random is false it will pick in a top-down fashion
+            # default sleep_delay=600 (10min) for every 10 user following, in this case sleep for 60 seconds
+            session.follow_user_followers(['friend1', 'friend2', 'friend3'], amount=10, random=False, sleep_delay=60)
+            # For 50% of the 30 newly followed, move to their profile
+            # and randomly choose 5 pictures to be liked.
+            # Take into account the other set options like the comment rate
+            # and the filtering for inappropriate words or users
+
+            # default sleep_delay=600 (10min) for every 10 user following, in this case sleep for 60 seconds
+            session.follow_user_followers(['cats_of_instagram'], amount=10, random=False, interact=True,
+                                          sleep_delay=60)
+
+            session.unfollow_users(onlyInstapyFollowed=True, unfollow_after=48*60*60,
+                amount=10)  # unfollows 10 of the accounts your following -> instagram will only unfollow 10 before you'll be 'blocked
+            #  for 10 minutes' (if you enter a higher number than 10 it will unfollow 10, then wait 10 minutes and will continue then)
 
         except Exception as exc:
             # if changes to IG layout, upload the file to help us locate the change
