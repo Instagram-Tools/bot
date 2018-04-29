@@ -18,6 +18,7 @@ class Bot(InstaPy):
         # you can also set comments for specific media types (Photo / Video)
         self.set_comments(['Nice shot!'], media='Photo')
         self.set_comments(['Great Video!'], media='Video')
+        print(self.comments)
 
         """Follow util"""
         # default enabled=False, follows ~ every 10th user from the images
@@ -76,4 +77,3 @@ class Bot(InstaPy):
                     print('{0}\nIf raising an issue, please also upload the file located at:\n{1}\n{0}'.format(
                         '*' * 70, file_path))
                 # full stacktrace when raising Github issue
-                raise
