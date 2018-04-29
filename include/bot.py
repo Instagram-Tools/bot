@@ -13,12 +13,8 @@ class Bot(InstaPy):
 
         """Comment util"""
         # default enabled=False, ~ every 4th image will be commented on
-        self.set_do_comment(enabled=True, percentage=25)
+        self.set_do_comment(enabled=True, percentage=10)
         self.set_comments(['Awesome', 'Really Cool', 'I like your stuff'])
-        # you can also set comments for specific media types (Photo / Video)
-        self.set_comments(['Nice shot!'], media='Photo')
-        self.set_comments(['Great Video!'], media='Video')
-        print(self.comments)
 
         """Follow util"""
         # default enabled=False, follows ~ every 10th user from the images
