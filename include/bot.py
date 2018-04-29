@@ -45,7 +45,7 @@ class Bot(InstaPy):
         # randomly choose 5 pictures to be liked.
         # take into account the other set options like the comment rate
         # and the filtering for inappropriate words or users
-        self.set_user_interact(amount=5, random=True, percentage=50)
+        self.set_user_interact(amount=5, randomize=True, percentage=50)
 
     def act(self):
         while True:
