@@ -3,7 +3,6 @@ from include import Bot
 # Write your automation here
 # Stuck ? Look at the github page or the examples in the examples folder
 
-from include import Settings
 
 # If you want to enter your Instagram Credentials directly just enter
 # username=<your-username-here> and password=<your-password> into InstaPy
