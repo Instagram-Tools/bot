@@ -13,8 +13,7 @@ bot = Bot(multi_logs=True, selenium_local_session=False)
 bot.set_selenium_remote_session(selenium_url='http://selenium:4444/wd/hub')
 bot.login()
 
-Settings.set(bot)
-
+bot.settings()
 bot.act()
 
 bot.end()
