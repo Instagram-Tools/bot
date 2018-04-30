@@ -9,6 +9,8 @@ from selenium.common.exceptions import NoSuchElementException
 
 class Bot(InstaPy):
     def settings(self):
+        self.set_blacklist(env_to_bool(os.environ.get('ENABLE_BLACKLIST', 'True')))
+
         self.set_upper_follower_count(limit=500)
 
         """Comment util"""
@@ -49,7 +51,7 @@ class Bot(InstaPy):
             try:
                 """Different tasks"""
                 # you can put in as much tags as you want, likes 100 of each tag
-                self.like_by_tags(['cat'], amount=100, interact=True)
+                self.like_by_tags(['cat', 'funnycat', 'cutecat'], amount=10, interact=True)
 
                 # For 50% of the 30 newly followed, move to their profile
                 # and randomly choose 5 pictures to be liked.
@@ -73,3 +75,7 @@ class Bot(InstaPy):
                     print('{0}\nIf raising an issue, please also upload the file located at:\n{1}\n{0}'.format(
                         '*' * 70, file_path))
                 # full stacktrace when raising Github issue
+
+
+def env_to_bool(env):
+    return str(env).capitalize() == 'True'
