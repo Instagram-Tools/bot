@@ -9,7 +9,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 class Bot(InstaPy):
     def settings(self):
-        self.set_blacklist(env_to_bool(os.environ.get('ENABLE_BLACKLIST', 'True')))
+        self.set_blacklist(str_to_bool(os.environ.get('ENABLE_BLACKLIST', 'True')))
 
         self.set_upper_follower_count(limit=500)
 
@@ -77,5 +77,5 @@ class Bot(InstaPy):
                 # full stacktrace when raising Github issue
 
 
-def env_to_bool(env):
+def str_to_bool(env):
     return str(env).capitalize() == 'True'
