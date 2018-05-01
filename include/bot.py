@@ -39,39 +39,42 @@ class Bot(InstaPy):
                          proxy_port=proxy_port,
                          bypass_suspicious_attempt=bypass_suspicious_attempt,
                          multi_logs=multi_logs)
-        self.env = env
+        self.settings = env
+        self.set_settings(env)
 
-    def settings(self):
-        self.set_blacklist(self.env.get("blacklist_enabled", True),
-                           self.env.get("blacklist_campaign", ''))
-        self.set_comments(self.env.get("comments", None))
-        self.set_do_comment(self.env.get("do_comment_enabled", False),
-                            self.env.get("do_comment_percentage", 0))
-        self.set_do_follow(self.env.get("do_follow_enabled", False),
-                           self.env.get("do_follow_percentage", 0),
-                           self.env.get("do_follow_times", 1))
-        self.set_do_like(self.env.get("do_like_enabled", False),
-                         self.env.get("do_like_percentage", 0))
-        self.set_dont_include(self.env.get("dont_include", None))
-        self.set_dont_like(self.env.get("dont_like", None))
-        self.set_dont_unfollow_active_users(self.env.get("dont_unfollow_active_users_enabled", False),
-                                            self.env.get("dont_unfollow_active_users_posts", 4))
-        self.set_ignore_if_contains(self.env.get("ignore_if_contains", None))
-        self.set_ignore_users(self.env.get("ignore_users", None))
-        self.set_lower_follower_count(self.env.get("lower_follower_count", None))
-        self.set_sleep_reduce(self.env.get("sleep_reduce", 100))
-        self.set_smart_hashtags(self.env.get("smart_hashtags_tags", None),
-                                self.env.get("smart_hashtags_limit", 3),
-                                self.env.get("smart_hashtags_top", "top"),
-                                self.env.get("smart_hashtags_log_tags", True))
-        self.set_use_clarifai(self.env.get("use_clarifai_enabled", False),
-                              self.env.get("use_clarifai_api_key", None),
-                              self.env.get("use_clarifai_full_match", False))
-        self.set_upper_follower_count(self.env.get("upper_follower_count", None))
-        self.set_user_interact(self.env.get("user_interact_amount", 0),
-                               self.env.get("user_interact_percentage", 100),
-                               self.env.get("user_interact_randomize", False),
-                               self.env.get("user_interact_media", None))
+    def set_settings(self, settings=None):
+        env = settings or self.settings
+
+        self.set_blacklist(env.get("blacklist_enabled", True),
+                           env.get("blacklist_campaign", ''))
+        self.set_comments(env.get("comments", None))
+        self.set_do_comment(env.get("do_comment_enabled", False),
+                            env.get("do_comment_percentage", 0))
+        self.set_do_follow(env.get("do_follow_enabled", False),
+                           env.get("do_follow_percentage", 0),
+                           env.get("do_follow_times", 1))
+        self.set_do_like(env.get("do_like_enabled", False),
+                         env.get("do_like_percentage", 0))
+        self.set_dont_include(env.get("dont_include", None))
+        self.set_dont_like(env.get("dont_like", None))
+        self.set_dont_unfollow_active_users(env.get("dont_unfollow_active_users_enabled", False),
+                                            env.get("dont_unfollow_active_users_posts", 4))
+        self.set_ignore_if_contains(env.get("ignore_if_contains", None))
+        self.set_ignore_users(env.get("ignore_users", None))
+        self.set_lower_follower_count(env.get("lower_follower_count", None))
+        self.set_sleep_reduce(env.get("sleep_reduce", 100))
+        self.set_smart_hashtags(env.get("smart_hashtags_tags", None),
+                                env.get("smart_hashtags_limit", 3),
+                                env.get("smart_hashtags_top", "top"),
+                                env.get("smart_hashtags_log_tags", True))
+        self.set_use_clarifai(env.get("use_clarifai_enabled", False),
+                              env.get("use_clarifai_api_key", None),
+                              env.get("use_clarifai_full_match", False))
+        self.set_upper_follower_count(env.get("upper_follower_count", None))
+        self.set_user_interact(env.get("user_interact_amount", 0),
+                               env.get("user_interact_percentage", 100),
+                               env.get("user_interact_randomize", False),
+                               env.get("user_interact_media", None))
 
     def act(self):
         while True:
