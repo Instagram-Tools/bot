@@ -8,6 +8,8 @@ from selenium.common.exceptions import NoSuchElementException
 
 import json
 
+print(os.environ)
+
 
 class Bot(InstaPy):
     def __init__(self,
@@ -39,7 +41,6 @@ class Bot(InstaPy):
                          bypass_suspicious_attempt=bypass_suspicious_attempt,
                          multi_logs=multi_logs)
         self.settings = env
-        self.set_settings(env)
 
     def set_settings(self, settings=None):
         env = settings or self.settings
