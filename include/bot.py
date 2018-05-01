@@ -6,10 +6,43 @@ from tempfile import gettempdir
 
 from selenium.common.exceptions import NoSuchElementException
 
+import json
+
 
 class Bot(InstaPy):
+    def __init__(self,
+                 username=None,
+                 password=None,
+                 nogui=False,
+                 selenium_local_session=True,
+                 use_firefox=False,
+                 page_delay=25,
+                 show_logs=True,
+                 headless_browser=False,
+                 proxy_address=None,
+                 proxy_chrome_extension=None,
+                 proxy_port=0,
+                 bypass_suspicious_attempt=False,
+                 multi_logs=False,
+                 env=json.loads(os.environ.get('ENV', '{}'))):
+        super().__init__(self,
+                         username=username,
+                         password=password,
+                         nogui=nogui,
+                         selenium_local_session=selenium_local_session,
+                         use_firefox=use_firefox,
+                         page_delay=page_delay,
+                         show_logs=show_logs,
+                         headless_browser=headless_browser,
+                         proxy_address=proxy_address,
+                         proxy_chrome_extension=proxy_chrome_extension,
+                         proxy_port=proxy_port,
+                         bypass_suspicious_attempt=bypass_suspicious_attempt,
+                         multi_logs=multi_logs)
+        self.env = env
+
     def settings(self):
-        self.set_blacklist(str_to_bool(os.environ.get('ENABLE_BLACKLIST', 'True')))
+        self.set_blacklist(self.env.get("enable-blacklist", True))
 
         self.set_upper_follower_count(limit=500)
 
@@ -75,7 +108,3 @@ class Bot(InstaPy):
                     print('{0}\nIf raising an issue, please also upload the file located at:\n{1}\n{0}'.format(
                         '*' * 70, file_path))
                 # full stacktrace when raising Github issue
-
-
-def str_to_bool(env):
-    return str(env).capitalize() == 'True'
