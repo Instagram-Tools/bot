@@ -1,5 +1,5 @@
 from include import Bot
-from env import insta_username,insta_password
+from env import insta_username, insta_password
 
 # set headless_browser=True if you want to run InstaPy on a server
 
@@ -9,9 +9,9 @@ from env import insta_username,insta_password
 #   Settings.chromedriver_location = '/path/to/chromedriver'
 
 bot = Bot(username=insta_username,
-                  password=insta_password,
-                  headless_browser=False,
-                  multi_logs=True)
+          password=insta_password,
+          headless_browser=False,
+          multi_logs=True)
 
 try:
     bot.login()
