@@ -16,7 +16,6 @@ bot = Bot(username=insta_username,
 try:
     bot.login()
 
-    bot.settings()
     bot.act()
 
 except Exception as exc:
