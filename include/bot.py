@@ -42,42 +42,36 @@ class Bot(InstaPy):
         self.env = env
 
     def settings(self):
-        self.set_blacklist(self.env.get("enable-blacklist", True))
-
-        self.set_upper_follower_count(limit=500)
-
-        """Comment util"""
-        # default enabled=False, ~ every 4th image will be commented on
-        self.set_do_comment(enabled=True, percentage=10)
-        self.set_comments(['Awesome', 'Really Cool', 'I like your stuff'])
-
-        """Follow util"""
-        # default enabled=False, follows ~ every 10th user from the images
-        self.set_do_follow(enabled=True, percentage=10)
-
-        """Like util"""
-        # completely ignore liking images from certain users
-        self.set_ignore_users(['random_user', 'another_username'])
-        # searches the description and owner comments for the given words
-        # and won't like the image if one of the words are in there
-        self.set_dont_like(['food', 'eat', 'meal'])
-        # will ignore the don't like if the description contains
-        # one of the given words
-        self.set_ignore_if_contains(['glutenfree', 'french', 'tasty'])
-
-        """Unfollow util"""
-        # will prevent commenting and unfollowing your good friends
-        self.set_dont_include(['friend1', 'friend2', 'friend3'])
-
-        """Extras"""
-        # Reduces the amount of time under sleep to a given percentage
-        # It might be useful to test the tool or to increase the time for slower connections (percentage > 100)
-        self.set_sleep_reduce(20)
-
-        # randomly choose 5 pictures to be liked.
-        # take into account the other set options like the comment rate
-        # and the filtering for inappropriate words or users
-        self.set_user_interact(amount=5, randomize=True, percentage=50)
+        self.set_blacklist(self.env.get("blacklist_enabled", True),
+                           self.env.get("blacklist_campaign", ''))
+        self.set_comments(self.env.get("comments", None))
+        self.set_do_comment(self.env.get("do_comment_enabled", False),
+                            self.env.get("do_comment_percentage", 0))
+        self.set_do_follow(self.env.get("do_follow_enabled", False),
+                           self.env.get("do_follow_percentage", 0),
+                           self.env.get("do_follow_times", 1))
+        self.set_do_like(self.env.get("do_like_enabled", False),
+                         self.env.get("do_like_percentage", 0))
+        self.set_dont_include(self.env.get("dont_include", None))
+        self.set_dont_like(self.env.get("dont_like", None))
+        self.set_dont_unfollow_active_users(self.env.get("dont_unfollow_active_users_enabled", False),
+                                            self.env.get("dont_unfollow_active_users_posts", 4))
+        self.set_ignore_if_contains(self.env.get("ignore_if_contains", None))
+        self.set_ignore_users(self.env.get("ignore_users", None))
+        self.set_lower_follower_count(self.env.get("lower_follower_count", None))
+        self.set_sleep_reduce(self.env.get("sleep_reduce", 100))
+        self.set_smart_hashtags(self.env.get("smart_hashtags_tags", None),
+                                self.env.get("smart_hashtags_limit", 3),
+                                self.env.get("smart_hashtags_top", "top"),
+                                self.env.get("smart_hashtags_log_tags", True))
+        self.set_use_clarifai(self.env.get("use_clarifai_enabled", False),
+                              self.env.get("use_clarifai_api_key", None),
+                              self.env.get("use_clarifai_full_match", False))
+        self.set_upper_follower_count(self.env.get("upper_follower_count", None))
+        self.set_user_interact(self.env.get("user_interact_amount", 0),
+                               self.env.get("user_interact_percentage", 100),
+                               self.env.get("user_interact_randomize", False),
+                               self.env.get("user_interact_media", None))
 
     def act(self):
         while True:
