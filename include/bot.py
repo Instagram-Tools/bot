@@ -25,8 +25,7 @@ class Bot(InstaPy):
                  bypass_suspicious_attempt=False,
                  multi_logs=False,
                  env=json.loads(os.environ.get('ENV', '{}'))):
-        super().__init__(self,
-                         username=username,
+        super().__init__(username=username,
                          password=password,
                          nogui=nogui,
                          selenium_local_session=selenium_local_session,
