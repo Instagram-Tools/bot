@@ -1,5 +1,5 @@
 from include import Bot
-from env import insta_username, insta_password
+from env import insta_username, insta_password, settings
 
 # set headless_browser=True if you want to run InstaPy on a server
 
@@ -11,7 +11,8 @@ from env import insta_username, insta_password
 bot = Bot(username=insta_username,
           password=insta_password,
           headless_browser=False,
-          multi_logs=True)
+          multi_logs=True,
+          env=settings)
 
 try:
     bot.login()
