@@ -79,9 +79,11 @@ class Bot(InstaPy):
     def act(self):
         while True:
             try:
-                """Different tasks"""
-                # you can put in as much tags as you want, likes 100 of each tag
-                self.like_by_tags(['cat', 'funnycat', 'cutecat'], amount=10, interact=True)
+                self.like_by_tags(env.get("like_by_tags", None),
+                                  amount=env.get("like_by_tags_amount", 50),
+                                  skip_top_posts=env.get("like_by_tags_skip_top_posts", True),
+                                  use_smart_hashtags=env.get("like_by_tags_use_smart_hashtags", False),
+                                  interact=env.get("like_by_tags_interact", False))
 
                 # For 50% of the 30 newly followed, move to their profile
                 # and randomly choose 5 pictures to be liked.
