@@ -91,9 +91,12 @@ class Bot(InstaPy):
                                            interact=env.get("follow_user_followers_interact", False),
                                            sleep_delay=env.get("follow_user_followers_sleep_delay", 600))
 
-                self.unfollow_users(onlyInstapyFollowed=True, unfollow_after=48 * 60 * 60,
-                                    amount=10)  # unfollows 10 of the accounts your following -> instagram will only unfollow 10 before you'll be 'blocked
-                #  for 10 minutes' (if you enter a higher number than 10 it will unfollow 10, then wait 10 minutes and will continue then)
+                self.unfollow_users(amount=env.get("unfollow_users_amount", 10),
+                                    onlyInstapyFollowed=env.get("unfollow_users_onlyInstapyFollowed", False),
+                                    onlyInstapyMethod=env.get("unfollow_users_onlyInstapyMethod", 'FIFO'),
+                                    sleep_delay=env.get("unfollow_users_sleep_delay", 600),
+                                    onlyNotFollowMe=env.get("unfollow_users_onlyNotFollowMe", False),
+                                    unfollow_after=env.get("unfollow_users_unfollow_after", None))
 
             except Exception as exc:
                 # if changes to IG layout, upload the file to help us locate the change
