@@ -81,7 +81,7 @@ class Bot(InstaPy):
 
         while True:
             try:
-                self.like_by_tags(env.get("like_by_tags", None),
+                self.like_by_tags(tags=env.get("like_by_tags", None),
                                   amount=env.get("like_by_tags_amount", 50),
                                   skip_top_posts=env.get("like_by_tags_skip_top_posts", True),
                                   use_smart_hashtags=env.get("like_by_tags_use_smart_hashtags", False),
