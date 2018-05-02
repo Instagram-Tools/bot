@@ -77,6 +77,8 @@ class Bot(InstaPy):
                                env.get("user_interact_media", None))
 
     def act(self):
+        env = self.settings or {}
+
         while True:
             try:
                 self.like_by_tags(env.get("like_by_tags", None),
