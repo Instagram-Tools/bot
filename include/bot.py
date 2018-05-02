@@ -85,14 +85,11 @@ class Bot(InstaPy):
                                   use_smart_hashtags=env.get("like_by_tags_use_smart_hashtags", False),
                                   interact=env.get("like_by_tags_interact", False))
 
-                # For 50% of the 30 newly followed, move to their profile
-                # and randomly choose 5 pictures to be liked.
-                # Take into account the other set options like the comment rate
-                # and the filtering for inappropriate words or users
-
-                # default sleep_delay=600 (10min) for every 10 user following, in this case sleep for 60 seconds
-                self.follow_user_followers(['cats_of_instagram'], amount=10, randomize=False, interact=True,
-                                           sleep_delay=60)
+                self.follow_user_followers(env.get("follow_user_followers", []),
+                                           amount=env.get("follow_user_followers_amount", 10),
+                                           randomize=env.get("follow_user_followers_randomize", False),
+                                           interact=env.get("follow_user_followers_interact", False),
+                                           sleep_delay=env.get("follow_user_followers_sleep_delay", 600))
 
                 self.unfollow_users(onlyInstapyFollowed=True, unfollow_after=48 * 60 * 60,
                                     amount=10)  # unfollows 10 of the accounts your following -> instagram will only unfollow 10 before you'll be 'blocked
