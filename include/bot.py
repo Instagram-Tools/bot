@@ -56,7 +56,7 @@ class Bot(InstaPy):
         self.set_do_like(env.get("do_like_enabled", False),
                          env.get("do_like_percentage", 0))
         self.set_dont_include(env.get("dont_include", None))
-        self.set_dont_like(env.get("dont_like", None))
+        self.set_dont_like(env.get("dont_like", []))
         self.set_dont_unfollow_active_users(env.get("dont_unfollow_active_users_enabled", False),
                                             env.get("dont_unfollow_active_users_posts", 4))
         self.set_ignore_if_contains(env.get("ignore_if_contains", None))
