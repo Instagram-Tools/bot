@@ -63,7 +63,13 @@ class Bot(InstaPy):
                                             env.get("dont_unfollow_active_users_posts", 4))
         self.set_ignore_if_contains(env.get("ignore_if_contains", None))
         self.set_ignore_users(env.get("ignore_users", None))
-        self.set_lower_follower_count(env.get("lower_follower_count", None))
+        self.set_relationship_bounds(enabled=env.get("relationship_bounds_enabled", False),
+                                     potency_ratio=env.get("relationship_bounds_potency_ratio", None),
+                                     delimit_by_numbers=env.get("relationship_bounds_delimit_by_numbers", True),
+                                     max_followers=env.get("relationship_bounds_max_followers", 90000),
+                                     max_following=env.get("relationship_bounds_max_following", 66834),
+                                     min_followers=env.get("relationship_bounds_min_followers", 35),
+                                     min_following=env.get("relationship_bounds_min_following", 27))
         self.set_sleep_reduce(env.get("sleep_reduce", 100))
         self.set_smart_hashtags(env.get("smart_hashtags_tags", []),
                                 env.get("smart_hashtags_limit", 3),
@@ -72,7 +78,6 @@ class Bot(InstaPy):
         self.set_use_clarifai(env.get("use_clarifai_enabled", False),
                               env.get("use_clarifai_api_key", None),
                               env.get("use_clarifai_full_match", False))
-        self.set_upper_follower_count(env.get("upper_follower_count", None))
         self.set_user_interact(env.get("user_interact_amount", 0),
                                env.get("user_interact_percentage", 100),
                                env.get("user_interact_randomize", False),
