@@ -4,7 +4,7 @@ import os
 import time
 from tempfile import gettempdir
 
-from selenium.common.exceptions import NoSuchElementExceptio
+from selenium.common.exceptions import NoSuchElementException
 
 import random
 
