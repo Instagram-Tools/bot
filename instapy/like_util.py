@@ -427,12 +427,12 @@ def check_link(browser, link, dont_like, ignore_if_contains, ignore_users, usern
     """Check if the Post is Valid/Exists"""
     try:
         post_page = browser.execute_script(
-            "return window._sharedData.entry_data.PostPage")
+            "return window._sharedData.entry_data.PostPage[0]")
     except WebDriverException:   #handle the possible `entry_data` error
         try:
             browser.execute_script("location.reload()")
             post_page = browser.execute_script(
-            "return window._sharedData.entry_data.PostPage")
+            "return window._sharedData.entry_data.PostPage[0]")
         except WebDriverException:
             post_page = None
 
@@ -441,15 +441,15 @@ def check_link(browser, link, dont_like, ignore_if_contains, ignore_users, usern
         return True, None, None, 'Unavailable Page'
 
     """Gets the description of the link and checks for the dont_like tags"""
-    graphql = 'graphql' in post_page
+    graphql = 'graphql' in post_page[0]
     if graphql:
-        media = post_page['graphql']['shortcode_media']
+        media = post_page[0]['graphql']['shortcode_media']
         is_video = media['is_video']
         user_name = media['owner']['username']
         image_text = media['edge_media_to_caption']['edges']
         image_text = image_text[0]['node']['text'] if image_text else None
         owner_comments = browser.execute_script('''
-      latest_comments = window._sharedData.entry_data.PostPage.graphql.shortcode_media.edge_media_to_comment.edges;
+      latest_comments = window._sharedData.entry_data.PostPage[0].graphql.shortcode_media.edge_media_to_comment.edges;
       if (latest_comments === undefined) latest_comments = Array();
       owner_comments = latest_comments
         .filter(item => item.node.owner.username == '{}')
@@ -458,12 +458,12 @@ def check_link(browser, link, dont_like, ignore_if_contains, ignore_users, usern
       return owner_comments;
     '''.format(user_name))
     else:
-        media = post_page['media']
+        media = post_page[0]['media']
         is_video = media['is_video']
         user_name = media['owner']['username']
         image_text = media['caption']
         owner_comments = browser.execute_script('''
-      latest_comments = window._sharedData.entry_data.PostPage.media.comments.nodes;
+      latest_comments = window._sharedData.entry_data.PostPage[0].media.comments.nodes;
       if (latest_comments === undefined) latest_comments = Array();
       owner_comments = latest_comments
         .filter(item => item.user.username == '{}')
@@ -693,15 +693,15 @@ def get_tags(browser, url):
     sleep(1)
 
     graphql = browser.execute_script(
-        "return ('graphql' in window._sharedData.entry_data.PostPage)")
+        "return ('graphql' in window._sharedData.entry_data.PostPage[0])")
     if graphql:
         image_text = browser.execute_script(
-            "return window._sharedData.entry_data.PostPage.graphql."
+            "return window._sharedData.entry_data.PostPage[0].graphql."
             "shortcode_media.edge_media_to_caption.edges[0].node.text")
     else:
         image_text = browser.execute_script(
             "return window._sharedData.entry_data."
-            "PostPage.media.caption.text")
+            "PostPage[0].media.caption.text")
 
     tags = findall(r'#\w*', image_text)
     return tags
