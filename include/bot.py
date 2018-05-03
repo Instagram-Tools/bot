@@ -4,7 +4,9 @@ import os
 import time
 from tempfile import gettempdir
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementExceptio
+
+import random
 
 import json
 
@@ -78,27 +80,33 @@ class Bot(InstaPy):
 
     def act(self):
         env = self.settings or {}
+        actions = [
+            lambda: self.like_by_tags(tags=env.get("like_by_tags", []),
+                                      amount=env.get("like_by_tags_amount", 50),
+                                      skip_top_posts=env.get("like_by_tags_skip_top_posts", True),
+                                      use_smart_hashtags=env.get("like_by_tags_use_smart_hashtags", False),
+                                      interact=env.get("like_by_tags_interact", False)),
+
+            lambda: self.follow_user_followers(env.get("follow_user_followers", []),
+                                               amount=env.get("follow_user_followers_amount", 10),
+                                               randomize=env.get("follow_user_followers_randomize", False),
+                                               interact=env.get("follow_user_followers_interact", False),
+                                               sleep_delay=env.get("follow_user_followers_sleep_delay", 600)),
+
+            lambda: self.unfollow_users(amount=env.get("unfollow_users_amount", 10),
+                                        onlyInstapyFollowed=env.get("unfollow_users_onlyInstapyFollowed",
+                                                                    True),
+                                        onlyInstapyMethod=env.get("unfollow_users_onlyInstapyMethod", 'FIFO'),
+                                        sleep_delay=env.get("unfollow_users_sleep_delay", 600),
+                                        onlyNotFollowMe=env.get("unfollow_users_onlyNotFollowMe", False),
+                                        unfollow_after=env.get("unfollow_users_unfollow_after", None))
+        ]
 
         while True:
             try:
-                self.like_by_tags(tags=env.get("like_by_tags", []),
-                                  amount=env.get("like_by_tags_amount", 50),
-                                  skip_top_posts=env.get("like_by_tags_skip_top_posts", True),
-                                  use_smart_hashtags=env.get("like_by_tags_use_smart_hashtags", False),
-                                  interact=env.get("like_by_tags_interact", False))
-
-                self.follow_user_followers(env.get("follow_user_followers", []),
-                                           amount=env.get("follow_user_followers_amount", 10),
-                                           randomize=env.get("follow_user_followers_randomize", False),
-                                           interact=env.get("follow_user_followers_interact", False),
-                                           sleep_delay=env.get("follow_user_followers_sleep_delay", 600))
-
-                self.unfollow_users(amount=env.get("unfollow_users_amount", 10),
-                                    onlyInstapyFollowed=env.get("unfollow_users_onlyInstapyFollowed", True),
-                                    onlyInstapyMethod=env.get("unfollow_users_onlyInstapyMethod", 'FIFO'),
-                                    sleep_delay=env.get("unfollow_users_sleep_delay", 600),
-                                    onlyNotFollowMe=env.get("unfollow_users_onlyNotFollowMe", False),
-                                    unfollow_after=env.get("unfollow_users_unfollow_after", None))
+                random.shuffle(actions)
+                for f in actions:
+                    f()
 
             except Exception as exc:
                 # if changes to IG layout, upload the file to help us locate the change
