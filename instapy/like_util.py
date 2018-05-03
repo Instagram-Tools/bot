@@ -347,7 +347,7 @@ def get_links_for_username(browser,
             filtered_links = len(links)
 
     except BaseException as e:
-        logger.error("link_elems error {}}".format(str(e)))
+        logger.error("link_elems error {}".format(str(e)))
 
     if randomize:
         # Expanding the pooulation for better random distribution
