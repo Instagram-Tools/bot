@@ -441,9 +441,9 @@ def check_link(browser, link, dont_like, ignore_if_contains, ignore_users, usern
         return True, None, None, 'Unavailable Page'
 
     """Gets the description of the link and checks for the dont_like tags"""
-    graphql = 'graphql' in post_page[0]
+    graphql = 'graphql' in post_page
     if graphql:
-        media = post_page[0]['graphql']['shortcode_media']
+        media = post_page['graphql']['shortcode_media']
         is_video = media['is_video']
         user_name = media['owner']['username']
         image_text = media['edge_media_to_caption']['edges']
@@ -458,7 +458,7 @@ def check_link(browser, link, dont_like, ignore_if_contains, ignore_users, usern
       return owner_comments;
     '''.format(user_name))
     else:
-        media = post_page[0]['media']
+        media = post_page['media']
         is_video = media['is_video']
         user_name = media['owner']['username']
         image_text = media['caption']
