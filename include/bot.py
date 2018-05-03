@@ -87,6 +87,10 @@ class Bot(InstaPy):
                                       use_smart_hashtags=env.get("like_by_tags_use_smart_hashtags", False),
                                       interact=env.get("like_by_tags_interact", False)),
 
+            lambda: self.like_by_locations(locations=env.get("like_by_locations", []),
+                                           amount=env.get("like_by_locations_amount", 50),
+                                           skip_top_posts=env.get("like_by_locations_skip_top_posts", True)),
+
             lambda: self.follow_user_followers(env.get("follow_user_followers", []),
                                                amount=env.get("follow_user_followers_amount", 10),
                                                randomize=env.get("follow_user_followers_randomize", False),
