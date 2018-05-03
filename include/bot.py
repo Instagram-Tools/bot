@@ -109,3 +109,4 @@ class Bot(InstaPy):
                     print('{0}\nIf raising an issue, please also upload the file located at:\n{1}\n{0}'.format(
                         '*' * 70, file_path))
                 # full stacktrace when raising Github issue
+                self.logger.exception(exc)
