@@ -94,7 +94,7 @@ class Bot(InstaPy):
                                            sleep_delay=env.get("follow_user_followers_sleep_delay", 600))
 
                 self.unfollow_users(amount=env.get("unfollow_users_amount", 10),
-                                    onlyInstapyFollowed=env.get("unfollow_users_onlyInstapyFollowed", False),
+                                    onlyInstapyFollowed=env.get("unfollow_users_onlyInstapyFollowed", True),
                                     onlyInstapyMethod=env.get("unfollow_users_onlyInstapyMethod", 'FIFO'),
                                     sleep_delay=env.get("unfollow_users_sleep_delay", 600),
                                     onlyNotFollowMe=env.get("unfollow_users_onlyNotFollowMe", False),
