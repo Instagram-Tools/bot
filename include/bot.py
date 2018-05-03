@@ -63,7 +63,7 @@ class Bot(InstaPy):
         self.set_ignore_users(env.get("ignore_users", None))
         self.set_lower_follower_count(env.get("lower_follower_count", None))
         self.set_sleep_reduce(env.get("sleep_reduce", 100))
-        self.set_smart_hashtags(env.get("smart_hashtags_tags", None),
+        self.set_smart_hashtags(env.get("smart_hashtags_tags", []),
                                 env.get("smart_hashtags_limit", 3),
                                 env.get("smart_hashtags_top", "top"),
                                 env.get("smart_hashtags_log_tags", True))
@@ -81,7 +81,7 @@ class Bot(InstaPy):
 
         while True:
             try:
-                self.like_by_tags(tags=env.get("like_by_tags", None),
+                self.like_by_tags(tags=env.get("like_by_tags", []),
                                   amount=env.get("like_by_tags_amount", 50),
                                   skip_top_posts=env.get("like_by_tags_skip_top_posts", True),
                                   use_smart_hashtags=env.get("like_by_tags_use_smart_hashtags", False),
