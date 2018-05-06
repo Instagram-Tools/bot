@@ -45,7 +45,12 @@ def comment_image(browser, username, comments, blacklist, logger, logfolder):
     comment_input = get_comment_input(browser)
 
     if len(comment_input) > 0:
-        comment_input[0].clear()
+        try:
+            comment_input[0].clear()
+        except Exception as exc:
+            logger.warning('--> Warning: Comment Action Failed: \n' + str(exc))
+            return 1
+
         comment_input = get_comment_input(browser)
 
         browser.execute_script(
