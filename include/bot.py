@@ -1,4 +1,5 @@
 from instapy import InstaPy
+from instapy.time_util import sleep
 
 import os
 import time
@@ -119,6 +120,7 @@ class Bot(InstaPy):
 
         while True:
             try:
+                sleep(10)
                 random.shuffle(actions)
                 for f in actions:
                     f()
