@@ -3,6 +3,7 @@ from instapy.time_util import sleep
 
 import os
 import time
+import datetime
 from tempfile import gettempdir
 
 from selenium.common.exceptions import NoSuchElementException
@@ -50,6 +51,8 @@ class Bot(InstaPy):
                          bypass_suspicious_attempt=bypass_suspicious_attempt,
                          multi_logs=multi_logs)
         self.settings = env
+        self.end_time = datetime.datetime.strptime(
+            str(env.get("end_time", datetime.datetime.now() + datetime.timedelta(days=1))), '%Y-%m-%d %H:%M:%S')
 
     def set_settings(self, settings=None):
         env = settings or self.settings
@@ -118,7 +121,7 @@ class Bot(InstaPy):
                                         unfollow_after=env.get("unfollow_users_unfollow_after", None))
         ]
 
-        while True:
+        while datetime.datetime.now() < self.end_time:
             try:
                 sleep(10)
                 random.shuffle(actions)
