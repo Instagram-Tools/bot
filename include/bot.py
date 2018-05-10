@@ -52,7 +52,7 @@ class Bot(InstaPy):
                          multi_logs=multi_logs)
         self.settings = env
         self.end_time = datetime.datetime.strptime(
-            str(env.get("end_time", datetime.datetime.now() + datetime.timedelta(days=1))), '%Y-%m-%d %H:%M:%S')
+            str(env.get("end_time", datetime.datetime.now() + datetime.timedelta(hours=1))), '%Y-%m-%d %H:%M:%S')
 
     def set_settings(self, settings=None):
         env = settings or self.settings
