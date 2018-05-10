@@ -21,6 +21,18 @@ def shuffle(in_list=[]):
     return out_list
 
 
+def parse_datetime_prefix(line, fmt):
+    try:
+        t = datetime.datetime.strptime(line, fmt)
+    except ValueError as v:
+        if len(v.args) > 0 and v.args[0].startswith('unconverted data remains: '):
+            line = line[:-(len(v.args[0]) - 26)]
+            t = datetime.datetime.strptime(line, fmt)
+        else:
+            raise
+    return t
+
+
 class Bot(InstaPy):
     def __init__(self,
                  username=None,
@@ -51,7 +63,7 @@ class Bot(InstaPy):
                          bypass_suspicious_attempt=bypass_suspicious_attempt,
                          multi_logs=multi_logs)
         self.settings = env
-        self.end_time = datetime.datetime.strptime(
+        self.end_time = parse_datetime_prefix(
             str(env.get("end_time", datetime.datetime.now() + datetime.timedelta(hours=1))), '%Y-%m-%d %H:%M:%S')
 
     def set_settings(self, settings=None):
