@@ -46,7 +46,7 @@ class Bot(InstaPy):
                  proxy_address=None,
                  proxy_chrome_extension=None,
                  proxy_port=0,
-                 bypass_suspicious_attempt=False,
+                 bypass_suspicious_attempt=True,
                  multi_logs=False,
                  env=json.loads(os.environ.get('ENV', '{}'))):
         super().__init__(username=username,
