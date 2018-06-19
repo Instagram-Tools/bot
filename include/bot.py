@@ -1,16 +1,13 @@
-from instapy import InstaPy
-from instapy.time_util import sleep
-
-import os
-import time
 import datetime
+import json
+import os
+import random
+import time
 from tempfile import gettempdir
 
+from instapy import InstaPy
+from instapy.time_util import sleep
 from selenium.common.exceptions import NoSuchElementException
-
-import random
-
-import json
 
 print(os.environ)
 
@@ -142,13 +139,17 @@ class Bot(InstaPy):
                                                interact=env.get("follow_user_followers_interact", False),
                                                sleep_delay=env.get("follow_user_followers_sleep_delay", 600)),
 
-            lambda: self.unfollow_users(amount=env.get("unfollow_users_amount", 10),
-                                        onlyInstapyFollowed=env.get("unfollow_users_onlyInstapyFollowed",
-                                                                    True),
-                                        onlyInstapyMethod=env.get("unfollow_users_onlyInstapyMethod", 'FIFO'),
-                                        sleep_delay=env.get("unfollow_users_sleep_delay", 600),
-                                        onlyNotFollowMe=env.get("unfollow_users_onlyNotFollowMe", False),
-                                        unfollow_after=env.get("unfollow_users_unfollow_after", None))
+            lambda: self.unfollow_users(
+                amount=env.get("unfollow_users_amount", 10),
+                # customList=(False, [], "all"),
+                InstapyFollowed=(env.get("unfollow_users_InstapyFollowed", True),
+                                 env.get("unfollow_users_InstapyFollowed_style", "all")),  # or 'nonfollowers'
+                # nonFollowers=False,
+                # allFollowing=False,
+                style=env.get("unfollow_users_style", 'FIFO'),  # or 'LIFO', 'RANDOM'
+                unfollow_after=env.get("unfollow_users_unfollow_after", None),
+                sleep_delay=env.get("unfollow_users_sleep_delay", 600)
+            )
         ]
 
         while datetime.datetime.now() < self.end_time:
