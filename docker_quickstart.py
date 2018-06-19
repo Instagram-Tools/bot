@@ -8,7 +8,7 @@ from include import Bot
 # username=<your-username-here> and password=<your-password> into InstaPy
 # e.g like so InstaPy(username="instagram", password="test1234")
 
-bot = Bot(multi_logs=True, selenium_local_session=False) #TODO Proxy
+bot = Bot(multi_logs=True, selenium_local_session=False)
 bot.set_selenium_remote_session(selenium_url='http://selenium:4444/wd/hub')
 bot.login()
 bot.set_settings()

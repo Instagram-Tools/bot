@@ -49,6 +49,24 @@ class Bot(InstaPy):
                  bypass_suspicious_attempt=True,
                  multi_logs=False,
                  env=json.loads(os.environ.get('ENV', '{}'))):
+
+        p_address: str = get.env("proxy_address", proxy_address)
+        p_port: str = get.env("proxy_port", proxy_port)
+        
+        if p_address and p_port:
+            proxy_login: str = get.env("proxy_login")
+            proxy_password: str = get.env("proxy_password")
+            if proxy_login and proxy_password:
+                from proxy_extension import create_proxy_extension
+                proxy = proxy_login + ':' + proxy_password + '@' + p_address + ':' + p_port
+                proxy_chrome_extension = create_proxy_extension(proxy)
+
+                proxy_address = None
+                proxy_port = None
+            else:
+                proxy_address = p_address
+                proxy_port = p_port
+
         super().__init__(username=username,
                          password=password,
                          nogui=nogui,
