@@ -50,12 +50,12 @@ class Bot(InstaPy):
                  multi_logs=False,
                  env=json.loads(os.environ.get('ENV', '{}'))):
 
-        p_address: str = get.env("proxy_address", proxy_address)
-        p_port: str = get.env("proxy_port", proxy_port)
+        p_address: str = env.get("proxy_address", proxy_address)
+        p_port: str = env.get("proxy_port", proxy_port)
         
         if p_address and p_port:
-            proxy_login: str = get.env("proxy_login")
-            proxy_password: str = get.env("proxy_password")
+            proxy_login: str = env.get("proxy_login")
+            proxy_password: str = env.get("proxy_password")
             if proxy_login and proxy_password:
                 from proxy_extension import create_proxy_extension
                 proxy = proxy_login + ':' + proxy_password + '@' + p_address + ':' + p_port
