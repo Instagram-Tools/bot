@@ -87,6 +87,12 @@ class Bot(InstaPy):
         self.set_blacklist(env.get("blacklist_enabled", True),
                            env.get("blacklist_campaign", ''))
         self.set_comments(env.get("comments", None))
+
+        delimit_commenting_max = env.get('delimit_commenting_max')
+        delimit_commenting_min = env.get('delimit_commenting_min')
+        self.set_delimit_commenting(enabled=delimit_commenting_max or delimit_commenting_min,
+                                    max=delimit_commenting_max,
+                                    min=delimit_commenting_min)
         self.set_do_comment(env.get("do_comment_enabled", False),
                             env.get("do_comment_percentage", 0))
         self.set_do_follow(env.get("do_follow_enabled", False),
