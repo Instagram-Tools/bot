@@ -88,6 +88,12 @@ class Bot(InstaPy):
                            env.get("blacklist_campaign", ''))
         self.set_comments(env.get("comments", None))
 
+        delimit_liking_max = env.get('delimit_liking_max')
+        delimit_liking_min = env.get('delimit_liking_min')
+        self.set_delimit_liking(enabled=delimit_liking_max or delimit_liking_min,
+                                    max=delimit_liking_max,
+                                    min=delimit_liking_min)
+        
         delimit_commenting_max = env.get('delimit_commenting_max')
         delimit_commenting_min = env.get('delimit_commenting_min')
         self.set_delimit_commenting(enabled=delimit_commenting_max or delimit_commenting_min,
