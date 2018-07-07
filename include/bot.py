@@ -151,6 +151,11 @@ class Bot(InstaPy):
                                                interact=env.get("follow_user_followers_interact", True),
                                                sleep_delay=env.get("follow_user_followers_sleep_delay", 600)),
 
+            lambda: self.like_by_feed(amount=env.get("like_by_feed_amount", 5),
+                                      randomize=env.get("like_by_feed_randomize", True),
+                                      unfollow=env.get("like_by_feed_unfollow", False),
+                                      interact=env.get("like_by_feed_interact", False)),
+
             lambda: self.unfollow_users(
                 amount=env.get("unfollow_users_amount", 50),
                 # customList=(False, [], "all"),
