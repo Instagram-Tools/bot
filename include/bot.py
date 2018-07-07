@@ -136,22 +136,22 @@ class Bot(InstaPy):
         env = self.settings or {}
         actions = [
             lambda: self.like_by_tags(tags=shuffle(env.get("like_by_tags", [])),
-                                      amount=env.get("like_by_tags_amount", 5),
+                                      amount=env.get("like_by_tags_amount", 1),
                                       skip_top_posts=env.get("like_by_tags_skip_top_posts", True),
                                       use_smart_hashtags=env.get("like_by_tags_use_smart_hashtags", False),
                                       interact=env.get("like_by_tags_interact", False)),
 
             lambda: self.like_by_locations(locations=shuffle(env.get("like_by_locations", [])),
-                                           amount=env.get("like_by_locations_amount", 5),
+                                           amount=env.get("like_by_locations_amount", 1),
                                            skip_top_posts=env.get("like_by_locations_skip_top_posts", True)),
 
             lambda: self.follow_user_followers(usernames=shuffle(env.get("follow_user_followers", [])),
-                                               amount=env.get("follow_user_followers_amount", 5),
+                                               amount=env.get("follow_user_followers_amount", 9),
                                                randomize=env.get("follow_user_followers_randomize", False),
                                                interact=env.get("follow_user_followers_interact", True),
                                                sleep_delay=env.get("follow_user_followers_sleep_delay", 600)),
 
-            lambda: self.like_by_feed(amount=env.get("like_by_feed_amount", 5),
+            lambda: self.like_by_feed(amount=env.get("like_by_feed_amount", 10),
                                       randomize=env.get("like_by_feed_randomize", True),
                                       unfollow=env.get("like_by_feed_unfollow", False),
                                       interact=env.get("like_by_feed_interact", False)),
