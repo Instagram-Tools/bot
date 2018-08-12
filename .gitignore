@@ -117,3 +117,8 @@ logs/
 # pytest
 .pytest_cache/
 tests/logs
+
+
+
+
+/docker-compose.override.yml
