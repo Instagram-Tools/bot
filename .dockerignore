@@ -3,14 +3,11 @@
 /docs/
 /docker_conf/
 /assets/
+!/assets/unicodes.md
 /setup.py
 /LICENSE
 /.gitignore
-/docker-prod.yml
-/docker-compose.yml
 /.dockerignore
-/docker-dev.yml
-/docker-allinone.yml
 /README.md
 /env.py
-/docker-compose.override.yml
+/docker*
