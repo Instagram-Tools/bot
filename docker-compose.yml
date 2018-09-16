@@ -5,9 +5,7 @@ services:
     image: instagramtools/web
     environment:
       - PYTHONUNBUFFERED=0
-    build:
-      context: .
-      dockerfile: ./docker_conf/python/Dockerfile
+    build: .
     depends_on:
       - selenium
     volumes:
