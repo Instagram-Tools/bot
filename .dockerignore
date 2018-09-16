@@ -11,3 +11,4 @@
 /README.md
 /env.py
 /docker*
+!docker_quickstart.py
