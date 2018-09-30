@@ -1,3 +1,5 @@
+import os
+
 from include import Bot
 
 # Write your automation here
@@ -9,7 +11,7 @@ from include import Bot
 # e.g like so InstaPy(username="instagram", password="test1234")
 
 bot = Bot(multi_logs=True, selenium_local_session=False)
-bot.set_selenium_remote_session(selenium_url='http://selenium:4444/wd/hub')
+bot.set_selenium_remote_session(selenium_url='http://'+os.environ.get('SELENIUM', 'selenium')+':4444/wd/hub')
 bot.login()
 bot.set_settings()
 
