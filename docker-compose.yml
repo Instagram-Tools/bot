@@ -11,7 +11,7 @@ services:
     volumes:
       - ./logs:/code/logs
   selenium:
-    container_name: selenium
+    container_name: selenium-debug
     image: selenium/standalone-chrome-debug
     ports:
       - "5900:5900"
