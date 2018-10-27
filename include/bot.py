@@ -47,8 +47,9 @@ class Bot(InstaPy):
                  multi_logs=False,
                  env=json.loads(os.environ.get('ENV', '{}'))):
 
-        p_address: str = env.get("proxy_address", proxy_address)
-        p_port: str = env.get("proxy_port", proxy_port)
+        proxy_address_port: str = os.environ.get("PROXY", "%s:%s" % (proxy_address, proxy_port))
+        p_address: str = proxy_address_port.split(":")[0]
+        p_port: str = proxy_address_port.split(":")[1]
 
         if p_address and p_port:
             proxy_login: str = env.get("proxy_login")
