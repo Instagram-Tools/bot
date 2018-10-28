@@ -118,7 +118,9 @@ logs/
 .pytest_cache/
 tests/logs
 
-
+# Pipfile
+Pipfile
+Pipfile.lock
 
 
 /docker-compose.override.yml
