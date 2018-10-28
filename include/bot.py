@@ -45,7 +45,7 @@ class Bot(InstaPy):
                  proxy_port=0,
                  bypass_suspicious_attempt=True,
                  multi_logs=False,
-                 env=json.loads(os.environ.get('ENV', '{}'))):
+                 env=self.load_env()):
 
         proxy_address_port: str = os.environ.get("PROXY", "%s:%s" % (proxy_address, proxy_port))
         p_address: str = proxy_address_port.split(":")[0]
@@ -81,6 +81,11 @@ class Bot(InstaPy):
         self.settings = env
         self.end_time = parse_datetime_prefix(
             str(env.get("end_time", datetime.datetime.now() + datetime.timedelta(hours=1))), '%Y-%m-%d %H:%M:%S')
+
+    def load_env(self):
+        env = os.environ.get('ENV', '{}')
+        env = env.replace('"', '').replace('\\\\', '"')
+        return json.loads(env)
 
     def set_settings(self, settings=None):
         env = settings or self.settings
