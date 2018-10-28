@@ -1,13 +1,13 @@
+import time
+
 import datetime
 import json
 import os
 import random
-import time
-from tempfile import gettempdir
-
 from instapy import InstaPy
 from instapy.time_util import sleep
 from selenium.common.exceptions import NoSuchElementException
+from tempfile import gettempdir
 
 print(os.environ)
 
@@ -30,6 +30,16 @@ def parse_datetime_prefix(line, fmt):
     return t
 
 
+def load_env():
+    env = os.environ.get('ENV', '{}')
+    print("env: %s" % env)
+    env = env.replace('"', '')
+    env = env.replace('\\', '"')
+    print("rep: %s" % env)
+
+    return json.loads(env)
+
+
 class Bot(InstaPy):
     def __init__(self,
                  username=None,
@@ -45,7 +55,7 @@ class Bot(InstaPy):
                  proxy_port=0,
                  bypass_suspicious_attempt=True,
                  multi_logs=False,
-                 env=self.load_env()):
+                 env=load_env()):
 
         proxy_address_port: str = os.environ.get("PROXY", "%s:%s" % (proxy_address, proxy_port))
         p_address: str = proxy_address_port.split(":")[0]
@@ -81,11 +91,6 @@ class Bot(InstaPy):
         self.settings = env
         self.end_time = parse_datetime_prefix(
             str(env.get("end_time", datetime.datetime.now() + datetime.timedelta(hours=1))), '%Y-%m-%d %H:%M:%S')
-
-    def load_env(self):
-        env = os.environ.get('ENV', '{}')
-        env = env.replace('"', '').replace('\\\\', '"')
-        return json.loads(env)
 
     def set_settings(self, settings=None):
         env = settings or self.settings
