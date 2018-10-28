@@ -52,16 +52,20 @@ class Bot(InstaPy):
                  headless_browser=False,
                  proxy_address=None,
                  proxy_chrome_extension=None,
-                 proxy_port=0,
+                 proxy_port=None,
                  bypass_suspicious_attempt=True,
                  multi_logs=False,
                  env=load_env()):
 
-        proxy_address_port: str = os.environ.get("PROXY", "%s:%s" % (proxy_address, proxy_port))
-        p_address: str = proxy_address_port.split(":")[0]
-        p_port: int = int(proxy_address_port.split(":")[1])
+        proxy_address_port: str = os.environ.get("PROXY")
+        if proxy_address_port:
+            p_address = proxy_address_port.split(":")[0]
+            p_port = proxy_address_port.split(":")[1]
+        else:
+            p_address = proxy_address
+            p_port = proxy_port
 
-        if p_address and p_port > 0 :
+        if p_address and p_port:
             proxy_login: str = env.get("proxy_login")
             proxy_password: str = env.get("proxy_password")
             if proxy_login and proxy_password:
@@ -74,6 +78,8 @@ class Bot(InstaPy):
             else:
                 proxy_address = p_address
                 proxy_port = p_port
+
+        print("super().init")
 
         super().__init__(username=username,
                          password=password,
