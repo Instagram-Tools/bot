@@ -296,6 +296,7 @@ class InstaPy:
             chrome_options = Options()
             # chrome_options.add_argument("--disable-infobars")
             chrome_options.add_argument("--mute-audio")
+            chrome_options.add_argument('--no-sandbox')
             chrome_options.add_argument('--dns-prefetch-disable')
             chrome_options.add_argument('--lang=en-US')
             chrome_options.add_argument('--disable-setuid-sandbox')
