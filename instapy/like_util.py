@@ -2,7 +2,6 @@
 import random
 import re
 from re import findall
-from selenium.webdriver.common.keys import Keys
 
 from .time_util import sleep
 from .util import format_number
@@ -12,10 +11,12 @@ from .util import is_private_profile
 from .util import update_activity
 from .util import web_address_navigator
 from .util import get_number_of_posts
+from .util import get_action_delay
 from .quota_supervisor import quota_supervisor
 
 from selenium.common.exceptions import WebDriverException
 from selenium.common.exceptions import NoSuchElementException
+from .unfollow_util import get_following_status
 
 
 
@@ -174,7 +175,7 @@ def get_links_for_location(browser,
                 filtered_links = len(links)
                 try_again = 0
                 nap = 1.5
-    except:
+    except Exception:
         raise
 
     sleep(4)
@@ -314,7 +315,7 @@ def get_links_for_tag(browser,
                 filtered_links = len(links)
                 try_again = 0
                 nap = 1.5
-    except:
+    except Exception:
         raise
 
     sleep(4)
@@ -327,10 +328,13 @@ def get_links_for_tag(browser,
 
 def get_links_for_username(browser,
                            username,
+                           person,
                            amount,
                            logger,
+                           logfolder,
                            randomize=False,
-                           media=None):
+                           media=None,
+                           taggedImages=False):
 
     """Fetches the number of links specified
     by amount and returns a list of links"""
@@ -344,9 +348,11 @@ def get_links_for_username(browser,
         # Make it an array to use it in the following part
         media = [media]
 
-    logger.info('Getting {} image list...'.format(username))
+    logger.info('Getting {} image list...'.format(person))
 
-    user_link = "https://www.instagram.com/{}/".format(username)
+    user_link = "https://www.instagram.com/{}/".format(person)
+    if taggedImages:
+        user_link = user_link + 'tagged/'
 
     #Check URL of the webpage, if it already is user's profile page, then do not navigate to it again
     web_address_navigator(browser, user_link)
@@ -354,17 +360,16 @@ def get_links_for_username(browser,
     body_elem = browser.find_element_by_tag_name('body')
     abort = True
 
-    try:
-        is_private = is_private_profile(browser, logger)
-    except:
-        logger.info('Interaction begin...')
-    else:
-        if is_private:
-            logger.warning('This user is private...')
-            return False
-
     if "Page Not Found" in browser.title:
         logger.error('Intagram error: The link you followed may be broken, or the page may have been removed...')
+        return False
+
+    # if private user, we can get links only if we following
+    following, follow_button = get_following_status(browser, 'profile', username, person, None, logger, logfolder)
+    if following == 'Following':
+        following = True
+    is_private = is_private_profile(browser, logger, following)
+    if (is_private is None) or (is_private is True and not following) or (following == 'Blocked'):
         return False
 
     #Get links
@@ -375,7 +380,7 @@ def get_links_for_username(browser,
 
     if posts_count is not None and amount > posts_count:
         logger.info("You have requested to get {} posts from {}'s profile page BUT"
-                    " there only {} posts available :D".format(amount, username, posts_count))
+                    " there only {} posts available :D".format(amount, person, posts_count))
         amount = posts_count
 
     while len(links) < amount:
@@ -387,12 +392,12 @@ def get_links_for_username(browser,
         sleep(0.66)
 
         # using `extend`  or `+=` results reference stay alive which affects previous assignment (can use `copy()` for it)
-        links = links + get_links(browser, username, logger, media, main_elem)
+        links = links + get_links(browser, person, logger, media, main_elem)
         links = sorted(set(links), key=links.index)
 
         if len(links) == len(initial_links):
             if attempt >= 7:
-                logger.info("There are possibly less posts than {} in {}'s profile page!".format(amount, username))
+                logger.info("There are possibly less posts than {} in {}'s profile page!".format(amount, person))
                 break
             else:
                 attempt += 1
@@ -558,8 +563,8 @@ def like_image(browser, username, blacklist, logger, logfolder):
     if quota_supervisor("likes") == "jump":
         return False, "jumped"
 
-    like_xpath = "//button/span[@aria-label='Like']"
-    unlike_xpath = "//button/span[@aria-label='Unlike']"
+    like_xpath = "//section/span/button/span[@aria-label='Like']"
+    unlike_xpath = "//section/span/button/span[@aria-label='Unlike']"
 
     # find first for like element
     like_elem = browser.find_elements_by_xpath(like_xpath)
@@ -579,7 +584,10 @@ def like_image(browser, username, blacklist, logger, logfolder):
                 action = 'liked'
                 add_user_to_blacklist(
                     username, blacklist['campaign'], action, logger, logfolder)
-            sleep(2)
+
+            # get the post-like delay time to sleep
+            naply = get_action_delay("like")
+            sleep(naply)
             return True, "success"
 
         else:
@@ -681,6 +689,3 @@ def verify_liking(browser, max, min, logger):
             return False
 
         return True
-
-
-
