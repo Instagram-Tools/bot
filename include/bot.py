@@ -148,6 +148,7 @@ class Bot(InstaPy):
                                env.get("user_interact_percentage", 100),
                                env.get("user_interact_randomize", False),
                                env.get("user_interact_media", None))
+        self.logger.warning("SETTINGS: %s" % env)
 
     def act(self):
         env = self.settings or {}
