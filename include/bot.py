@@ -91,6 +91,7 @@ class Bot(InstaPy):
                          proxy_address=proxy_address,
                          proxy_chrome_extension=proxy_chrome_extension,
                          proxy_port=proxy_port,
+                         disable_image_load=True,
                          multi_logs=multi_logs)
         self.settings = env
         self.end_time = parse_datetime_prefix(
