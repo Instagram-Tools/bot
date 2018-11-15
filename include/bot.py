@@ -123,7 +123,7 @@ class Bot(InstaPy):
                            env.get("do_follow_times", 1))
         self.set_do_like(env.get("do_like_enabled", True),
                          env.get("do_like_percentage", 100))
-        self.set_dont_include(env.get("dont_include", ()))
+        self.set_dont_include(set(env.get("dont_include", [])))
         self.set_dont_like(env.get("dont_like", []))
         self.set_dont_unfollow_active_users(env.get("dont_unfollow_active_users_enabled", False),
                                             env.get("dont_unfollow_active_users_posts", 4))
@@ -169,7 +169,7 @@ class Bot(InstaPy):
                 usernames=shuffle(env.get("follow_user_followers", [])) if env.get("enable_follow_user_followers",
                                                                                    True) else [],
                 amount=env.get("follow_user_followers_amount", 9),
-                randomize=env.get("follow_user_followers_randomize", False),
+                randomize=env.get("follow_user_followers_randomize", True),
                 interact=env.get("follow_user_followers_interact", True),
                 sleep_delay=env.get("follow_user_followers_sleep_delay", 600)),
 
