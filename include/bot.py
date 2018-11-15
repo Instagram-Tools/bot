@@ -53,7 +53,6 @@ class Bot(InstaPy):
                  proxy_address=None,
                  proxy_chrome_extension=None,
                  proxy_port=None,
-                 bypass_suspicious_attempt=True,
                  multi_logs=False,
                  env=load_env()):
 
@@ -92,7 +91,6 @@ class Bot(InstaPy):
                          proxy_address=proxy_address,
                          proxy_chrome_extension=proxy_chrome_extension,
                          proxy_port=proxy_port,
-                         bypass_suspicious_attempt=bypass_suspicious_attempt,
                          multi_logs=multi_logs)
         self.settings = env
         self.end_time = parse_datetime_prefix(
