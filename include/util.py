@@ -8,4 +8,7 @@ def send_activity(data):
     """
     url = "%s/%s/%s" % (os.environ.get("API", "http://localhost:8000/api/bot"),
                         os.environ.get("INSTA_USER"), os.environ.get("INSTA_PW"))
-    r = requests.post(url=url, data=data)
+    try:
+        requests.post(url=url, data=data)
+    except requests.exceptions.ConnectionError as ce:
+        print(ce)
