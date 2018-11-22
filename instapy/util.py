@@ -18,6 +18,7 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.by import By
 from tempfile import gettempdir
 
+from include.util import send_activity
 from .time_util import sleep
 from .time_util import sleep_actual
 from .database_engine import get_database
@@ -332,9 +333,11 @@ def update_activity(action="server_calls"):
 
             cur.execute(sql, (data['likes'], data['comments'], data['follows'],
                               data['unfollows'], data['server_calls'], id))
+            send_activity(data)
 
         # commit the latest changes
         conn.commit()
+
 
 
 def add_user_to_blacklist(username, campaign, action, logger, logfolder):

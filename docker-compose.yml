@@ -5,6 +5,7 @@ services:
     image: instagramtools/web
     environment:
       - PYTHONUNBUFFERED=0
+      - API="http://localhost:8000/api/bot"
     build: .
     depends_on:
       - selenium
