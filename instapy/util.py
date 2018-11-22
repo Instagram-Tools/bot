@@ -333,7 +333,7 @@ def update_activity(action="server_calls"):
 
             cur.execute(sql, (data['likes'], data['comments'], data['follows'],
                               data['unfollows'], data['server_calls'], id))
-            send_activity(data)
+            # send_activity(data)
 
         # commit the latest changes
         conn.commit()
