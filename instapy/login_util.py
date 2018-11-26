@@ -1,14 +1,13 @@
 """Module only used for the login part of the script"""
 import time
 import pickle
-from selenium.webdriver.common.action_chains import ActionChains
-
 from .time_util import sleep
 from .util import update_activity
 from .util import web_address_navigator
+from .util import reload_webpage
 from .util import explicit_wait
 from .util import click_element
-
+from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
 
@@ -66,7 +65,7 @@ def bypass_suspicious_login(browser, bypass_with_mobile):
 
             except Exception:
                 print("Unable to locate email or phone button, maybe "
-                        "bypass_suspicious_login=True isn't needed anymore.")
+                      "bypass_suspicious_login=True isn't needed anymore.")
                 return False
 
     if bypass_with_mobile:
@@ -138,7 +137,6 @@ def bypass_suspicious_login(browser, bypass_with_mobile):
         pass
 
 
-
 def login_user(browser,
                username,
                password,
@@ -158,10 +156,8 @@ def login_user(browser,
 
     # try to load cookie from username
     try:
-        googledotcom = "https://www.google.com"
-        web_address_navigator(browser, googledotcom)
         for cookie in pickle.load(open('{0}{1}_cookie.pkl'
-                                       .format(logfolder,username), 'rb')):
+                                       .format(logfolder, username), 'rb')):
             browser.add_cookie(cookie)
             cookie_loaded = True
     except (WebDriverException, OSError, IOError):
@@ -171,6 +167,7 @@ def login_user(browser,
     time.sleep(1)
 
     web_address_navigator(browser, ig_homepage)
+    reload_webpage(browser)
 
     # Changes instagram language to english, to ensure no errors ensue from
     # having the site on a different language
@@ -191,8 +188,8 @@ def login_user(browser,
 
     # If not, issue with cookie, create new cookie
     if cookie_loaded:
-        print("Issue with cookie for user " + username
-              + ". Creating new cookie...")
+        print("Issue with cookie for user {}. Creating "
+              "new cookie...".format(username))
 
     # Check if the first div is 'Create an Account' or 'Log In'
     login_elem = browser.find_element_by_xpath(
@@ -273,12 +270,11 @@ def login_user(browser,
     nav = browser.find_elements_by_xpath('//nav')
     if len(nav) == 2:
         # create cookie for username
-        pickle.dump(browser.get_cookies(),
-                    open('{0}{1}_cookie.pkl'.format(logfolder,username), 'wb'))
+        pickle.dump(browser.get_cookies(), open(
+            '{0}{1}_cookie.pkl'.format(logfolder, username), 'wb'))
         return True
     else:
         return False
-
 
 
 def dismiss_get_app_offer(browser, logger):
@@ -287,12 +283,12 @@ def dismiss_get_app_offer(browser, logger):
     dismiss_elem = "//*[contains(text(), 'Not Now')]"
 
     # wait a bit and see if the 'Get App' offer rises up
-    offer_loaded = explicit_wait(browser, "VOEL", [offer_elem, "XPath"], logger, 5, False)
+    offer_loaded = explicit_wait(
+        browser, "VOEL", [offer_elem, "XPath"], logger, 5, False)
 
     if offer_loaded:
         dismiss_elem = browser.find_element_by_xpath(dismiss_elem)
         click_element(browser, dismiss_elem)
-
 
 
 def dismiss_notification_offer(browser, logger):
@@ -301,7 +297,8 @@ def dismiss_notification_offer(browser, logger):
     dismiss_elem_loc = "//button[text()='Not Now']"
 
     # wait a bit and see if the 'Turn on Notifications' offer rises up
-    offer_loaded = explicit_wait(browser, "VOEL", [offer_elem_loc, "XPath"], logger, 4, False)
+    offer_loaded = explicit_wait(
+        browser, "VOEL", [offer_elem_loc, "XPath"], logger, 4, False)
 
     if offer_loaded:
         dismiss_elem = browser.find_element_by_xpath(dismiss_elem_loc)
