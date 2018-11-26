@@ -1,13 +1,14 @@
-import time
-
 import datetime
 import json
 import os
 import random
+import time
+from tempfile import gettempdir
+
+from selenium.common.exceptions import NoSuchElementException
+
 from instapy import InstaPy
 from instapy.time_util import sleep
-from selenium.common.exceptions import NoSuchElementException
-from tempfile import gettempdir
 
 print(os.environ)
 
@@ -62,7 +63,7 @@ class Bot(InstaPy):
             p_port = int(proxy_address_port.split(":")[1])
         else:
             p_address = proxy_address
-            p_port = int(proxy_port)
+            p_port: int = proxy_port
 
         if p_address and p_port:
             proxy_login: str = env.get("proxy_login")
@@ -78,8 +79,28 @@ class Bot(InstaPy):
                 proxy_address = p_address
                 proxy_port = p_port
 
-        print("super().init")
+        self.settings = env
+        self.end_time = parse_datetime_prefix(
+            str(env.get("end_time", datetime.datetime.now() + datetime.timedelta(hours=1))), '%Y-%m-%d %H:%M:%S')
+        os.environ["INSTA_USER"] = username or os.environ.get('INSTA_USER')
+        os.environ["INSTA_PW"] = password or os.environ.get('INSTA_PW')
 
+        print(
+            "super().init(username=%s, password=%s, nogui=%s, selenium_local_session=%s, use_firefox=%s, page_delay=%s, show_logs=%s, headless_browser=%s, proxy_address=%s, proxy_chrome_extension=%s, proxy_port=%s, disable_image_load=%s, multi_logs=%s)"
+            % (
+                username,
+                password,
+                nogui,
+                selenium_local_session,
+                use_firefox,
+                page_delay,
+                show_logs,
+                headless_browser,
+                proxy_address,
+                proxy_chrome_extension,
+                proxy_port,
+                True,
+                multi_logs))
         super().__init__(username=username,
                          password=password,
                          nogui=nogui,
@@ -93,11 +114,6 @@ class Bot(InstaPy):
                          proxy_port=proxy_port,
                          disable_image_load=True,
                          multi_logs=multi_logs)
-        self.settings = env
-        self.end_time = parse_datetime_prefix(
-            str(env.get("end_time", datetime.datetime.now() + datetime.timedelta(hours=1))), '%Y-%m-%d %H:%M:%S')
-        os.environ["INSTA_USER"] = username or os.environ.get('INSTA_USER')
-        os.environ["INSTA_PW"] = password or os.environ.get('INSTA_PW')
 
     def set_settings(self, settings=None):
         env = settings or self.settings
