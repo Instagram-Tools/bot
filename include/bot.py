@@ -96,6 +96,8 @@ class Bot(InstaPy):
         self.settings = env
         self.end_time = parse_datetime_prefix(
             str(env.get("end_time", datetime.datetime.now() + datetime.timedelta(hours=1))), '%Y-%m-%d %H:%M:%S')
+        os.environ["INSTA_USER"] = username or os.environ.get('INSTA_USER')
+        os.environ["INSTA_PW"] = password or os.environ.get('INSTA_PW')
 
     def set_settings(self, settings=None):
         env = settings or self.settings
