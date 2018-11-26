@@ -59,10 +59,10 @@ class Bot(InstaPy):
         proxy_address_port: str = os.environ.get("PROXY")
         if proxy_address_port:
             p_address = proxy_address_port.split(":")[0]
-            p_port = proxy_address_port.split(":")[1]
+            p_port = int(proxy_address_port.split(":")[1])
         else:
             p_address = proxy_address
-            p_port = proxy_port
+            p_port = int(proxy_port)
 
         if p_address and p_port:
             proxy_login: str = env.get("proxy_login")
