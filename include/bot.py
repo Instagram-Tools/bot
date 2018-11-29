@@ -37,8 +37,11 @@ def load_env():
     env = env.replace('"', '')
     env = env.replace('\\', '"')
     print("rep: %s" % env)
-
-    return json.loads(env)
+    env_json = json.loads(env)
+    print("env_json: %s" % env_json)
+    env_json_join = " ".join(env_json)
+    print("env_json_join: %s" % env_json_join)
+    return json.loads(env_json_join)
 
 
 class Bot(InstaPy):
