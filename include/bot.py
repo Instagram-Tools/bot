@@ -34,14 +34,13 @@ def parse_datetime_prefix(line, fmt):
 def load_env():
     env = os.environ.get('ENV', '{}')
     print("env: %s" % env)
-    env = env.replace('"', '')
-    env = env.replace('\\', '"')
-    print("rep: %s" % env)
-    env_json = json.loads(env)
-    print("env_json: %s" % env_json)
-    env_json_join = " ".join(env_json)
+    env1 = json.loads(env)
+    print("rep: %s" % env1)
+    env_join = json.loads(" ".join(env1))
+    print("env_json: %s" % env_join)
+    env_json_join = json.loads(env_join)
     print("env_json_join: %s" % env_json_join)
-    return json.loads(env_json_join)
+    return env_json_join
 
 
 class Bot(InstaPy):
