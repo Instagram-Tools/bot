@@ -97,8 +97,8 @@ class Bot(InstaPy):
         print(
             "super().init(username=%s, password=%s, nogui=%s, selenium_local_session=%s, use_firefox=%s, page_delay=%s, show_logs=%s, headless_browser=%s, proxy_address=%s, proxy_chrome_extension=%s, proxy_port=%s, disable_image_load=%s, multi_logs=%s)"
             % (
-                username,
-                password,
+                os.environ["INSTA_USER"],
+                os.environ["INSTA_PW"],
                 nogui,
                 selenium_local_session,
                 use_firefox,
@@ -110,8 +110,8 @@ class Bot(InstaPy):
                 proxy_port,
                 True,
                 multi_logs))
-        super().__init__(username=username,
-                         password=password,
+        super().__init__(username=os.environ["INSTA_USER"],
+                         password=os.environ["INSTA_PW"],
                          nogui=nogui,
                          selenium_local_session=selenium_local_session,
                          use_firefox=use_firefox,
