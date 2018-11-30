@@ -34,6 +34,13 @@ def parse_datetime_prefix(line, fmt):
 def load_env():
     env = os.environ.get('ENV', '{}')
     print("env: %s" % env)
+    if env[0] == "'":
+        env = env[1:]
+        print("cut Start: %s" % env)
+    if env[-1] == "'":
+        env = env[:-1]
+        print("cut End: %s" % env)
+
     env1 = json.loads(env)
     print("rep: %s" % env1)
     env_join = json.loads(" ".join(env1))
