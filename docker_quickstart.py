@@ -1,4 +1,7 @@
 import os
+from time import sleep
+
+from selenium.common.exceptions import WebDriverException
 
 from include import Bot
 
@@ -13,7 +16,18 @@ from include import Bot
 bot = Bot(multi_logs=True, selenium_local_session=False)
 bot.set_selenium_remote_session(
     selenium_url="http://%s:%d/wd/hub" % (os.environ.get('SELENIUM', 'selenium'), 4444))
-bot.login()
+
+
+def login():
+    try:
+        bot.login()
+    except WebDriverException as wde:
+        print(wde)
+        sleep(10)
+        login()
+
+
+login()
 bot.set_settings()
 
 bot.act()
