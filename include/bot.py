@@ -47,7 +47,18 @@ def load_env():
     print("env_json: %s" % env_join)
     env_json_join = json.loads(env_join)
     print("env_json_join: %s" % env_json_join)
-    return env_json_join
+    return clean_settings(env_json_join)
+
+
+def clean_settings(settings={}):
+    for key in settings:
+        if type(settings[key]) == str:
+            try:
+                settings[key] = int(settings[key])
+            except:
+                print("String in: {%s: %s} " % (key, settings[key]))
+
+    return settings
 
 
 class Bot(InstaPy):
