@@ -1,13 +1,19 @@
 """Module only used for the login part of the script"""
+# import built-in & third-party modules
 import time
 import pickle
+from selenium.webdriver.common.action_chains import ActionChains
+
+# import InstaPy modules
 from .time_util import sleep
 from .util import update_activity
 from .util import web_address_navigator
 from .util import reload_webpage
 from .util import explicit_wait
 from .util import click_element
-from selenium.webdriver.common.action_chains import ActionChains
+from .util import check_authorization
+
+# import exceptions
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import WebDriverException
 
@@ -166,27 +172,29 @@ def login_user(browser,
     # include time.sleep(1) to prevent getting stuck on google.com
     time.sleep(1)
 
-    web_address_navigator(browser, ig_homepage)
-    reload_webpage(browser)
-
-    # Changes instagram language to english, to ensure no errors ensue from
-    # having the site on a different language
-    # Might cause problems if the OS language is english
+    # changes instagram website language to english to use english xpaths
     if switch_language:
         language_element_ENG = browser.find_element_by_xpath(
           "//select[@class='hztqj']/option[text()='English']")
         click_element(browser, language_element_ENG)
 
-    # Cookie has been loaded, user should be logged in. Ensurue this is true
-    login_elem = browser.find_elements_by_xpath(
-        "//*[contains(text(), 'Log in')]")
-    # Login text is not found, user logged in
-    # If not, issue with cookie, create new cookie
-    if len(login_elem) == 0:
+    web_address_navigator(browser, ig_homepage)
+    reload_webpage(browser)
+
+
+    # cookie has been LOADED, so the user SHOULD be logged in
+    # check if the user IS logged in
+    login_state = check_authorization(browser,
+                                      username,
+                                      "activity counts",
+                                      logger,
+                                      False)
+    if login_state == True:
         dismiss_notification_offer(browser, logger)
         return True
 
-    # If not, issue with cookie, create new cookie
+    # if user is still not logged in, then there is an issue with the cookie
+    # so go create a new cookie..
     if cookie_loaded:
         print("Issue with cookie for user {}. Creating "
               "new cookie...".format(username))
@@ -264,7 +272,8 @@ def login_user(browser,
     if bypass_suspicious_attempt is True:
         bypass_suspicious_login(browser, bypass_with_mobile)
 
-    sleep(5)
+    # wait until page fully load
+    explicit_wait(browser, "PFL", [], logger, 5)
 
     # Check if user is logged-in (If there's two 'nav' elements)
     nav = browser.find_elements_by_xpath('//nav')
