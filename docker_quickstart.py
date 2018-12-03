@@ -22,7 +22,7 @@ def login():
     try:
         bot.login()
     except WebDriverException as wde:
-        print(wde)
+        print("WebDriverException in login(): %s" % wde)
         sleep(10)
         login()
 
