@@ -28,7 +28,11 @@ def login():
 
 
 def act():
-    bot.act()
+    try:
+        bot.act()
+    except WebDriverException as wde:
+        print("WebDriverException in act(): %s \n%s" % (wde, wde.stacktrace))
+        act()
 
 
 login()
