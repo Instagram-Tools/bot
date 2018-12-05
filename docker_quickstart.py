@@ -27,9 +27,12 @@ def login():
         login()
 
 
+def act():
+    bot.act()
+
+
 login()
 bot.set_settings()
-
-bot.act()
+act()
 
 bot.end()
