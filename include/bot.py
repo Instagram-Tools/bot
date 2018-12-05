@@ -75,9 +75,9 @@ class Bot(InstaPy):
                  proxy_chrome_extension=None,
                  proxy_port=None,
                  multi_logs=False,
-                 env=load_env()):
+                 env=load_env(),
+                 proxy_address_port=None):
 
-        proxy_address_port: str = os.environ.get("PROXY")
         if proxy_address_port:
             p_address = proxy_address_port.split(":")[0]
             p_port = int(proxy_address_port.split(":")[1])
