@@ -5,6 +5,7 @@ services:
     image: instagramtools/web
     environment:
       - PYTHONUNBUFFERED=0
+      - SELENIUM=selenium
       - API="http://localhost:8000/api/bot"
     build: .
     depends_on:
@@ -25,8 +26,11 @@ services:
       - .env/.proxy-manager.env
 
   selenium:
-    container_name: selenium-debug
     image: selenium/standalone-chrome-debug
+    environment:
+      - NODE_MAX_INSTANCES=5
+      - NODE_MAX_SESSION=5
     ports:
       - "5900:5900"
+      - "4444:4444"
     shm_size: 128M
