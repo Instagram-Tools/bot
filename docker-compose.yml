@@ -20,6 +20,8 @@ services:
 
   proxy-manager:
     image: gott50/proxy-manager
+    ports:
+      - 60000:60000
     environment:
       - DEBUG=False
     env_file:
