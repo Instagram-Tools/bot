@@ -9,8 +9,21 @@ services:
     build: .
     depends_on:
       - selenium
+      - proxy-manager
+    links:
+      - selenium:selenium
+      - proxy-manager:proxy-manager
     volumes:
       - ./logs:/code/logs
+
+
+  proxy-manager:
+    image: gott50/proxy-manager
+    environment:
+      - DEBUG=False
+    env_file:
+      - .env/.proxy-manager.env
+
   selenium:
     container_name: selenium-debug
     image: selenium/standalone-chrome-debug
