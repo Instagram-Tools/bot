@@ -282,13 +282,15 @@ class Bot(InstaPy):
                 for f in actions:
                     f()
 
-            except Exception as exc:
+            except NoSuchElementException as exc:
                 # if changes to IG layout, upload the file to help us locate the change
-                if isinstance(exc, NoSuchElementException):
-                    file_path = os.path.join(gettempdir(), '{}.html'.format(time.strftime('%Y%m%d-%H%M%S')))
-                    with open(file_path, 'wb') as fp:
-                        fp.write(self.browser.page_source.encode('utf8'))
-                    print('{0}\nIf raising an issue, please also upload the file located at:\n{1}\n{0}'.format(
-                        '*' * 70, file_path))
+                file_path = os.path.join(gettempdir(), '{}.html'.format(time.strftime('%Y%m%d-%H%M%S')))
+                with open(file_path, 'wb') as fp:
+                    fp.write(self.browser.page_source.encode('utf8'))
+                print('{0}\nIf raising an issue, please also upload the file located at:\n{1}\n{0}'.format(
+                    '*' * 70, file_path))
                 # full stacktrace when raising Github issue
                 self.logger.exception(exc)
+            except Exception as exc:
+                self.logger.error(exc)
+                raise
