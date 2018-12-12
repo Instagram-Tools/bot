@@ -17,7 +17,7 @@ def get_proxy(user):
 
 
 def create_proxy(user, proxy):
-    for i in range(20):
+    for i in range(2):
         if check_proxy(proxy=proxy):
             return proxy
         print("%s: waiting for Proxy of user: %s" % (i, user))
