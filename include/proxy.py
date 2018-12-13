@@ -1,9 +1,13 @@
 from time import sleep
-
+import os
 import requests
 
+PROXY_MANAGER = os.environ.get('PROXY_MANAGER')
 
 def get_proxy(user):
+    if not PROXY_MANAGER:
+        return None
+
     proxy = None
     while not proxy:
         try:
@@ -28,11 +32,11 @@ def create_proxy(user, proxy):
 
 
 def get_proxy_manager(user):
-    return requests.get('http://proxy-manager:60000/%s' % user).text
+    return requests.get((PROXY_MANAGER + '/%s') % user).text
 
 
 def restart_proxy_manager(user):
-    return requests.get('http://proxy-manager:60000/restart/%s' % user).text
+    return requests.get(PROXY_MANAGER + '/restart/%s' % user).text
 
 
 def check_proxy(proxy):
