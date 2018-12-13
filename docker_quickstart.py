@@ -20,9 +20,9 @@ def login():
         bot.login()
     except WebDriverException as wde:
         print("WebDriverException in login(): %s \n%s" % (wde, wde.stacktrace))
-        sleep(10)
-        login()
-
+        # sleep(10)
+        # login()
+        pass
 
 def run():
     global bot
@@ -35,8 +35,9 @@ def run():
         bot.act()
     except WebDriverException as wde:
         print("WebDriverException in run(): %s \n%s" % (wde, wde.stacktrace))
-        sleep(60)
-        run()
+        pass
+        # sleep(60)
+        # run()
 
 
 run()
