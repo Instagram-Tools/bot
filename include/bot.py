@@ -236,6 +236,7 @@ class Bot(InstaPy):
             try:
                 sleep(10)
                 random.shuffle(actions)
+                self.logger.warning("shuffled actions: %s" % actions)
                 for f in actions:
                     f()
 
