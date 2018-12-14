@@ -184,7 +184,7 @@ class Bot(InstaPy):
 
         self.set_blacklist(env.get("blacklist_enabled", True),
                            env.get("blacklist_campaign", ''))
-        self.set_comments(env.get("comments", None))
+        self.set_comments(env.get("comments", []))
 
         delimit_liking_max = env.get('delimit_liking_max')
         delimit_liking_min = env.get('delimit_liking_min')
