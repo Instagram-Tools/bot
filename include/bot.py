@@ -136,49 +136,6 @@ class Bot(InstaPy):
                          disable_image_load=True,
                          multi_logs=multi_logs)
 
-    def set_selenium_remote_session(self, selenium_url='', selenium_driver=None):
-        """
-        Starts remote session for a selenium server.
-        Creates a new selenium driver instance for remote session or uses provided
-        one. Useful for docker setup.
-
-        :param selenium_url: string
-        :param selenium_driver: selenium WebDriver
-        :return: self
-        """
-        if self.aborting:
-            return self
-
-        if selenium_driver:
-            self.browser = selenium_driver
-        else:
-            if self.use_firefox:
-                self.browser = webdriver.Remote(
-                    command_executor=selenium_url,
-                    desired_capabilities=DesiredCapabilities.FIREFOX)
-            else:
-                capabilities = DesiredCapabilities.CHROME
-                if self.proxy_address and self.proxy_port:
-                    prox = Proxy()
-                    proxy = ":".join([self.proxy_address, str(self.proxy_port)])
-                    prox.proxy_type = ProxyType.MANUAL
-                    prox.http_proxy = proxy
-                    prox.socks_proxy = proxy
-                    prox.ssl_proxy = proxy
-                    prox.add_to_capabilities(capabilities)
-
-                    print("USE PROXY: %s" % proxy)
-
-                self.browser = webdriver.Remote(
-                    command_executor=selenium_url,
-                    desired_capabilities=capabilities)
-
-        message = "Session started!"
-        highlight_print(self.username, message, "initialization", "info", self.logger)
-        print('')
-
-        return self
-
     def set_settings(self, settings=None):
         env = settings or self.settings
 
