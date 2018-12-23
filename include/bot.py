@@ -8,7 +8,6 @@ from tempfile import gettempdir
 from selenium.common.exceptions import NoSuchElementException
 
 from instapy import InstaPy
-from instapy.instapy import webdriver, DesiredCapabilities, highlight_print, Proxy, ProxyType
 from instapy.time_util import sleep
 
 print(os.environ)
@@ -191,56 +190,16 @@ class Bot(InstaPy):
         self.logger.warning("SETTINGS: %s" % env)
 
     def act(self):
-        env = self.settings or {}
-        actions = [
-            lambda: self.like_by_tags(
-                tags=shuffle(env.get("like_by_tags", [])) if env.get("enable_like_by_tags", True) else [],
-                amount=env.get("like_by_tags_amount", 1),
-                skip_top_posts=env.get("like_by_tags_skip_top_posts", True),
-                use_smart_hashtags=env.get("like_by_tags_use_smart_hashtags", False),
-                interact=env.get("like_by_tags_interact", False)),
-
-            lambda: self.like_by_locations(
-                locations=shuffle(env.get("like_by_locations", [])) if env.get("enable_like_by_locations",
-                                                                               True) else [],
-                amount=env.get("like_by_locations_amount", 1),
-                skip_top_posts=env.get("like_by_locations_skip_top_posts", True)),
-
-            lambda: self.follow_user_followers(
-                usernames=shuffle(env.get("follow_user_followers", [])) if env.get("enable_follow_user_followers",
-                                                                                   True) else [],
-                amount=env.get("follow_user_followers_amount", 9),
-                randomize=env.get("follow_user_followers_randomize", True),
-                interact=env.get("follow_user_followers_interact", True),
-                sleep_delay=env.get("follow_user_followers_sleep_delay", 600)),
-
-            lambda: self.like_by_feed(
-                amount=env.get("like_by_feed_amount", 10) if env.get("enable_like_by_feed", True) else 0,
-                randomize=env.get("like_by_feed_randomize", True),
-                unfollow=env.get("like_by_feed_unfollow", False),
-                interact=env.get("like_by_feed_interact", False)),
-
-            lambda: self.unfollow_users(
-                amount=env.get("unfollow_users_amount", 50) if env.get("enable_unfollow", True) else 0,
-                # customList=(False, [], "all"),
-                InstapyFollowed=(env.get("unfollow_users_InstapyFollowed", True),
-                                 "nonfollowers" if env.get("unfollow_users_nonfollowers", False) else "all"),
-                # 'all' or 'nonfollowers'
-                # nonFollowers=False,
-                # allFollowing=False,
-                style=env.get("unfollow_users_style", 'FIFO'),  # or 'LIFO', 'RANDOM'
-                unfollow_after=env.get("unfollow_users_unfollow_after", 2) * 24 * 60 * 60,
-                sleep_delay=env.get("unfollow_users_sleep_delay", 600)
-            )
-        ]
+        actions = self.get_actions(self.settings or {})
 
         while datetime.datetime.now() < self.end_time:
             try:
                 sleep(10)
                 random.shuffle(actions)
-                self.logger.warning("shuffled actions: %s" % actions)
+                self.logger.warning("shuffled actions: %s" % list(map(lambda a: a["name"], actions)))
                 for f in actions:
-                    f()
+                    self.logger.warning("RUN: %s" % f["name"])
+                    f["fun"]()
 
             except NoSuchElementException as exc:
                 # if changes to IG layout, upload the file to help us locate the change
@@ -254,3 +213,64 @@ class Bot(InstaPy):
             except Exception as exc:
                 self.logger.error("Excepiton in act(): %s" % exc)
                 # TODO send Mail to Developers
+
+    def get_actions(self, env):
+        actions = [
+            {
+                "name": "like_by_tags",
+                "enabled": env.get("enable_like_by_tags", True),
+                "fun":
+                    lambda: self.like_by_tags(
+                        tags=shuffle(env.get("like_by_tags", [])) if env.get("enable_like_by_tags", True) else [],
+                        amount=env.get("like_by_tags_amount", 1),
+                        skip_top_posts=env.get("like_by_tags_skip_top_posts", True),
+                        use_smart_hashtags=env.get("like_by_tags_use_smart_hashtags", False),
+                        interact=env.get("like_by_tags_interact", False)),
+            },
+            {
+                "name": "like_by_locations",
+                "enabled": env.get("enable_like_by_locations", True),
+                "fun": lambda: self.like_by_locations(
+                    locations=shuffle(env.get("like_by_locations", [])) if env.get("enable_like_by_locations",
+                                                                                   True) else [],
+                    amount=env.get("like_by_locations_amount", 1),
+                    skip_top_posts=env.get("like_by_locations_skip_top_posts", True))
+            },
+            {
+                "name": "follow_user_followers",
+                "enabled": env.get("enable_follow_user_followers", True),
+                "fun": lambda: self.follow_user_followers(
+                    usernames=shuffle(env.get("follow_user_followers", [])) if env.get("enable_follow_user_followers",
+                                                                                       True) else [],
+                    amount=env.get("follow_user_followers_amount", 9),
+                    randomize=env.get("follow_user_followers_randomize", True),
+                    interact=env.get("follow_user_followers_interact", True),
+                    sleep_delay=env.get("follow_user_followers_sleep_delay", 600))
+            },
+            {
+                "name": "like_by_feed",
+                "enabled": env.get("enable_like_by_feed", True),
+                "fun": lambda: self.like_by_feed(
+                    amount=env.get("like_by_feed_amount", 10) if env.get("enable_like_by_feed", True) else 0,
+                    randomize=env.get("like_by_feed_randomize", True),
+                    unfollow=env.get("like_by_feed_unfollow", False),
+                    interact=env.get("like_by_feed_interact", False))
+            },
+            {
+                "name": "unfollow_users",
+                "enabled": env.get("enable_unfollow", True),
+                "fun": lambda: self.unfollow_users(
+                    amount=env.get("unfollow_users_amount", 50) if env.get("enable_unfollow", True) else 0,
+                    # customList=(False, [], "all"),
+                    InstapyFollowed=(env.get("unfollow_users_InstapyFollowed", True),
+                                     "nonfollowers" if env.get("unfollow_users_nonfollowers", False) else "all"),
+                    # 'all' or 'nonfollowers'
+                    # nonFollowers=False,
+                    # allFollowing=False,
+                    style=env.get("unfollow_users_style", 'FIFO'),  # or 'LIFO', 'RANDOM'
+                    unfollow_after=env.get("unfollow_users_unfollow_after", 2) * 24 * 60 * 60,
+                    sleep_delay=env.get("unfollow_users_sleep_delay", 600)
+                )
+            }
+        ]
+        return list(filter(lambda a: a["enabled"], actions))
