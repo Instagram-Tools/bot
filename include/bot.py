@@ -34,7 +34,7 @@ def parse_datetime_prefix(line, fmt):
 def load_env():
     env = os.environ.get('ENV')
     if not env:
-        return None
+        return {}
     print("env: %s" % env)
     if env[0] == "'":
         env = env[1:]
