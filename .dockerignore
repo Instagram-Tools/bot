@@ -12,3 +12,10 @@
 /env.py
 /docker*
 !docker_quickstart.py
+
+/.env
+/logs
+/.github
+!/include
+/quickstart_templates
+/venv
