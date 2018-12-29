@@ -138,6 +138,9 @@ class Bot(InstaPy):
                          multi_logs=multi_logs)
 
     def set_settings(self, settings=None):
+        if self.aborting:
+            return
+
         env = settings or self.settings
 
         self.set_blacklist(env.get("blacklist_enabled", True),
@@ -190,6 +193,9 @@ class Bot(InstaPy):
         self.logger.warning("SETTINGS: %s" % env)
 
     def act(self):
+        if self.aborting:
+            return
+
         actions = self.get_actions(self.settings or {})
 
         while datetime.datetime.now() < self.end_time:
