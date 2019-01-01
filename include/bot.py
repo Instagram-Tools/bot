@@ -218,6 +218,7 @@ class Bot(InstaPy):
                 self.logger.exception(exc)
             except Exception as exc:
                 self.logger.error("Excepiton in act(): %s" % exc)
+                raise
                 # TODO send Mail to Developers
 
     def get_actions(self, env):
