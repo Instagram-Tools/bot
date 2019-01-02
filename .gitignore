@@ -125,3 +125,6 @@ Pipfile.lock
 
 /docker-compose.override.yml
 /scripts
+
+# Instances
+z_*

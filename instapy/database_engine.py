@@ -3,7 +3,6 @@ import sqlite3
 
 from .settings import Settings
 
-
 SELECT_FROM_PROFILE_WHERE_NAME = "SELECT * FROM profiles WHERE name = :name"
 
 INSERT_INTO_PROFILE = "INSERT INTO profiles (name) VALUES (?)"
@@ -28,6 +27,17 @@ SQL_CREATE_FOLLOW_RESTRICTION_TABLE = """
         `profile_id` INTEGER REFERENCES `profiles` (id),
         `username` TEXT NOT NULL,
         `times` TINYINT UNSIGNED NOT NULL);"""
+
+SQL_CREATE_ACCOUNTS_PROGRESS_TABLE = """
+    CREATE TABLE IF NOT EXISTS `accountsProgress` (
+        `profile_id` INTEGER NOT NULL,
+        `followers` INTEGER NOT NULL,
+        `following` INTEGER NOT NULL,
+        `total_posts` INTEGER NOT NULL,
+        `created` DATETIME NOT NULL,
+        `modified` DATETIME NOT NULL,
+        CONSTRAINT `fk_accountsProgress_profiles1`
+        FOREIGN KEY(`profile_id`) REFERENCES `profiles`(`id`));"""
 
 
 def get_database(make=False):
@@ -55,7 +65,8 @@ def create_database(address, logger, name):
 
             create_tables(cursor, ["profiles",
                                    "recordActivity",
-                                   "followRestriction"])
+                                   "followRestriction",
+                                   "accountsProgress"])
 
             connection.commit()
 
@@ -80,6 +91,9 @@ def create_tables(cursor, tables):
     if "followRestriction" in tables:
         cursor.execute(SQL_CREATE_FOLLOW_RESTRICTION_TABLE)
 
+    if "accountsProgress" in tables:
+        cursor.execute(SQL_CREATE_ACCOUNTS_PROGRESS_TABLE)
+
 
 def verify_database_directories(address):
     db_dir = os.path.dirname(address)
@@ -94,9 +108,7 @@ def validate_database_address():
         address = address if address.endswith(slash) else address + slash
         address += "instapy.db"
         Settings.database_location = address
-
     verify_database_directories(address)
-
     return address
 
 
@@ -113,12 +125,10 @@ def get_profile(name, address, logger):
                 add_profile(conn, cursor, name)
                 # reselect the table after adding data to get the proper `id`
                 profile = select_profile_by_username(cursor, name)
-
     except Exception as exc:
         logger.warning(
             "Heeh! Error occurred while getting a DB profile for '{}':\n\t{}"
             .format(name, str(exc).encode("utf-8")))
-
     finally:
         if conn:
             # close the open connection
@@ -126,7 +136,6 @@ def get_profile(name, address, logger):
 
     profile = dict(profile)
     id = profile["id"]
-
     # assign the id to its child in `Settings` class
     Settings.profile["id"] = id
 
@@ -144,6 +153,3 @@ def select_profile_by_username(cursor, name):
     profile = cursor.fetchone()
 
     return profile
-
-
-

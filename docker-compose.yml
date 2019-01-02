@@ -1,4 +1,4 @@
-version: '3'
+version: '2'
 services:
   web:
     command: ["sh", "./wait-for-selenium.sh", "http://selenium:4444/wd/hub", "--", "python", "docker_quickstart.py"]
@@ -7,7 +7,7 @@ services:
       - PYTHONUNBUFFERED=0
       - SELENIUM=selenium
       - API="http://localhost:8000/api/bot"
-      - PROXY_MANAGER=http://proxy-manager:60000
+#      - PROXY_MANAGER=http://proxy-manager:60000
     build: .
     depends_on:
       - selenium
@@ -15,8 +15,8 @@ services:
     links:
       - selenium:selenium
       - proxy-manager:proxy-manager
-    volumes:
-      - ./logs:/code/logs
+#    volumes:
+#      - ./logs:/code/logs
 
 
   proxy-manager:
@@ -24,15 +24,15 @@ services:
     ports:
       - 60000:60000
     environment:
-      - DEBUG=False
+      - DEBUG=True
     env_file:
       - .env/.proxy-manager.env
 
   selenium:
-    image: selenium/standalone-chrome-debug
+    image: selenium/standalone-chrome:3.141.59
     environment:
-      - NODE_MAX_INSTANCES=5
-      - NODE_MAX_SESSION=5
+      - NODE_MAX_INSTANCES=1
+      - NODE_MAX_SESSION=1
     ports:
       - "5900:5900"
       - "4444:4444"
