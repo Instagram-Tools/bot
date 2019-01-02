@@ -204,6 +204,10 @@ class Bot(InstaPy):
                 random.shuffle(actions)
                 self.logger.warning("shuffled actions: %s" % list(map(lambda a: a["name"], actions)))
                 for f in actions:
+                    if self.aborting:
+                        self.logger.warning("ABORTING")
+                        return
+
                     self.logger.warning("RUN: %s" % f["name"])
                     f["fun"]()
 
