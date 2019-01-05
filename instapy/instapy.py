@@ -3434,7 +3434,9 @@ class InstaPy:
         history = []
         self.quotient_breach = False
 
-        while liked_img < amount:
+        counter = 0
+        while liked_img < amount and counter < amount:
+            counter += 1
             if self.quotient_breach:
                 break
 
