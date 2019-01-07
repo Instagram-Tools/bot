@@ -13,10 +13,11 @@ from instapy.time_util import sleep
 print(os.environ)
 
 
-def shuffle(in_list=[]):
+def shuffle3(in_list=[]):
     out_list = in_list[:]
     random.shuffle(out_list)
-    return out_list
+    index = len(out_list) if len(out_list) < 3 else 3
+    return out_list[:index]
 
 
 def parse_datetime_prefix(line, fmt):
@@ -232,8 +233,8 @@ class Bot(InstaPy):
                 "enabled": env.get("enable_like_by_tags", True),
                 "fun":
                     lambda: self.like_by_tags(
-                        tags=shuffle(env.get("like_by_tags", [])) if env.get("enable_like_by_tags", True) else [],
-                        amount=env.get("like_by_tags_amount", 1),
+                        tags=shuffle3(env.get("like_by_tags", [])) if env.get("enable_like_by_tags", True) else [],
+                        amount=env.get("like_by_tags_amount", 3),
                         skip_top_posts=env.get("like_by_tags_skip_top_posts", True),
                         use_smart_hashtags=env.get("like_by_tags_use_smart_hashtags", False),
                         interact=env.get("like_by_tags_interact", False)),
@@ -242,18 +243,18 @@ class Bot(InstaPy):
                 "name": "like_by_locations",
                 "enabled": env.get("enable_like_by_locations", True),
                 "fun": lambda: self.like_by_locations(
-                    locations=shuffle(env.get("like_by_locations", [])) if env.get("enable_like_by_locations",
-                                                                                   True) else [],
-                    amount=env.get("like_by_locations_amount", 1),
+                    locations=shuffle3(env.get("like_by_locations", [])) if env.get("enable_like_by_locations",
+                                                                                    True) else [],
+                    amount=env.get("like_by_locations_amount", 3),
                     skip_top_posts=env.get("like_by_locations_skip_top_posts", True))
             },
             {
                 "name": "follow_user_followers",
                 "enabled": env.get("enable_follow_user_followers", True),
                 "fun": lambda: self.follow_user_followers(
-                    usernames=shuffle(env.get("follow_user_followers", [])) if env.get("enable_follow_user_followers",
-                                                                                       True) else [],
-                    amount=env.get("follow_user_followers_amount", 9),
+                    usernames=shuffle3(env.get("follow_user_followers", [])) if env.get("enable_follow_user_followers",
+                                                                                        True) else [],
+                    amount=env.get("follow_user_followers_amount", 3),
                     randomize=env.get("follow_user_followers_randomize", True),
                     interact=env.get("follow_user_followers_interact", True),
                     sleep_delay=env.get("follow_user_followers_sleep_delay", 600))
@@ -271,7 +272,7 @@ class Bot(InstaPy):
                 "name": "unfollow_users",
                 "enabled": env.get("enable_unfollow", True),
                 "fun": lambda: self.unfollow_users(
-                    amount=env.get("unfollow_users_amount", 50) if env.get("enable_unfollow", True) else 0,
+                    amount=env.get("unfollow_users_amount", 10) if env.get("enable_unfollow", True) else 0,  # TODO shorten Cycles
                     # customList=(False, [], "all"),
                     InstapyFollowed=(env.get("unfollow_users_InstapyFollowed", True),
                                      "nonfollowers" if env.get("unfollow_users_nonfollowers", False) else "all"),
