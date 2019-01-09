@@ -22,7 +22,7 @@ def login():
         print("WebDriverException in login(): %s \n%s" % (wde, wde.stacktrace))
         # sleep(10)
         # login()
-        pass
+        raise
 
 def run():
     global bot
@@ -37,7 +37,6 @@ def run():
         print("WebDriverException in run(): %s \n%s" % (wde, wde.stacktrace))
         bot.end()
         sleep(60)
-        run()
 
 
 run()
