@@ -272,7 +272,7 @@ class Bot(InstaPy):
                 "name": "unfollow_users",
                 "enabled": env.get("enable_unfollow", True),
                 "fun": lambda: self.unfollow_users(
-                    amount=env.get("unfollow_users_amount", 10) if env.get("enable_unfollow", True) else 0,  # TODO shorten Cycles
+                    amount=env.get("unfollow_users_amount", random.randint(8, 12)) if env.get("enable_unfollow", True) else 0,  # TODO shorten Cycles
                     # customList=(False, [], "all"),
                     InstapyFollowed=(env.get("unfollow_users_InstapyFollowed", True),
                                      "nonfollowers" if env.get("unfollow_users_nonfollowers", False) else "all"),
@@ -281,7 +281,7 @@ class Bot(InstaPy):
                     # allFollowing=False,
                     style=env.get("unfollow_users_style", 'FIFO'),  # or 'LIFO', 'RANDOM'
                     unfollow_after=env.get("unfollow_users_unfollow_after", 2) * 24 * 60 * 60,
-                    sleep_delay=env.get("unfollow_users_sleep_delay", 600)
+                    sleep_delay=env.get("unfollow_users_sleep_delay", 0)
                 )
             }
         ]
