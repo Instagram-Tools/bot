@@ -1130,6 +1130,7 @@ def dump_record_activity(profile_name, logger, logfolder):
             if os.path.isfile(filename):
                 with open(filename) as recordActFile:
                     current_data = json.load(recordActFile)
+            logger.error("current_data: %s" % current_data)
 
             # re-order live user data in the required structure
             for hourly_data in user_data:
@@ -1140,19 +1141,27 @@ def dump_record_activity(profile_name, logger, logfolder):
                 if day not in ordered_user_data.keys():
                     ordered_user_data.update({day: {}})
 
-                ordered_user_data[day].update({hour: {"likes": hourly_data[1],
-                                                      "comments": hourly_data[
-                                                          2],
-                                                      "follows": hourly_data[
-                                                          3],
-                                                      "unfollows": hourly_data[
-                                                          4],
-                                                      "server_calls":
-                                                          hourly_data[5]}})
+                cur = current_data[profile_name][day].get(hour, {"likes": 0,
+                                                                 "comments": 0,
+                                                                 "follows": 0,
+                                                                 "unfollows": 0,
+                                                                 "server_calls": 0})
+
+                ordered_user_data[day].update({hour: {"likes": hourly_data[1]
+                                                               + cur["likes"],
+                                                      "comments": hourly_data[2]
+                                                                  + cur["comments"],
+                                                      "follows": hourly_data[3]
+                                                                 + cur["follows"],
+                                                      "unfollows": hourly_data[4]
+                                                                   + cur["unfollows"],
+                                                      "server_calls": hourly_data[5]
+                                                                      + cur["server_calls"]}})
 
             # update user data with live data whilst preserving all other
             # data (keys)
             current_data.update({profile_name: ordered_user_data})
+            logger.error("updated cr_d: %s" % current_data)
 
             # dump the fresh record data to a local human readable JSON
             with open(filename, 'w') as recordActFile:

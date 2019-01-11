@@ -11,12 +11,12 @@ services:
     build: .
     depends_on:
       - selenium
-      - proxy-manager
+#      - proxy-manager
     links:
       - selenium:selenium
-      - proxy-manager:proxy-manager
-#    volumes:
-#      - ./logs:/code/logs
+#      - proxy-manager:proxy-manager
+    volumes:
+      - ./logs:/code/logs
 
 
   proxy-manager:
