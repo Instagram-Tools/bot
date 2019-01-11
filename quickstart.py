@@ -4,8 +4,7 @@ from instapy import InstaPy
 from instapy.util import smart_run
 
 # login credentials
-insta_username = ''
-insta_password = ''
+from env import insta_username, insta_password
 
 # get an InstaPy session!
 # set headless_browser=True to run InstaPy in the background
@@ -26,4 +25,4 @@ with smart_run(session):
     session.set_dont_like(["pizza", "#store"])
 
     # activity
-    session.like_by_tags(["natgeo"], amount=10)
+    session.like_by_tags(["natgeo"], amount=5)

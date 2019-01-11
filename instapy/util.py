@@ -22,7 +22,7 @@ from tempfile import gettempdir
 import emoji
 from emoji.unicode_codes import UNICODE_EMOJI
 
-from include.util import send_activity
+# from include.util import send_activity
 from .time_util import sleep
 from .time_util import sleep_actual
 from .database_engine import get_database
