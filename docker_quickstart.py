@@ -35,10 +35,7 @@ def run():
         bot.act()
     except WebDriverException as wde:
         print("WebDriverException in run(): %s \n%s" % (wde, wde.stacktrace))
+    finally:
         bot.end()
-        sleep(60)
-
 
 run()
-
-bot.end()
