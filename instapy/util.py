@@ -1147,16 +1147,11 @@ def dump_record_activity(profile_name, logger, logfolder):
                                                                  "unfollows": 0,
                                                                  "server_calls": 0})
 
-                ordered_user_data[day].update({hour: {"likes": hourly_data[1]
-                                                               + cur["likes"],
-                                                      "comments": hourly_data[2]
-                                                                  + cur["comments"],
-                                                      "follows": hourly_data[3]
-                                                                 + cur["follows"],
-                                                      "unfollows": hourly_data[4]
-                                                                   + cur["unfollows"],
-                                                      "server_calls": hourly_data[5]
-                                                                      + cur["server_calls"]}})
+                ordered_user_data[day].update({hour: {"likes": hourly_data[1] + cur["likes"],
+                                                      "comments": hourly_data[2] + cur["comments"],
+                                                      "follows": hourly_data[3] + cur["follows"],
+                                                      "unfollows": hourly_data[4] + cur["unfollows"],
+                                                      "server_calls": hourly_data[5] + cur["server_calls"]}})
 
             # update user data with live data whilst preserving all other
             # data (keys)
