@@ -199,32 +199,32 @@ class Bot(InstaPy):
 
         actions = self.get_actions(self.settings or {})
 
-        while datetime.datetime.now() < self.end_time:
-            try:
-                sleep(10)
-                random.shuffle(actions)
-                self.logger.warning("shuffled actions: %s" % list(map(lambda a: a["name"], actions)))
-                for f in actions:
-                    if self.aborting:
-                        self.logger.warning("ABORTING")
-                        return
+        # while datetime.datetime.now() < self.end_time:  # TODO terminate Task if it takes too long
+        try:
+            sleep(10)
+            # random.shuffle(actions)
+            self.logger.warning("shuffled actions: %s" % list(map(lambda a: a["name"], actions)))
+            # for f in actions:
+            if self.aborting:
+                self.logger.warning("ABORTING")
+                return
+            f = actions[0]
+            self.logger.warning("RUN: %s" % f["name"])
+            f["fun"]()
 
-                    self.logger.warning("RUN: %s" % f["name"])
-                    f["fun"]()
-
-            except NoSuchElementException as exc:
-                # if changes to IG layout, upload the file to help us locate the change
-                file_path = os.path.join(gettempdir(), '{}.html'.format(time.strftime('%Y%m%d-%H%M%S')))
-                with open(file_path, 'wb') as fp:
-                    fp.write(self.browser.page_source.encode('utf8'))
-                print('{0}\nIf raising an issue, please also upload the file located at:\n{1}\n{0}'.format(
-                    '*' * 70, file_path))
-                # full stacktrace when raising Github issue
-                self.logger.exception(exc)
-            except Exception as exc:
-                self.logger.error("Excepiton in act(): %s" % exc)
-                raise
-                # TODO send Mail to Developers
+        except NoSuchElementException as exc:
+            # if changes to IG layout, upload the file to help us locate the change
+            file_path = os.path.join(gettempdir(), '{}.html'.format(time.strftime('%Y%m%d-%H%M%S')))
+            with open(file_path, 'wb') as fp:
+                fp.write(self.browser.page_source.encode('utf8'))
+            print('{0}\nIf raising an issue, please also upload the file located at:\n{1}\n{0}'.format(
+                '*' * 70, file_path))
+            # full stacktrace when raising Github issue
+            self.logger.exception(exc)
+        except Exception as exc:
+            self.logger.error("Excepiton in act(): %s" % exc)
+            raise
+            # TODO send Mail to Developers
 
     def get_actions(self, env):
         actions = [
