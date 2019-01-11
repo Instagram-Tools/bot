@@ -1129,7 +1129,10 @@ def dump_record_activity(profile_name, logger, logfolder):
             filename = "{}recordActivity.json".format(logfolder)
             if os.path.isfile(filename):
                 with open(filename) as recordActFile:
-                    current_data = json.load(recordActFile)
+                    current_data = json.load(recordActFile) or {}
+            else:
+                current_data = {}
+
             logger.error("current_data: %s" % current_data)
 
             # re-order live user data in the required structure
@@ -1140,6 +1143,9 @@ def dump_record_activity(profile_name, logger, logfolder):
 
                 if day not in ordered_user_data.keys():
                     ordered_user_data.update({day: {}})
+
+                current_data[profile_name] = current_data.get('profile_name', {})
+                current_data[profile_name][day] = current_data[profile_name].get('day', {})
 
                 cur = current_data[profile_name][day].get(hour, {"likes": 0,
                                                                  "comments": 0,
