@@ -1130,8 +1130,6 @@ def dump_record_activity(profile_name, logger, logfolder):
             if os.path.isfile(filename):
                 with open(filename) as recordActFile:
                     current_data = json.load(recordActFile) or {}
-            else:
-                current_data = {}
 
             logger.error("current_data: %s" % current_data)
 
