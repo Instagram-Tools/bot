@@ -31,8 +31,14 @@ Head over to https://github.com/timgrossmann/InstaPy/wiki/Reporting-An-Issue to 
 
 ### Do you want to support us ?
 
+<a href="https://opencollective.com/instapy/donate" target="_blank">
+  <img src="https://opencollective.com/instapy/contribute/button@2x.png?color=blue" width=300 />
+</a>
+
+<br />
+
 <a href="https://www.paypal.me/supportInstaPy">
-	<img alt="paypalme" src="http://codeinpython.com/tutorials/wp-content/uploads/2017/09/PayPal-ME-300x300.jpg.png" width=150/>
+	<img alt="paypalme" src="http://codeinpython.com/tutorials/wp-content/uploads/2017/09/PayPal-ME-300x300.jpg.png" width=100/>
 </a>
 
 Table of Contents
@@ -57,6 +63,7 @@ Table of Contents
   * [Interact on posts at given URLs](#interact-on-posts-at-given-urls)
   * [Interact by Comments](#interact-by-comments)
   * [Unfollowing](#unfollowing)
+  * [Remove outgoing follow requests](#remove-outgoing-follow-requests)
   * [Don't unfollow active users](#dont-unfollow-active-users)
   * [Interactions based on the number of followers and/or following a user has](#interactions-based-on-the-number-of-followers-andor-following-a-user-has)
   * [Interactions based on the number of posts a user has](#interactions-based-on-the-number-of-posts-a-user-has)
@@ -115,7 +122,7 @@ Table of Contents
 ## Getting started
 
 ### Video tutorials:
-**[Setting up InstaPy for OSX](https://www.youtube.com/watch?v=I025CEBJCvQ)**
+**[Setting up InstaPy for MacOS using Firefox](https://www.youtube.com/watch?v=A1a8J_IjSPs)**
 
 **[Setting up InstaPy at Digital Ocean (for Debian)](https://www.youtube.com/watch?v=2Ci-hXU1IEY)**
 
@@ -647,6 +654,15 @@ session.unfollow_users(amount=200, allFollowing=True, style="FIFO", unfollow_aft
 ```
 _here the unfollow method- **alFollowing** is used_
 
+
+
+### Remove outgoing follow requests
+
+```python
+# Remove outgoing unapproved follow requests from private accounts
+
+session.remove_follow_requests(amount=200, sleep_delay=600)
+```
 
 
 ### Don't unfollow active users
@@ -1674,7 +1690,7 @@ You can use InstaPy behind a proxy by specifying server address and port
 session = InstaPy(username=insta_username, password=insta_password, proxy_address='8.8.8.8', proxy_port=8080)
 ```
 
-To use proxy with authentication you should firstly generate proxy chrome extension (works only with Chrome and headless_browser=False).
+To use proxy with authentication you should firstly generate proxy chrome extension (works only with headless_browser=False unless using FF where it works with headless_browser=True).
 
 ```python
 from proxy_extension import create_proxy_extension
