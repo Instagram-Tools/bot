@@ -193,11 +193,11 @@ def validate_username(browser,
         logger.info(
             "User: '{}'  |> followers: {}  |> following: {}  |> relationship "
             "ratio: {}"
-            .format(username,
-                    followers_count if followers_count else 'unknown',
-                    following_count if following_count else 'unknown',
-                    truncate_float(relationship_ratio,
-                                   2) if relationship_ratio else 'unknown'))
+                .format(username,
+                        followers_count if followers_count else 'unknown',
+                        following_count if following_count else 'unknown',
+                        truncate_float(relationship_ratio,
+                                       2) if relationship_ratio else 'unknown'))
 
         if followers_count or following_count:
             if potency_ratio and not delimit_by_numbers:
@@ -205,10 +205,10 @@ def validate_username(browser,
                     inap_msg = (
                         "'{}' is not a {} with the relationship ratio of {}  "
                         "~skipping user\n"
-                        .format(username,
-                                "potential user" if not reverse_relationship
-                                else "massive follower",
-                                truncate_float(relationship_ratio, 2)))
+                            .format(username,
+                                    "potential user" if not reverse_relationship
+                                    else "massive follower",
+                                    truncate_float(relationship_ratio, 2)))
                     return False, inap_msg
 
             elif delimit_by_numbers:
@@ -218,7 +218,7 @@ def validate_username(browser,
                             inap_msg = (
                                 "User '{}'s followers count exceeds maximum "
                                 "limit  ~skipping user\n"
-                                .format(username))
+                                    .format(username))
                             return False, inap_msg
 
                     if min_followers:
@@ -226,7 +226,7 @@ def validate_username(browser,
                             inap_msg = (
                                 "User '{}'s followers count is less than "
                                 "minimum limit  ~skipping user\n"
-                                .format(username))
+                                    .format(username))
                             return False, inap_msg
 
                 if following_count:
@@ -235,7 +235,7 @@ def validate_username(browser,
                             inap_msg = (
                                 "User '{}'s following count exceeds maximum "
                                 "limit  ~skipping user\n"
-                                .format(username))
+                                    .format(username))
                             return False, inap_msg
 
                     if min_following:
@@ -243,7 +243,7 @@ def validate_username(browser,
                             inap_msg = (
                                 "User '{}'s following count is less than "
                                 "minimum limit  ~skipping user\n"
-                                .format(username))
+                                    .format(username))
                             return False, inap_msg
 
                 if potency_ratio:
@@ -252,11 +252,11 @@ def validate_username(browser,
                         inap_msg = (
                             "'{}' is not a {} with the relationship ratio of "
                             "{}  ~skipping user\n"
-                            .format(username,
-                                    "potential user" if not
-                                    reverse_relationship else "massive "
-                                                              "follower",
-                                    truncate_float(relationship_ratio, 2)))
+                                .format(username,
+                                        "potential user" if not
+                                        reverse_relationship else "massive "
+                                                                  "follower",
+                                        truncate_float(relationship_ratio, 2)))
                         return False, inap_msg
 
     if min_posts or max_posts or skip_private or skip_no_profile_pic or \
@@ -279,14 +279,14 @@ def validate_username(browser,
                 inap_msg = (
                     "Number of posts ({}) of '{}' exceeds the maximum limit "
                     "given {}\n"
-                    .format(number_of_posts, username, max_posts))
+                        .format(number_of_posts, username, max_posts))
                 return False, inap_msg
         if min_posts:
             if number_of_posts < min_posts:
                 inap_msg = (
                     "Number of posts ({}) of '{}' is less than the minimum "
                     "limit given {}\n"
-                    .format(number_of_posts, username, min_posts))
+                        .format(number_of_posts, username, min_posts))
                 return False, inap_msg
 
     """Skip users"""
@@ -311,7 +311,7 @@ def validate_username(browser,
             return False, "---> Sorry, couldn't get if user profile pic url\n"
         if (profile_pic in default_profile_pic_instagram or str(
                 profile_pic).find(
-                "11906329_960233084022564_1448528159_a.jpg") > 0) and (
+            "11906329_960233084022564_1448528159_a.jpg") > 0) and (
                 random.randint(0, 100) <= skip_no_profile_pic_percentage):
             return False, "{} has default instagram profile picture\n".format(
                 username)
@@ -430,7 +430,6 @@ def update_activity(action="server_calls"):
 
         # commit the latest changes
         conn.commit()
-
 
 
 def add_user_to_blacklist(username, campaign, action, logger, logfolder):
@@ -609,7 +608,7 @@ def get_active_users(browser, username, posts, boundary, logger):
                                 "Cor! ~failed to get the desired amount of "
                                 "usernames, "
                                 "trying again!  |  post:{}  |  attempt: {}"
-                                .format(posts, try_again + 1))
+                                    .format(posts, try_again + 1))
                             try_again += 1
                             too_many_requests += 1
                             scroll_it = True
@@ -1159,7 +1158,8 @@ def dump_record_activity(profile_name, logger, logfolder):
 
             # update user data with live data whilst preserving all other
             # data (keys)
-            current_data.update({profile_name: ordered_user_data})
+            # current_data.update({profile_name: ordered_user_data})
+            update_dict(current_data, {profile_name: ordered_user_data})
             logger.error("updated cr_d: %s" % current_data)
 
             # dump the fresh record data to a local human readable JSON
@@ -1176,6 +1176,11 @@ def dump_record_activity(profile_name, logger, logfolder):
         if conn:
             # close the open connection
             conn.close()
+
+
+def update_dict(dictionary={}, update={}):
+    for key in update.keys():
+        dictionary[key] = update[key]
 
 
 def ping_server(host, logger):
@@ -1202,7 +1207,7 @@ def ping_server(host, logger):
         if connectivity is False:
             logger.warning(
                 "Pinging the server again!\t~total attempts left: {}"
-                .format(ping_attempts))
+                    .format(ping_attempts))
             ping_attempts -= 1
             sleep(5)
 
@@ -1477,7 +1482,7 @@ def explicit_wait(browser, track, ec_params, logger, timeout=35, notify=True):
         if notify is True:
             logger.info(
                 "Timed out with failure while explicitly waiting until {}!\n"
-                .format(ec_name))
+                    .format(ec_name))
         return False
 
     return result
