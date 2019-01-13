@@ -128,3 +128,5 @@ Pipfile.lock
 
 # Instances
 z_*
+
+/env*
