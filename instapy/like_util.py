@@ -522,19 +522,22 @@ def check_link(browser, post_link, dont_like, mandatory_words,
         image_text = image_text[0]['node']['text'] if image_text else None
         location = media['location']
         location_name = location['name'] if location else None
-        owner_comments = browser.execute_script('''
-            latest_comments = window._sharedData.entry_data.PostPage[
-            0].graphql.shortcode_media.edge_media_to_comment.edges;
-            if (latest_comments === undefined) {
-                latest_comments = Array();
-                owner_comments = latest_comments
-                    .filter(item => item.node.owner.username == arguments[0])
-                    .map(item => item.node.text)
-                    .reduce((item, total) => item + '\\n' + total, '');
-                return owner_comments;}
-            else {
-                return null;}
-        ''', user_name)
+        try:
+            owner_comments = browser.execute_script('''
+                latest_comments = window._sharedData.entry_data.PostPage[
+                0].graphql.shortcode_media.edge_media_to_comment.edges;
+                if (latest_comments === undefined) {
+                    latest_comments = Array();
+                    owner_comments = latest_comments
+                        .filter(item => item.node.owner.username == arguments[0])
+                        .map(item => item.node.text)
+                        .reduce((item, total) => item + '\\n' + total, '');
+                    return owner_comments;}
+                else {
+                    return null;}
+            ''', user_name)
+        except WebDriverException:
+            owner_comments = None
 
     else:
         media = post_page[0]['media']
