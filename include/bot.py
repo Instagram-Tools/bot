@@ -3,6 +3,7 @@ import json
 import os
 import random
 import time
+import traceback
 from tempfile import gettempdir
 
 from selenium.common.exceptions import NoSuchElementException
@@ -223,6 +224,7 @@ class Bot(InstaPy):
                 self.logger.exception(exc)
             except Exception as exc:
                 self.logger.error("Excepiton in act(): %s" % exc)
+                traceback.print_stack()
                 raise
                 # TODO send Mail to Developers
 
