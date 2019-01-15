@@ -223,8 +223,7 @@ class Bot(InstaPy):
                 # full stacktrace when raising Github issue
                 self.logger.exception(exc)
             except Exception as exc:
-                self.logger.error("Excepiton in act(): %s" % exc)
-                traceback.print_stack()
+                self.logger.error("Excepiton in act(): %s \n %s" % (exc, traceback.format_exc()))
                 raise
                 # TODO send Mail to Developers
 
