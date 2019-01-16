@@ -234,7 +234,7 @@ class Bot(InstaPy):
                 "enabled": env.get("enable_like_by_tags", True) and len(env.get("like_by_tags", [])) > 0,
                 "fun":
                     lambda: self.like_by_tags(
-                        tags=shuffle3(env.get("like_by_tags", [])) if env.get("enable_like_by_tags", True) else [],
+                        tags=shuffle3(env.get("like_by_tags", [])),
                         amount=env.get("like_by_tags_amount", 3),
                         skip_top_posts=env.get("like_by_tags_skip_top_posts", True),
                         use_smart_hashtags=env.get("like_by_tags_use_smart_hashtags", False),
@@ -244,8 +244,7 @@ class Bot(InstaPy):
                 "name": "like_by_locations",
                 "enabled": env.get("enable_like_by_locations", True) and len(env.get("like_by_locations", [])) > 0,
                 "fun": lambda: self.like_by_locations(
-                    locations=shuffle3(env.get("like_by_locations", [])) if env.get("enable_like_by_locations",
-                                                                                    True) else [],
+                    locations=shuffle3(env.get("like_by_locations", [])),
                     amount=env.get("like_by_locations_amount", 3),
                     skip_top_posts=env.get("like_by_locations_skip_top_posts", True))
             },
@@ -253,8 +252,7 @@ class Bot(InstaPy):
                 "name": "follow_user_followers",
                 "enabled": env.get("enable_follow_user_followers", True) and len(env.get("follow_user_followers", [])) > 0,
                 "fun": lambda: self.follow_user_followers(
-                    usernames=shuffle3(env.get("follow_user_followers", [])) if env.get("enable_follow_user_followers",
-                                                                                        True) else [],
+                    usernames=shuffle3(env.get("follow_user_followers", [])),
                     amount=random.randint(3, 4),
                     randomize=env.get("follow_user_followers_randomize", True),
                     interact=env.get("follow_user_followers_interact", True),
@@ -273,7 +271,7 @@ class Bot(InstaPy):
                 "name": "unfollow_users",
                 "enabled": env.get("enable_unfollow", True) and len(env.get("unfollow_users_amount", [])) > 0,
                 "fun": lambda: self.unfollow_users(
-                    amount=env.get("unfollow_users_amount", random.randint(8, 12)) if env.get("enable_unfollow", True) else 0,
+                    amount=env.get("unfollow_users_amount", random.randint(8, 12)),
                     # customList=(False, [], "all"),
                     InstapyFollowed=(env.get("unfollow_users_InstapyFollowed", True),
                                      "nonfollowers" if env.get("unfollow_users_nonfollowers", False) else "all"),
