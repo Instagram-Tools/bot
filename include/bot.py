@@ -231,7 +231,7 @@ class Bot(InstaPy):
         actions = [
             {
                 "name": "like_by_tags",
-                "enabled": env.get("enable_like_by_tags", True),
+                "enabled": env.get("enable_like_by_tags", True) and len(env.get("like_by_tags", [])) > 0,
                 "fun":
                     lambda: self.like_by_tags(
                         tags=shuffle3(env.get("like_by_tags", [])) if env.get("enable_like_by_tags", True) else [],
@@ -242,7 +242,7 @@ class Bot(InstaPy):
             },
             {
                 "name": "like_by_locations",
-                "enabled": env.get("enable_like_by_locations", True),
+                "enabled": env.get("enable_like_by_locations", True) and len(env.get("like_by_locations", [])) > 0,
                 "fun": lambda: self.like_by_locations(
                     locations=shuffle3(env.get("like_by_locations", [])) if env.get("enable_like_by_locations",
                                                                                     True) else [],
@@ -251,7 +251,7 @@ class Bot(InstaPy):
             },
             {
                 "name": "follow_user_followers",
-                "enabled": env.get("enable_follow_user_followers", True),
+                "enabled": env.get("enable_follow_user_followers", True) and len(env.get("follow_user_followers", [])) > 0,
                 "fun": lambda: self.follow_user_followers(
                     usernames=shuffle3(env.get("follow_user_followers", [])) if env.get("enable_follow_user_followers",
                                                                                         True) else [],
@@ -262,7 +262,7 @@ class Bot(InstaPy):
             },
             {
                 "name": "like_by_feed",
-                "enabled": env.get("enable_like_by_feed", True),
+                "enabled": env.get("enable_like_by_feed", True) and len(env.get("like_by_feed_amount", [])) > 0,
                 "fun": lambda: self.like_by_feed(
                     amount=env.get("like_by_feed_amount", 10) if env.get("enable_like_by_feed", True) else 0,
                     randomize=env.get("like_by_feed_randomize", True),
@@ -271,7 +271,7 @@ class Bot(InstaPy):
             },
             {
                 "name": "unfollow_users",
-                "enabled": env.get("enable_unfollow", True),
+                "enabled": env.get("enable_unfollow", True) and len(env.get("unfollow_users_amount", [])) > 0,
                 "fun": lambda: self.unfollow_users(
                     amount=env.get("unfollow_users_amount", random.randint(8, 12)) if env.get("enable_unfollow", True) else 0,
                     # customList=(False, [], "all"),
