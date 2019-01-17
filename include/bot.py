@@ -252,8 +252,8 @@ class Bot(InstaPy):
                 "name": "follow_user_followers",
                 "enabled": env.get("enable_follow_user_followers", True) and len(env.get("follow_user_followers", [])) > 0,
                 "fun": lambda: self.follow_user_followers(
-                    usernames=shuffle3(env.get("follow_user_followers", [])),
-                    amount=random.randint(3, 4),
+                    usernames=shuffle3(env.get("follow_user_followers", []))[0],
+                    amount=random.randint(4, 6),
                     randomize=env.get("follow_user_followers_randomize", True),
                     interact=env.get("follow_user_followers_interact", True),
                     sleep_delay=env.get("follow_user_followers_sleep_delay", 0))
