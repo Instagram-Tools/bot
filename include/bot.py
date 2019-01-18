@@ -260,9 +260,9 @@ class Bot(InstaPy):
             },
             {
                 "name": "like_by_feed",
-                "enabled": env.get("enable_like_by_feed", True) and len(env.get("like_by_feed_amount", [])) > 0,
+                "enabled": env.get("enable_like_by_feed", True),
                 "fun": lambda: self.like_by_feed(
-                    amount=env.get("like_by_feed_amount", 10) if env.get("enable_like_by_feed", True) else 0,
+                    amount=random.randint(8, 12),
                     randomize=env.get("like_by_feed_randomize", True),
                     unfollow=env.get("like_by_feed_unfollow", False),
                     interact=env.get("like_by_feed_interact", False))
