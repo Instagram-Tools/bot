@@ -269,7 +269,7 @@ class Bot(InstaPy):
             },
             {
                 "name": "unfollow_users",
-                "enabled": env.get("enable_unfollow", True) and len(env.get("unfollow_users_amount", [])) > 0,
+                "enabled": env.get("enable_unfollow", True),
                 "fun": lambda: self.unfollow_users(
                     amount=env.get("unfollow_users_amount", random.randint(8, 12)),
                     # customList=(False, [], "all"),
