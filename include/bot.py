@@ -202,7 +202,6 @@ class Bot(InstaPy):
 
         while datetime.datetime.now() < self.end_time:
             try:
-                sleep(10)
                 random.shuffle(actions)
                 self.logger.warning("shuffled actions: %s" % list(map(lambda a: a["name"], actions)))
                 for f in actions:
@@ -212,6 +211,8 @@ class Bot(InstaPy):
 
                     self.logger.warning("RUN: %s" % f["name"])
                     f["fun"]()
+
+                sleep(180)
 
             except NoSuchElementException as exc:
                 # if changes to IG layout, upload the file to help us locate the change
