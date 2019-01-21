@@ -280,7 +280,8 @@ class Bot(InstaPy):
                     # nonFollowers=False,
                     # allFollowing=False,
                     style=env.get("unfollow_users_style", 'FIFO'),  # or 'LIFO', 'RANDOM'
-                    unfollow_after=env.get("unfollow_users_unfollow_after", 2) * 24 * 60 * 60,
+                    unfollow_after=(env.get("unfollow_users_unfollow_after", 2) if env.get(
+                        "unfollow_users_unfollow_after", 2) > 0 else 1) * 24 * 60 * 60,
                     sleep_delay=env.get("unfollow_users_sleep_delay", 0)
                 )
             }
