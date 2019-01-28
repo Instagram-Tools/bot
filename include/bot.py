@@ -202,7 +202,7 @@ class Bot(InstaPy):
 
         while datetime.datetime.now() < self.end_time:
             try:
-                random.shuffle(actions)
+                self.shuffle_actions(actions)
                 self.logger.warning("shuffled actions: %s" % list(map(lambda a: a["name"], actions)))
                 for f in actions:
                     if self.aborting:
@@ -212,7 +212,7 @@ class Bot(InstaPy):
                     self.logger.warning("RUN: %s" % f["name"])
                     f["fun"]()
 
-                sleep(180)
+                sleep(3 * 60)
 
             except NoSuchElementException as exc:
                 # if changes to IG layout, upload the file to help us locate the change
@@ -227,6 +227,14 @@ class Bot(InstaPy):
                 self.logger.error("Excepiton in act(): %s \n %s" % (exc, traceback.format_exc()))
                 raise
                 # TODO send Mail to Developers
+
+    def shuffle_actions(self, actions):
+        old_order = actions[:]
+        random.shuffle(actions)
+
+        if actions[0] == old_order[-1]:
+            actions = actions[1:] + actions[0]
+        return actions
 
     def get_actions(self, env):
         actions = [
