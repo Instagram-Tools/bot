@@ -229,6 +229,10 @@ class Bot(InstaPy):
                 # TODO send Mail to Developers
 
     def shuffle_actions(self, actions):
+        if len(actions) <= 1:
+            sleep(7 * 60)
+            return actions
+
         old_order = actions[:]
         random.shuffle(actions)
 
