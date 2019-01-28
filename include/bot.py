@@ -237,7 +237,7 @@ class Bot(InstaPy):
         random.shuffle(actions)
 
         if actions[0] == old_order[-1]:
-            actions = actions[1:] + actions[0]
+            actions = actions[1:] + actions[0:1]
         return actions
 
     def get_actions(self, env):
