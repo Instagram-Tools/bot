@@ -15,22 +15,13 @@ from include.proxy import get_proxy
 # e.g like so InstaPy(username="instagram", password="test1234")
 
 
-def login():
-    try:
-        bot.login()
-    except WebDriverException as wde:
-        print("WebDriverException in login(): %s \n%s" % (wde, wde.stacktrace))
-        # sleep(10)
-        # login()
-        raise
-
 def run():
     global bot
     try:
         bot = Bot(multi_logs=True, selenium_local_session=False, proxy_address_port=get_proxy(os.environ.get('INSTA_USER')))
         bot.set_selenium_remote_session(
             selenium_url="http://%s:%d/wd/hub" % (os.environ.get('SELENIUM', 'selenium'), 4444))
-        login()
+        bot.login()
         bot.set_settings()
         bot.act()
     except WebDriverException as wde:

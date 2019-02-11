@@ -6,7 +6,7 @@ import time
 import traceback
 from tempfile import gettempdir
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, WebDriverException
 
 from instapy import InstaPy
 from instapy.time_util import sleep
@@ -138,6 +138,14 @@ class Bot(InstaPy):
                          proxy_port=proxy_port,
                          disable_image_load=True,
                          multi_logs=multi_logs)
+
+    def login(self):
+        try:
+            super().login()
+        except WebDriverException as wde:
+            print("WebDriverException in login(): %s \n%s" % (wde, wde.stacktrace))
+            raise
+
 
     def set_settings(self, settings=None):
         if self.aborting:
