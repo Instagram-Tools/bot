@@ -197,7 +197,7 @@ class Bot(InstaPy):
                               env.get("use_clarifai_api_key", None),
                               env.get("use_clarifai_full_match", False))
         self.set_user_interact(env.get("user_interact_amount", 3),
-                               env.get("user_interact_percentage", 100),
+                               env.get("user_interact_percentage", 80),
                                env.get("user_interact_randomize", False),
                                env.get("user_interact_media", None))
         self.logger.warning("SETTINGS: %s" % env)
@@ -274,7 +274,7 @@ class Bot(InstaPy):
                 "enabled": env.get("enable_follow_user_followers", True) and len(env.get("follow_user_followers", [])) > 0,
                 "fun": lambda: self.follow_user_followers(
                     usernames=shuffle3(env.get("follow_user_followers", []))[0],
-                    amount=random.randint(4, 6),
+                    amount=random.randint(2, 4),
                     randomize=env.get("follow_user_followers_randomize", True),
                     interact=env.get("follow_user_followers_interact", True),
                     sleep_delay=env.get("follow_user_followers_sleep_delay", 0))
@@ -283,7 +283,7 @@ class Bot(InstaPy):
                 "name": "like_by_feed",
                 "enabled": env.get("enable_like_by_feed", True),
                 "fun": lambda: self.like_by_feed(
-                    amount=random.randint(8, 12),
+                    amount=random.randint(6, 12),
                     randomize=env.get("like_by_feed_randomize", True),
                     unfollow=env.get("like_by_feed_unfollow", False),
                     interact=env.get("like_by_feed_interact", False))
