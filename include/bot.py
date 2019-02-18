@@ -219,8 +219,9 @@ class Bot(InstaPy):
 
                     self.logger.warning("RUN: %s" % f["name"])
                     f["fun"]()
+                    sleep(1 * 60)
 
-                sleep(3 * 60)
+                sleep(2 * 60)
 
             except NoSuchElementException as exc:
                 # if changes to IG layout, upload the file to help us locate the change
