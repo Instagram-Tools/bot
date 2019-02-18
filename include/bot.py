@@ -188,7 +188,7 @@ class Bot(InstaPy):
                                      max_following=env.get("relationship_bounds_max_following", 66834),
                                      min_followers=env.get("relationship_bounds_min_followers", 35),
                                      min_following=env.get("relationship_bounds_min_following", 27))
-        self.set_sleep_reduce(env.get("sleep_reduce", 100) + 100)
+        self.set_sleep_reduce(env.get("sleep_reduce", 100)*2 + 100)
         self.set_smart_hashtags(env.get("smart_hashtags_tags", []),
                                 env.get("smart_hashtags_limit", 3),
                                 env.get("smart_hashtags_top", "top"),
@@ -219,8 +219,9 @@ class Bot(InstaPy):
 
                     self.logger.warning("RUN: %s" % f["name"])
                     f["fun"]()
+                    sleep(1 * 60)
 
-                sleep(3 * 60)
+                sleep(2 * 60)
 
             except NoSuchElementException as exc:
                 # if changes to IG layout, upload the file to help us locate the change
