@@ -17,6 +17,7 @@ services:
 #      - proxy-manager:proxy-manager
     volumes:
       - ./logs:/code/logs
+      - ./docker:/root/InstaPy
 
 
   proxy-manager:
