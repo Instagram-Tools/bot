@@ -1,4 +1,5 @@
 """ Module which handles the follow features like unfollowing and following """
+import time
 from datetime import datetime
 import os
 import random
@@ -26,6 +27,7 @@ from .util import reload_webpage
 from .util import click_visibly
 from .util import get_action_delay
 from .util import truncate_float
+from .util import progress_tracker
 from .print_log_writer import log_followed_pool
 from .print_log_writer import log_uncertain_unfollowed_pool
 from .print_log_writer import log_record_all_unfollowed
@@ -61,6 +63,7 @@ def set_automated_followed_pool(username, unfollow_after, logger, logfolder):
                     datetime ~ user ~ user_id,   # after `user_id` was added
                 """
                 if sz == 1:
+                    time_stamp = None
                     user = entries[0]
 
                 elif sz == 2:
@@ -314,7 +317,7 @@ def unfollow(browser,
             logger.info(
                 "Total {} users available to unfollow  ~didn't pass "
                 "`unfollow_after`: {}\n"
-                .format(len(unfollow_list), len(non_eligible)))
+                    .format(len(unfollow_list), len(non_eligible)))
 
         if len(unfollow_list) < 1:
             logger.info("There are no any users available to unfollow")
@@ -343,7 +346,7 @@ def unfollow(browser,
                 if unfollowNum >= amount:
                     logger.warning(
                         "--> Total unfollows reached it's amount given {}\n"
-                        .format(unfollowNum))
+                            .format(unfollowNum))
                     break
 
                 if jumps["consequent"]["unfollows"] >= jumps["limit"][
@@ -373,9 +376,9 @@ def unfollow(browser,
                 if person not in dont_include:
                     logger.info(
                         "Ongoing Unfollow [{}/{}]: now unfollowing '{}'..."
-                        .format(unfollowNum + 1,
-                                amount,
-                                person.encode('utf-8')))
+                            .format(unfollowNum + 1,
+                                    amount,
+                                    person.encode('utf-8')))
 
                     person_id = (automatedFollowedPool["all"][person]["id"] if
                                  person in automatedFollowedPool[
@@ -517,7 +520,7 @@ def unfollow(browser,
                 if unfollowNum >= amount:
                     logger.info(
                         "--> Total unfollowNum reached it's amount given: {}"
-                        .format(unfollowNum))
+                            .format(unfollowNum))
                     break
 
                 if jumps["consequent"]["unfollows"] >= jumps["limit"][
@@ -540,9 +543,9 @@ def unfollow(browser,
                 if person not in dont_include:
                     logger.info(
                         "Ongoing Unfollow [{}/{}]: now unfollowing '{}'..."
-                        .format(unfollowNum + 1,
-                                amount,
-                                person.encode('utf-8')))
+                            .format(unfollowNum + 1,
+                                    amount,
+                                    person.encode('utf-8')))
 
                     person_id = (automatedFollowedPool["all"][person]["id"] if
                                  person in automatedFollowedPool[
@@ -736,7 +739,7 @@ def get_users_through_dialog(browser,
     sc_rolled = 0
 
     # find dialog box
-    dialog_address = "//div[3]/div/div/div[2]"
+    dialog_address = "//body/div[2]/div/div[2]"
     dialog = browser.find_element_by_xpath(dialog_address)
 
     # scroll to end of follower list to initiate first load which hides the
@@ -750,6 +753,8 @@ def get_users_through_dialog(browser,
     total_list = len(buttons)
     simulated_list = []
     simulator_counter = 0
+    start_time = time.time()
+    pts_printed = False
 
     # scroll down if the generated list of user to follow is not enough to
     # follow amount set
@@ -759,16 +764,19 @@ def get_users_through_dialog(browser,
             scroll_bottom(browser, dialog, 2)
             sc_rolled += 1
             simulator_counter += 1
+            buttons = get_buttons_from_dialog(dialog, channel)
+            total_list = len(buttons)
+            progress_tracker(total_list, amount, start_time, logger)
 
-        buttons = get_buttons_from_dialog(dialog, channel)
-        total_list = len(buttons)
         abort = (before_scroll == total_list)
         if abort:
             if total_list < real_amount:
+                print('')
                 logger.info("Failed to load desired amount of users!\n")
 
         if sc_rolled > 85:  # you may want to use up to 100
             if total_list < amount:
+                print('')
                 logger.info(
                     "Too many requests sent!  attempt: {}  |  gathered "
                     "links: {}"
@@ -796,6 +804,11 @@ def get_users_through_dialog(browser,
                 quick_username = dialog_username_extractor(quick_button)
 
                 if quick_username and quick_username[0] not in simulated_list:
+                    if not pts_printed:
+                        print('\n')
+                        if total_list >= amount:
+                            pts_printed = True
+
                     logger.info("Simulated follow : {}".format(
                         len(simulated_list) + 1))
 
@@ -810,11 +823,16 @@ def get_users_through_dialog(browser,
                                                          jumps,
                                                          logger,
                                                          logfolder)
-                    print('')
+                    if ((quick_amount == 1
+                        or i != (quick_amount - 1))
+                        and (not pts_printed
+                             or not abort)):
+                        print('')
                     simulated_list.extend(quick_follow)
 
             simulator_counter = 0
 
+    print('')
     person_list = dialog_username_extractor(buttons)
 
     if randomize:
@@ -1396,7 +1414,7 @@ def verify_username_by_id(browser, username, person, person_id, logger,
             if person_new != person:
                 logger.info(
                     "User '{}' has changed username and now is called '{}' :S"
-                    .format(person, person_new))
+                        .format(person, person_new))
             return person_new
 
         else:
@@ -1483,3 +1501,52 @@ def verify_action(browser, action, track, username, person, person_id, logger,
 
 def post_unfollow_actions(browser, person, logger):
     pass
+
+
+def get_follow_requests(browser, amount, sleep_delay, logger, logfolder):
+    """ Get follow requests from instagram access tool list """
+
+    user_link = "https://www.instagram.com/accounts/access_tool" \
+                "/current_follow_requests"
+    web_address_navigator(browser, user_link)
+
+    list_of_users = []
+    view_more_button_exist = True
+    view_more_clicks = 0
+
+    while len(
+            list_of_users) < amount and view_more_clicks < 750 and \
+            view_more_button_exist:
+        sleep(4)
+        list_of_users = browser.find_elements_by_xpath("//section/div")
+
+        if len(list_of_users) == 0:
+            logger.info("There are not outgoing follow requests")
+            break
+
+        try:
+            view_more_button = browser.find_element_by_xpath(
+                "//button[text()='View More']")
+        except NoSuchElementException:
+            view_more_button_exist = False
+
+        if view_more_button_exist:
+            logger.info(
+                "Found '{}' outgoing follow requests, Going to ask for more..."
+                .format(len(list_of_users))
+            )
+            click_element(browser, view_more_button)
+            view_more_clicks += 1
+
+    users_to_unfollow = []
+
+    for user in list_of_users:
+        users_to_unfollow.append(user.text)
+        if len(users_to_unfollow) == amount:
+            break
+
+    logger.info(
+        "Found '{}' outgoing follow requests '{}'"
+        .format(len(users_to_unfollow), users_to_unfollow))
+
+    return users_to_unfollow

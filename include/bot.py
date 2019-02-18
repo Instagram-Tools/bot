@@ -3,9 +3,10 @@ import json
 import os
 import random
 import time
+import traceback
 from tempfile import gettempdir
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, WebDriverException
 
 from instapy import InstaPy
 from instapy.time_util import sleep
@@ -138,6 +139,14 @@ class Bot(InstaPy):
                          disable_image_load=True,
                          multi_logs=multi_logs)
 
+    def login(self):
+        try:
+            super().login()
+        except WebDriverException as wde:
+            print("WebDriverException in login(): %s \n%s" % (wde, wde.stacktrace))
+            raise
+
+
     def set_settings(self, settings=None):
         if self.aborting:
             return
@@ -179,7 +188,7 @@ class Bot(InstaPy):
                                      max_following=env.get("relationship_bounds_max_following", 66834),
                                      min_followers=env.get("relationship_bounds_min_followers", 35),
                                      min_following=env.get("relationship_bounds_min_following", 27))
-        self.set_sleep_reduce(env.get("sleep_reduce", 100))
+        self.set_sleep_reduce(env.get("sleep_reduce", 100)*2 + 100)
         self.set_smart_hashtags(env.get("smart_hashtags_tags", []),
                                 env.get("smart_hashtags_limit", 3),
                                 env.get("smart_hashtags_top", "top"),
@@ -188,7 +197,7 @@ class Bot(InstaPy):
                               env.get("use_clarifai_api_key", None),
                               env.get("use_clarifai_full_match", False))
         self.set_user_interact(env.get("user_interact_amount", 3),
-                               env.get("user_interact_percentage", 100),
+                               env.get("user_interact_percentage", 80),
                                env.get("user_interact_randomize", False),
                                env.get("user_interact_media", None))
         self.logger.warning("SETTINGS: %s" % env)
@@ -199,41 +208,55 @@ class Bot(InstaPy):
 
         actions = self.get_actions(self.settings or {})
 
-        # while datetime.datetime.now() < self.end_time:  # TODO terminate Task if it takes too long
-        try:
-            sleep(10)
-            # random.shuffle(actions)
-            self.logger.warning("shuffled actions: %s" % list(map(lambda a: a["name"], actions)))
-            # for f in actions:
-            if self.aborting:
-                self.logger.warning("ABORTING")
-                return
-            f = actions[0]
-            self.logger.warning("RUN: %s" % f["name"])
-            f["fun"]()
+        while datetime.datetime.now() < self.end_time:
+            try:
+                self.shuffle_actions(actions)
+                self.logger.warning("shuffled actions: %s" % list(map(lambda a: a["name"], actions)))
+                for f in actions:
+                    if self.aborting:
+                        self.logger.warning("ABORTING")
+                        return
 
-        except NoSuchElementException as exc:
-            # if changes to IG layout, upload the file to help us locate the change
-            file_path = os.path.join(gettempdir(), '{}.html'.format(time.strftime('%Y%m%d-%H%M%S')))
-            with open(file_path, 'wb') as fp:
-                fp.write(self.browser.page_source.encode('utf8'))
-            print('{0}\nIf raising an issue, please also upload the file located at:\n{1}\n{0}'.format(
-                '*' * 70, file_path))
-            # full stacktrace when raising Github issue
-            self.logger.exception(exc)
-        except Exception as exc:
-            self.logger.error("Excepiton in act(): %s" % exc)
-            raise
-            # TODO send Mail to Developers
+                    self.logger.warning("RUN: %s" % f["name"])
+                    f["fun"]()
+                    sleep(1 * 60)
+
+                sleep(2 * 60)
+
+            except NoSuchElementException as exc:
+                # if changes to IG layout, upload the file to help us locate the change
+                file_path = os.path.join(gettempdir(), '{}.html'.format(time.strftime('%Y%m%d-%H%M%S')))
+                with open(file_path, 'wb') as fp:
+                    fp.write(self.browser.page_source.encode('utf8'))
+                print('{0}\nIf raising an issue, please also upload the file located at:\n{1}\n{0}'.format(
+                    '*' * 70, file_path))
+                # full stacktrace when raising Github issue
+                self.logger.exception(exc)
+            except Exception as exc:
+                self.logger.error("Excepiton in act(): %s \n %s" % (exc, traceback.format_exc()))
+                raise
+                # TODO send Mail to Developers
+
+    def shuffle_actions(self, actions):
+        if len(actions) <= 1:
+            sleep(7 * 60)
+            return actions
+
+        old_order = actions[:]
+        random.shuffle(actions)
+
+        if actions[0] == old_order[-1]:
+            actions = actions[1:] + actions[0:1]
+        return actions
 
     def get_actions(self, env):
         actions = [
             {
                 "name": "like_by_tags",
-                "enabled": env.get("enable_like_by_tags", True),
+                "enabled": env.get("enable_like_by_tags", True) and len(env.get("like_by_tags", [])) > 0,
                 "fun":
                     lambda: self.like_by_tags(
-                        tags=shuffle3(env.get("like_by_tags", [])) if env.get("enable_like_by_tags", True) else [],
+                        tags=shuffle3(env.get("like_by_tags", [])),
                         amount=env.get("like_by_tags_amount", 3),
                         skip_top_posts=env.get("like_by_tags_skip_top_posts", True),
                         use_smart_hashtags=env.get("like_by_tags_use_smart_hashtags", False),
@@ -241,29 +264,27 @@ class Bot(InstaPy):
             },
             {
                 "name": "like_by_locations",
-                "enabled": env.get("enable_like_by_locations", True),
+                "enabled": env.get("enable_like_by_locations", True) and len(env.get("like_by_locations", [])) > 0,
                 "fun": lambda: self.like_by_locations(
-                    locations=shuffle3(env.get("like_by_locations", [])) if env.get("enable_like_by_locations",
-                                                                                    True) else [],
+                    locations=shuffle3(env.get("like_by_locations", [])),
                     amount=env.get("like_by_locations_amount", 3),
                     skip_top_posts=env.get("like_by_locations_skip_top_posts", True))
             },
             {
                 "name": "follow_user_followers",
-                "enabled": env.get("enable_follow_user_followers", True),
+                "enabled": env.get("enable_follow_user_followers", True) and len(env.get("follow_user_followers", [])) > 0,
                 "fun": lambda: self.follow_user_followers(
-                    usernames=shuffle3(env.get("follow_user_followers", [])) if env.get("enable_follow_user_followers",
-                                                                                        True) else [],
-                    amount=env.get("follow_user_followers_amount", 3),
+                    usernames=shuffle3(env.get("follow_user_followers", []))[0],
+                    amount=random.randint(2, 4),
                     randomize=env.get("follow_user_followers_randomize", True),
                     interact=env.get("follow_user_followers_interact", True),
-                    sleep_delay=env.get("follow_user_followers_sleep_delay", 600))
+                    sleep_delay=env.get("follow_user_followers_sleep_delay", 0))
             },
             {
                 "name": "like_by_feed",
                 "enabled": env.get("enable_like_by_feed", True),
                 "fun": lambda: self.like_by_feed(
-                    amount=env.get("like_by_feed_amount", 10) if env.get("enable_like_by_feed", True) else 0,
+                    amount=random.randint(6, 12),
                     randomize=env.get("like_by_feed_randomize", True),
                     unfollow=env.get("like_by_feed_unfollow", False),
                     interact=env.get("like_by_feed_interact", False))
@@ -272,15 +293,15 @@ class Bot(InstaPy):
                 "name": "unfollow_users",
                 "enabled": env.get("enable_unfollow", True),
                 "fun": lambda: self.unfollow_users(
-                    amount=env.get("unfollow_users_amount", random.randint(8, 12)) if env.get("enable_unfollow", True) else 0,  # TODO shorten Cycles
+                    amount=env.get("unfollow_users_amount", random.randint(8, 12)),
                     # customList=(False, [], "all"),
-                    InstapyFollowed=(env.get("unfollow_users_InstapyFollowed", True),
-                                     "nonfollowers" if env.get("unfollow_users_nonfollowers", False) else "all"),
+                    InstapyFollowed="all",
                     # 'all' or 'nonfollowers'
                     # nonFollowers=False,
                     # allFollowing=False,
                     style=env.get("unfollow_users_style", 'FIFO'),  # or 'LIFO', 'RANDOM'
-                    unfollow_after=env.get("unfollow_users_unfollow_after", 2) * 24 * 60 * 60,
+                    unfollow_after=(env.get("unfollow_users_unfollow_after", 2) if env.get(
+                        "unfollow_users_unfollow_after", 2) > 0 else 1) * 24 * 60 * 60,
                     sleep_delay=env.get("unfollow_users_sleep_delay", 0)
                 )
             }

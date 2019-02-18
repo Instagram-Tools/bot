@@ -17,6 +17,7 @@ __pycache__/
 *$py.class
 
 quickstart.py
+docker_quickstart.py
 
 # C extensions
 *.so
@@ -128,3 +129,5 @@ Pipfile.lock
 
 # Instances
 z_*
+
+/env*

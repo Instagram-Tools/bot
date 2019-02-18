@@ -406,7 +406,7 @@ def get_links_for_username(browser,
 
     if "Page Not Found" in browser.title:
         logger.error(
-            'Intagram error: The link you followed may be broken, or the '
+            'Instagram error: The link you followed may be broken, or the '
             'page may have been removed...')
         return False
 
@@ -463,6 +463,17 @@ def get_links_for_username(browser,
         random.shuffle(links)
 
     return links[:amount]
+
+
+def get_media_edge_comment_string(media):
+    """AB test (Issue 3712) alters the string for media edge, this resoves it"""
+    options = ['edge_media_to_comment', 'edge_media_preview_comment']
+    for option in options:
+        try:
+            media[option]
+        except KeyError:
+            continue
+        return option
 
 
 def check_link(browser, post_link, dont_like, mandatory_words,
@@ -522,19 +533,24 @@ def check_link(browser, post_link, dont_like, mandatory_words,
         image_text = image_text[0]['node']['text'] if image_text else None
         location = media['location']
         location_name = location['name'] if location else None
-        owner_comments = browser.execute_script('''
-            latest_comments = window._sharedData.entry_data.PostPage[
-            0].graphql.shortcode_media.edge_media_to_comment.edges;
-            if (latest_comments === undefined) {
-                latest_comments = Array();
-                owner_comments = latest_comments
-                    .filter(item => item.node.owner.username == arguments[0])
-                    .map(item => item.node.text)
-                    .reduce((item, total) => item + '\\n' + total, '');
-                return owner_comments;}
-            else {
-                return null;}
-        ''', user_name)
+        try:
+            media_edge_string = get_media_edge_comment_string(media)
+            # double {{ allows us to call .format here:
+            owner_comments = browser.execute_script('''
+                latest_comments = window._sharedData.entry_data.PostPage[
+                0].graphql.shortcode_media.{}.edges;
+                if (latest_comments === undefined) {{
+                    latest_comments = Array();
+                    owner_comments = latest_comments
+                        .filter(item => item.node.owner.username == arguments[0])
+                        .map(item => item.node.text)
+                        .reduce((item, total) => item + '\\n' + total, '');
+                    return owner_comments;}}
+                else {{
+                    return null;}}
+            '''.format(media_edge_string), user_name)
+        except WebDriverException:
+            owner_comments = None
 
     else:
         media = post_page[0]['media']
