@@ -295,7 +295,7 @@ class Bot(InstaPy):
                 "fun": lambda: self.unfollow_users(
                     amount=env.get("unfollow_users_amount", random.randint(8, 12)),
                     # customList=(False, [], "all"),
-                    InstapyFollowed="all",
+                    InstapyFollowed=(True, "all"),
                     # 'all' or 'nonfollowers'
                     # nonFollowers=False,
                     # allFollowing=False,
