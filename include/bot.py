@@ -281,13 +281,15 @@ class Bot(InstaPy):
                     sleep_delay=env.get("follow_user_followers_sleep_delay", 0))
             },
             {
-                "name": "like_by_feed",
-                "enabled": env.get("enable_like_by_feed", True),
-                "fun": lambda: self.like_by_feed(
-                    amount=random.randint(6, 12),
-                    randomize=env.get("like_by_feed_randomize", True),
-                    unfollow=env.get("like_by_feed_unfollow", False),
-                    interact=env.get("like_by_feed_interact", False))
+                "name": "interact_by_comments",
+                "enabled": env.get("enable_follow_user_followers", True) and len(
+                    env.get("follow_user_followers", [])) > 0,
+                "fun": lambda: self.interact_by_comments(
+                    usernames=shuffle3(env.get("follow_user_followers", []))[0],
+                    posts_amount=random.randint(2, 4),
+                    comments_per_post=random.randint(2, 4),
+                    reply=False, interact=True,
+                    randomize=True, media=None)
             },
             {
                 "name": "unfollow_users",

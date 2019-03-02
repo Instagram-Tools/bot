@@ -4794,7 +4794,7 @@ class InstaPy:
                     self.logger.info("--> Not a valid user: {}"
                                      .format(details))
                     self.not_valid_users += 1
-                    continue
+                    # continue
 
             per_user_liked_comments = 0
             per_user_replied_to_comments = 0
