@@ -257,7 +257,7 @@ class Bot(InstaPy):
                 "fun":
                     lambda: self.like_by_tags(
                         tags=shuffle3(env.get("like_by_tags", [])),
-                        amount=env.get("like_by_tags_amount", 3),
+                        amount=env.get("like_by_tags_amount", 2),
                         skip_top_posts=env.get("like_by_tags_skip_top_posts", True),
                         use_smart_hashtags=env.get("like_by_tags_use_smart_hashtags", False),
                         interact=env.get("like_by_tags_interact", False)),
@@ -267,7 +267,7 @@ class Bot(InstaPy):
                 "enabled": env.get("enable_like_by_locations", True) and len(env.get("like_by_locations", [])) > 0,
                 "fun": lambda: self.like_by_locations(
                     locations=shuffle3(env.get("like_by_locations", [])),
-                    amount=env.get("like_by_locations_amount", 3),
+                    amount=env.get("like_by_locations_amount", 2),
                     skip_top_posts=env.get("like_by_locations_skip_top_posts", True))
             },
             {
@@ -275,7 +275,7 @@ class Bot(InstaPy):
                 "enabled": env.get("enable_follow_user_followers", True) and len(env.get("follow_user_followers", [])) > 0,
                 "fun": lambda: self.follow_user_followers(
                     usernames=shuffle3(env.get("follow_user_followers", []))[0],
-                    amount=random.randint(2, 4),
+                    amount=random.randint(2, 3),
                     randomize=env.get("follow_user_followers_randomize", True),
                     interact=env.get("follow_user_followers_interact", True),
                     sleep_delay=env.get("follow_user_followers_sleep_delay", 0))
@@ -286,8 +286,8 @@ class Bot(InstaPy):
                     env.get("follow_user_followers", [])) > 0,
                 "fun": lambda: self.interact_by_comments(
                     usernames=shuffle3(env.get("follow_user_followers", []))[0],
-                    posts_amount=random.randint(2, 4),
-                    comments_per_post=random.randint(2, 4),
+                    posts_amount=random.randint(2, 3),
+                    comments_per_post=random.randint(2, 3),
                     reply=False, interact=True,
                     randomize=True, media=None)
             },
