@@ -1208,7 +1208,7 @@ def dump_record_activity(profile_name, logger, logfolder):
                 with open(filename) as recordActFile:
                     current_data = json.load(recordActFile) or {}
 
-            logger.error("current_data: %s" % current_data)
+            # logger.error("current_data: %s" % current_data)
 
             # re-order live user data in the required structure
             for hourly_data in user_data:
@@ -1238,7 +1238,7 @@ def dump_record_activity(profile_name, logger, logfolder):
             # data (keys)
             # current_data.update({profile_name: ordered_user_data})
             update_dict(current_data, {profile_name: ordered_user_data})
-            logger.error("updated cr_d: %s" % current_data)
+            # logger.error("updated cr_d: %s" % current_data)
 
             # dump the fresh record data to a local human readable JSON
             with open(filename, 'w') as recordActFile:
