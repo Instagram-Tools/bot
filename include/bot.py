@@ -140,8 +140,9 @@ class Bot(InstaPy):
                          proxy_chrome_extension=proxy_chrome_extension,
                          proxy_port=proxy_port,
                          disable_image_load=True,
-                         bypass_suspicious_attempt=env.get("bypass_suspicious_attempt", bypass_suspicious_attempt),
-                         bypass_with_mobile=env.get("bypass_with_mobile", bypass_with_mobile),
+                         bypass_suspicious_attempt=env.get("bypass_suspicious_attempt",
+                                                           bypass_suspicious_attempt) == "True",
+                         bypass_with_mobile=env.get("bypass_with_mobile", bypass_with_mobile) == "True",
                          multi_logs=multi_logs)
 
     def login(self):
@@ -150,7 +151,6 @@ class Bot(InstaPy):
         except WebDriverException as wde:
             print("WebDriverException in login(): %s \n%s" % (wde, wde.stacktrace))
             raise
-
 
     def set_settings(self, settings=None):
         if self.aborting:
@@ -193,7 +193,7 @@ class Bot(InstaPy):
                                      max_following=env.get("relationship_bounds_max_following", 66834),
                                      min_followers=env.get("relationship_bounds_min_followers", 35),
                                      min_following=env.get("relationship_bounds_min_following", 27))
-        self.set_sleep_reduce(env.get("sleep_reduce", 100)*2)
+        self.set_sleep_reduce(env.get("sleep_reduce", 100) * 2)
         self.set_smart_hashtags(env.get("smart_hashtags_tags", []),
                                 env.get("smart_hashtags_limit", 3),
                                 env.get("smart_hashtags_top", "top"),
@@ -277,7 +277,8 @@ class Bot(InstaPy):
             },
             {
                 "name": "follow_user_followers",
-                "enabled": env.get("enable_follow_user_followers", True) and len(env.get("follow_user_followers", [])) > 0,
+                "enabled": env.get("enable_follow_user_followers", True) and len(
+                    env.get("follow_user_followers", [])) > 0,
                 "fun": lambda: self.follow_user_followers(
                     usernames=shuffle3(env.get("follow_user_followers", []))[0],
                     amount=random.randint(2, 3),
