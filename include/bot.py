@@ -80,7 +80,10 @@ class Bot(InstaPy):
                  proxy_port=None,
                  multi_logs=False,
                  env=load_env(),
-                 proxy_address_port=None):
+                 proxy_address_port=None,
+                 bypass_suspicious_attempt=False,
+                 bypass_with_mobile=False,
+                 ):
 
         if proxy_address_port:
             p_address = proxy_address_port.split(":")[0]
@@ -137,6 +140,8 @@ class Bot(InstaPy):
                          proxy_chrome_extension=proxy_chrome_extension,
                          proxy_port=proxy_port,
                          disable_image_load=True,
+                         bypass_suspicious_attempt=env.get("bypass_suspicious_attempt", bypass_suspicious_attempt),
+                         bypass_with_mobile=env.get("bypass_with_mobile", bypass_with_mobile),
                          multi_logs=multi_logs)
 
     def login(self):
