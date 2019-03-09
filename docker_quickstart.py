@@ -1,4 +1,5 @@
 import os
+import traceback
 
 from selenium.common.exceptions import WebDriverException
 
@@ -25,8 +26,8 @@ def run():
         bot.act()
     except WebDriverException as wde:
         print("WebDriverException in run(): %s \n%s" % (wde, wde.stacktrace))
-    except Exception as e:
-        print("Exception in run(): %s" % e)
+    except Exception as exc:
+        print("Exception in run(): %s \n %s" % (exc, traceback.format_exc()))
     finally:
         bot.end()
 
