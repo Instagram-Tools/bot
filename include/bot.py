@@ -158,6 +158,7 @@ class Bot(InstaPy):
 
         env = settings or self.settings
 
+        self.set_simulation(enabled=True, percentage=66)
         self.set_blacklist(env.get("blacklist_enabled", True),
                            env.get("blacklist_campaign", ''))
         self.set_comments(env.get("comments", []))
