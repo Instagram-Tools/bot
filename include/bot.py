@@ -175,9 +175,9 @@ class Bot(InstaPy):
                                     max=delimit_commenting_max,
                                     min=delimit_commenting_min)
         self.set_do_comment(enabled=env.get("do_comment_enabled", True) and len(env.get("comments", [])),
-                            percentage=90)
+                            percentage=40)
         self.set_do_follow(enabled=env.get("do_follow_enabled", True),
-                           percentage=40,
+                           percentage=30,
                            times=env.get("do_follow_times", 1))
         self.set_do_like(enabled=env.get("do_like_enabled", True),
                          percentage=50)
@@ -209,9 +209,9 @@ class Bot(InstaPy):
         self.set_quota_supervisor(enabled=True,
                                   sleepyhead=True, stochastic_flow=True, notify_me=True,
                                   peak_likes=(15, 200),
-                                  peak_comments=(10, 182),
-                                  peak_follows=(48, None),
-                                  peak_unfollows=(35, 402),
+                                  peak_comments=(15, 182),
+                                  peak_follows=(40, None),
+                                  peak_unfollows=(50, 402),
                                   peak_server_calls=(None, 4700))
         self.logger.warning("SETTINGS: %s" % env)
 
