@@ -175,7 +175,7 @@ class Bot(InstaPy):
                                     max=delimit_commenting_max,
                                     min=delimit_commenting_min)
         self.set_do_comment(enabled=env.get("do_comment_enabled", True) and len(env.get("comments", [])),
-                            percentage=50)
+                            percentage=90)
         self.set_do_follow(enabled=env.get("do_follow_enabled", True),
                            percentage=40,
                            times=env.get("do_follow_times", 1))
@@ -208,8 +208,8 @@ class Bot(InstaPy):
                                env.get("user_interact_media", None))
         self.set_quota_supervisor(enabled=True,
                                   sleepyhead=True, stochastic_flow=True, notify_me=True,
-                                  peak_likes=(10, 200),
-                                  peak_comments=(21, 182),
+                                  peak_likes=(15, 200),
+                                  peak_comments=(10, 182),
                                   peak_follows=(48, None),
                                   peak_unfollows=(35, 402),
                                   peak_server_calls=(None, 4700))
@@ -270,7 +270,7 @@ class Bot(InstaPy):
                 "fun":
                     lambda: self.like_by_tags(
                         tags=shuffle3(env.get("like_by_tags", [])),
-                        amount=env.get("like_by_tags_amount", 3),
+                        amount=env.get("like_by_tags_amount", random.randint(2, 4)),
                         skip_top_posts=env.get("like_by_tags_skip_top_posts", True),
                         use_smart_hashtags=env.get("like_by_tags_use_smart_hashtags", False),
                         interact=env.get("like_by_tags_interact", False)),
@@ -280,7 +280,7 @@ class Bot(InstaPy):
                 "enabled": env.get("enable_like_by_locations", True) and len(env.get("like_by_locations", [])) > 0,
                 "fun": lambda: self.like_by_locations(
                     locations=shuffle3(env.get("like_by_locations", [])),
-                    amount=env.get("like_by_locations_amount", 3),
+                    amount=env.get("like_by_locations_amount", random.randint(2, 4)),
                     skip_top_posts=env.get("like_by_locations_skip_top_posts", True))
             },
             {
