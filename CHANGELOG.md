@@ -4,6 +4,53 @@ The **goal** of this file is explaining to the users of our project the notable 
 _The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)_.
 
 
+## [0.3.4] - 2019-03-17
+### Added
+- (re) add page_reload, after cookie load, on login_user()
+
+### Fixed
+- "Failed to load desired amount of users" when trying to read long follower lists
+
+
+## [0.3.3] - 2019-03-14
+### Added
+- Add additional exception catch to Login check
+
+### Changed
+- Set language on the browser (no clicks required)
+
+### Fixed
+- Get_active_users hotfix
+
+
+## [0.3.2] - 2019-03-12
+### Fixed
+- Hot fix problems with browser abstraction class
+
+
+## [0.3.1] - 2019-03-12
+### Fixed
+- Removed retry decorator 
+
+
+## [0.3.0] - 2019-03-11
+### Added
+- Allowing `follow_by_tags` to interact with the user
+- Context manager to interaction calls in `like_by_tags` and `follow_likers`
+- Engagement pods feature 🙌 
+- Smart Hashtags based on locations `set_smart_location_hashtags`
+- Verify action for unfollow and follow actions
+- Browser abstraction and Decorator that handles Selenium Browser exceptions by reloading
+- Add delay unfollow of follow backers
+
+### Changed
+- Expose `threaded_session` of Instapy.end()
+
+### Fixed
+- `follow_likers` always fetches zero likers
+- Prevent division by zero in `validate_username`
+
+
 ## [0.2.3] - 2019-03-01
 ### Changed
 - Made Log in text checking more resilient 
