@@ -208,11 +208,11 @@ class Bot(InstaPy):
                                env.get("user_interact_media", None))
         self.set_quota_supervisor(enabled=True,
                                   sleepyhead=True, stochastic_flow=True, notify_me=True,
-                                  peak_likes=(15, 200),
-                                  peak_comments=(15, 182),
+                                  peak_likes=(15, 250),
+                                  peak_comments=(15, 200),
                                   peak_follows=(40, None),
-                                  peak_unfollows=(50, 402),
-                                  peak_server_calls=(None, 4700))
+                                  peak_unfollows=(50, None),
+                                  peak_server_calls=(None, None))
         self.logger.warning("SETTINGS: %s" % env)
 
     def act(self):
