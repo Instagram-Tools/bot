@@ -148,9 +148,17 @@ class Bot(InstaPy):
     def login(self):
         try:
             super().login()
+
+            if self.aborting:
+                self.send_mail_wrong_login_data()
+
         except WebDriverException as wde:
             print("WebDriverException in login(): %s \n%s" % (wde, wde.stacktrace))
             raise
+
+    def send_mail_wrong_login_data(self):
+        print("Send Mail")
+        # TODO Send Mail
 
     def set_settings(self, settings=None):
         if self.aborting:
