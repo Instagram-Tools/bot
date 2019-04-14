@@ -157,8 +157,14 @@ class Bot(InstaPy):
             raise
 
     def send_mail_wrong_login_data(self):
-        print("Send Mail")
-        # TODO Send Mail
+        print("Send Mail for %s" % self.username)
+
+        email = os.environ.get("EMAIL")
+        email_api = os.environ.get("EMAIL_API")
+        if email and email_api:
+            import requests
+            requests.post("%s/mail/wrong_login_data/" % email_api,
+                          json.dumps({"username": self.username, "email": email}))
 
     def set_settings(self, settings=None):
         if self.aborting:

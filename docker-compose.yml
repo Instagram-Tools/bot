@@ -7,6 +7,7 @@ services:
       - PYTHONUNBUFFERED=0
       - SELENIUM=selenium
       - API="http://localhost:8000/api/bot"
+      - EMAIL_API="http://localhost:7070"
 #      - PROXY_MANAGER=http://proxy-manager:60000
     build: .
     depends_on:
