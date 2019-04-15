@@ -191,7 +191,7 @@ class Bot(InstaPy):
         self.set_do_comment(enabled=env.get("do_comment_enabled", True) and len(env.get("comments", [])),
                             percentage=40)
         self.set_do_follow(enabled=env.get("do_follow_enabled", True),
-                           percentage=30,
+                           percentage=60,
                            times=env.get("do_follow_times", 1))
         self.set_do_like(enabled=env.get("do_like_enabled", True),
                          percentage=50)
