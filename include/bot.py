@@ -268,7 +268,6 @@ class Bot(InstaPy):
             except Exception as exc:
                 self.logger.error("Excepiton in act(): %s \n %s" % (exc, traceback.format_exc()))
                 raise
-                # TODO send Mail to Developers
 
     def shuffle_actions(self, actions):
         if len(actions) <= 1:
