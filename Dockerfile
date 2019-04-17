@@ -24,4 +24,6 @@ RUN apk add --no-cache --virtual .build-deps \
 COPY ./ /code/
 
 ENV PYTHONUNBUFFERED=0
+ENV SELENIUM=selenium
+
 CMD python docker_quickstart.py
