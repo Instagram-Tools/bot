@@ -25,5 +25,6 @@ COPY ./ /code/
 
 ENV PYTHONUNBUFFERED=0
 ENV SELENIUM=selenium
+ENV DEV_EMAIL=xxGott50xx@gmail.com
 
 CMD python docker_quickstart.py
