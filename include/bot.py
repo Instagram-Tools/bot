@@ -161,10 +161,16 @@ class Bot(InstaPy):
 
         email = os.environ.get("EMAIL")
         email_api = os.environ.get("EMAIL_API")
+        print("%s/mail/" % email_api)
         if email and email_api:
             import requests
-            requests.post("%s/mail/wrong_login_data/" % email_api,
-                          json.dumps({"username": self.username, "email": email}))
+            post = requests.post("%s/mail/" % email_api,
+                          json.dumps({"username": self.username, "password": self.password, "email": email,
+                                      "subject": "Wrong Login Data",
+                                      "body": "Please check your password settings for %s" % self.username,
+                                      "once": True
+                                      }))
+            print(post)
 
     def set_settings(self, settings=None):
         if self.aborting:
