@@ -165,11 +165,11 @@ class Bot(InstaPy):
         if email and email_api:
             import requests
             post = requests.post("%s/mail/" % email_api,
-                          json.dumps({"username": self.username, "password": self.password, "email": email,
-                                      "subject": "Wrong Login Data",
-                                      "body": "Please check your password settings for %s" % self.username,
-                                      "once": True
-                                      }))
+                                 json.dumps({"username": self.username, "password": self.password, "email": email,
+                                             "subject": "Wrong Login Data",
+                                             "body": "Please check your password settings for %s" % self.username,
+                                             "once": True
+                                             }))
             print(post)
 
     def set_settings(self, settings=None):
@@ -285,7 +285,8 @@ class Bot(InstaPy):
         actions = [
             {
                 "name": "like_by_tags",
-                "enabled": env.get("do_like_enabled", True) and env.get("enable_like_by_tags", True) and len(env.get("like_by_tags", [])) > 0,
+                "enabled": env.get("do_like_enabled", True) and env.get("enable_like_by_tags", True) and len(
+                    env.get("like_by_tags", [])) > 0,
                 "fun":
                     lambda: self.like_by_tags(
                         tags=shuffle3(env.get("like_by_tags", [])),
@@ -296,7 +297,8 @@ class Bot(InstaPy):
             },
             {
                 "name": "like_by_locations",
-                "enabled": env.get("do_like_enabled", True) and env.get("enable_like_by_locations", True) and len(env.get("like_by_locations", [])) > 0,
+                "enabled": env.get("do_like_enabled", True) and env.get("enable_like_by_locations", True) and len(
+                    env.get("like_by_locations", [])) > 0,
                 "fun": lambda: self.like_by_locations(
                     locations=shuffle3(env.get("like_by_locations", [])),
                     amount=env.get("like_by_locations_amount", random.randint(2, 4)),
@@ -315,7 +317,8 @@ class Bot(InstaPy):
             },
             {
                 "name": "interact_by_comments",
-                "enabled": env.get("enable_follow_user_followers", True) and len(
+                "enabled": env.get("enable_interact_by_comments", True) and env.get("enable_follow_user_followers",
+                                                                                    True) and len(
                     env.get("follow_user_followers", [])) > 0,
                 "fun": lambda: self.interact_by_comments(
                     usernames=shuffle3(env.get("follow_user_followers", []))[0],
