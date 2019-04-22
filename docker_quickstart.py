@@ -2,6 +2,7 @@ import json
 import os
 import traceback
 
+from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 
 from include import Bot
@@ -16,13 +17,22 @@ from include.proxy import get_proxy
 # e.g like so InstaPy(username="instagram", password="test1234")
 
 
+def selenium_driver(selenium_url):
+    mobile_emulation = {"deviceName": "Nexus 5"}
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_experimental_option("mobileEmulation", mobile_emulation)
+    selenium_driver = webdriver.Remote(command_executor=selenium_url,
+                                       desired_capabilities=chrome_options.to_capabilities())
+    return selenium_driver
+
+
 def run():
     global bot
     try:
         bot = Bot(multi_logs=True, selenium_local_session=False,
                   proxy_address_port=get_proxy(os.environ.get('INSTA_USER')))
-        bot.set_selenium_remote_session(
-            selenium_url="http://%s:%d/wd/hub" % (os.environ.get('SELENIUM', 'selenium'), 4444))
+        selenium_url = "http://%s:%d/wd/hub" % (os.environ.get('SELENIUM', 'selenium'), 4444)
+        bot.set_selenium_remote_session(selenium_url=selenium_url, selenium_driver=selenium_driver())
         bot.login()
         bot.set_settings()
         bot.act()
@@ -44,5 +54,6 @@ def run():
                                       }))
     finally:
         bot.end()
+
 
 run()
