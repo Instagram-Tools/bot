@@ -268,6 +268,8 @@ def login_user(browser,
      .click()
      .perform())
 
+    # TODO validate Password
+
     # update server calls
     update_activity()
 
