@@ -34,6 +34,7 @@ from .like_util import get_links_for_username
 from .like_util import like_comment
 from .login_util import login_user
 from .settings import Settings
+from .settings import localize_path
 from .print_log_writer import log_follower_num
 from .print_log_writer import log_following_num
 
@@ -105,7 +106,8 @@ class InstaPy:
                  disable_image_load=False,
                  bypass_suspicious_attempt=False,
                  bypass_with_mobile=False,
-                 multi_logs=True):
+                 multi_logs=True,
+                 split_db=False):
 
         cli_args = parse_cli_args()
         username = cli_args.username or username
@@ -119,6 +121,7 @@ class InstaPy:
         bypass_suspicious_attempt = (
             cli_args.bypass_suspicious_attempt or bypass_suspicious_attempt)
         bypass_with_mobile = cli_args.bypass_with_mobile or bypass_with_mobile
+        split_db = cli_args.split_db or split_db
 
         Settings.InstaPy_is_running = True
         # workspace must be ready before anything
@@ -146,6 +149,10 @@ class InstaPy:
         self.username = username or os.environ.get('INSTA_USER')
         self.password = password or os.environ.get('INSTA_PW')
         Settings.profile["name"] = self.username
+
+        self.split_db = split_db
+        if self.split_db:
+            Settings.database_location = localize_path("db", "instapy_{}.db".format(self.username))
 
         self.page_delay = page_delay
         self.use_firefox = use_firefox
@@ -237,6 +244,7 @@ class InstaPy:
         self.skip_business_categories = []
         self.dont_skip_business_categories = []
         self.skip_business = False
+        self.skip_non_business = False
         self.skip_no_profile_pic = False
         self.skip_private = True
         self.skip_business_percentage = 100
@@ -1173,6 +1181,7 @@ class InstaPy:
                                                 self.skip_no_profile_pic,
                                                 self.skip_no_profile_pic_percentage,
                                                 self.skip_business,
+                                                self.skip_non_business,
                                                 self.skip_business_percentage,
                                                 self.skip_business_categories,
                                                 self.dont_skip_business_categories,
@@ -1201,7 +1210,8 @@ class InstaPy:
                        skip_business=False,
                        business_percentage=100,
                        skip_business_categories=[],
-                       dont_skip_business_categories=[]):
+                       dont_skip_business_categories=[],
+                       skip_non_business=False):
 
         self.skip_business = skip_business
         self.skip_private = skip_private
@@ -1209,6 +1219,7 @@ class InstaPy:
         self.skip_business_percentage = business_percentage
         self.skip_no_profile_pic_percentage = no_profile_pic_percentage
         self.skip_private_percentage = private_percentage
+        self.skip_non_business = skip_non_business
         if skip_business:
             self.skip_business_categories = skip_business_categories
             if len(skip_business_categories) == 0:
@@ -1314,7 +1325,7 @@ class InstaPy:
                     self.jumps["consequent"]["likes"] = 0
                     break
 
-                self.logger.info('[{}/{}]'.format(i + 1, len(links)))
+                self.logger.info('Like# [{}/{}]'.format(i + 1, len(links)))
                 self.logger.info(link)
 
                 try:
@@ -1521,7 +1532,7 @@ class InstaPy:
                     self.jumps["consequent"]["comments"] = 0
                     break
 
-                self.logger.info('[{}/{}]'.format(i + 1, len(links)))
+                self.logger.info('Comment# [{}/{}]'.format(i + 1, len(links)))
                 self.logger.info(link)
 
                 try:
@@ -1728,7 +1739,7 @@ class InstaPy:
                     self.jumps["consequent"]["likes"] = 0
                     break
 
-                self.logger.info('[{}/{}]'.format(i + 1, len(links)))
+                self.logger.info('Like# [{}/{}]'.format(i + 1, len(links)))
                 self.logger.info(link)
 
                 try:
@@ -1882,7 +1893,8 @@ class InstaPy:
                 except NoSuchElementException as err:
                     self.logger.error('Invalid Page: {}'.format(err))
 
-        self.logger.info('Tag: {}'.format(tag.encode('utf-8')))
+            self.logger.info('Tag: {}'.format(tag.encode('utf-8')))
+        
         self.logger.info('Liked: {}'.format(liked_img))
         self.logger.info('Already Liked: {}'.format(already_liked))
         self.logger.info('Commented: {}'.format(commented))
@@ -4132,7 +4144,7 @@ class InstaPy:
                     self.jumps["consequent"]["follows"] = 0
                     break
 
-                self.logger.info('[{}/{}]'.format(i + 1, len(links)))
+                self.logger.info('Follow# [{}/{}]'.format(i + 1, len(links)))
                 self.logger.info(link)
 
                 try:
@@ -4255,7 +4267,7 @@ class InstaPy:
                     self.jumps["consequent"]["follows"] = 0
                     break
 
-                self.logger.info('[{}/{}]'.format(i + 1, len(links)))
+                self.logger.info('Follow# [{}/{}]'.format(i + 1, len(links)))
                 self.logger.info(link)
 
                 try:
@@ -5218,6 +5230,7 @@ class InstaPy:
         web_address_navigator(self.browser, user_link)
         try:
             pod_post_ids = get_recent_posts_from_pods(topic, self.logger)
+            self.logger.info("Downloaded pod_post_ids : {}".format(pod_post_ids))
             sleep(2)
             post_link_elems = self.browser.find_elements_by_xpath("//a[contains(@href, '/p/')]")
             post_links = []
@@ -5233,26 +5246,29 @@ class InstaPy:
             post_links = list(set(post_links))
             my_recent_post_ids = []
             for post_link in post_links:
-                web_address_navigator(self.browser, post_link)
-                sleep(2)
-                time_element = self.browser.find_element_by_xpath("//div/a/time")
-                post_datetime_str = time_element.get_attribute('datetime')
-                post_datetime = datetime.strptime(post_datetime_str, "%Y-%m-%dT%H:%M:%S.%fZ")
-                postid = post_link.split('/')[4]
-                self.logger.info("Post: {}, Instaposted at: {}".format(postid, post_datetime))
-                share_restricted = share_with_pods_restriction("read", postid,
-                                        self.share_times,
-                                        self.logger)
-                if datetime.now() - post_datetime < timedelta(hours=12, minutes=30) and not share_restricted:
-                    my_recent_post_ids.append(postid)
-                    if share_my_post_with_pods(postid, topic, self.logger):
-                        share_with_pods_restriction("write", postid, None, self.logger)
+                try:
+                    web_address_navigator(self.browser, post_link)
+                    sleep(2)
+                    time_element = self.browser.find_element_by_xpath("//div/a/time")
+                    post_datetime_str = time_element.get_attribute('datetime')
+                    post_datetime = datetime.strptime(post_datetime_str, "%Y-%m-%dT%H:%M:%S.%fZ")
+                    postid = post_link.split('/')[4]
+                    self.logger.info("Post: {}, Instaposted at: {}".format(postid, post_datetime))
+                    share_restricted = share_with_pods_restriction("read", postid,
+                                            self.share_times,
+                                            self.logger)
+                    if datetime.now() - post_datetime < timedelta(hours=12, minutes=30) and not share_restricted:
+                        my_recent_post_ids.append(postid)
+                        if share_my_post_with_pods(postid, topic, self.logger):
+                            share_with_pods_restriction("write", postid, None, self.logger)
+                except Exception as err:
+                    self.logger.error("Failed for {} with Error {}".format(post_link, err))
 
             if len(my_recent_post_ids) > 0:
-                self.logger.info("I have recent post(s), so I will now help pod members actively.")
+                self.logger.info("I have recent post(s): {}, so I will now help pod members actively.".format(my_recent_post_ids))
                 nposts = 200
             else:
-                self.logger.info("I don't have any recent post(s), so I will just help a few pod posts and move on.")
+                self.logger.info("I don't have any recent post, so I will just help a few pod posts and move on.")
                 nposts = 40
 
             if len(pod_post_ids) <= nposts:
@@ -5261,58 +5277,61 @@ class InstaPy:
                 pod_post_ids = random.sample(pod_post_ids, nposts)
 
             for pod_post_id in pod_post_ids:
-                post_link = "https://www.instagram.com/p/{}".format(pod_post_id)
-                web_address_navigator(self.browser, post_link)
+                try:
+                    post_link = "https://www.instagram.com/p/{}".format(pod_post_id)
+                    web_address_navigator(self.browser, post_link)
 
-                inappropriate, user_name, is_video, reason, scope = (
-                    check_link(self.browser,
-                                post_link,
-                                self.dont_like,
-                                self.mandatory_words,
-                                self.mandatory_language,
-                                self.is_mandatory_character,
-                                self.mandatory_character,
-                                self.check_character_set,
-                                self.ignore_if_contains,
-                                self.logger))
+                    inappropriate, user_name, is_video, reason, scope = (
+                        check_link(self.browser,
+                                    post_link,
+                                    self.dont_like,
+                                    self.mandatory_words,
+                                    self.mandatory_language,
+                                    self.is_mandatory_character,
+                                    self.mandatory_character,
+                                    self.check_character_set,
+                                    self.ignore_if_contains,
+                                    self.logger))
 
-                if user_name != self.username:
-                    follow_state, msg = follow_user(self.browser,
-                                                    "post",
-                                                    self.username,
-                                                    user_name,
-                                                    None,
-                                                    self.blacklist,
-                                                    self.logger,
-                                                    self.logfolder)
-
-                    self.dont_include.add(user_name)
-
-                if not inappropriate and user_name != self.username:
-                    pods_like_percent = max(80, min(100, self.like_percentage))
-                    pods_comment_percentage = max(80, min(100, self.comment_percentage))
-                    liking = (random.randint(0, 100) <= pods_like_percent)
-                    commenting = (random.randint(0, 100) <= pods_comment_percentage)
-
-                    if liking:
-                        like_state, msg = like_image(self.browser,
+                    if user_name != self.username:
+                        follow_state, msg = follow_user(self.browser,
+                                                        "post",
+                                                        self.username,
                                                         user_name,
+                                                        None,
                                                         self.blacklist,
                                                         self.logger,
                                                         self.logfolder)
 
-                    if commenting:
-                        comments = self.fetch_smart_comments(
-                                                        is_video,
-                                                        temp_comments=[])
+                        self.dont_include.add(user_name)
 
-                        comment_state, msg = comment_image(
-                                                        self.browser,
-                                                        user_name,
-                                                        comments,
-                                                        self.blacklist,
-                                                        self.logger,
-                                                        self.logfolder)
+                    if not inappropriate and user_name != self.username:
+                        pods_like_percent = max(80, min(100, self.like_percentage))
+                        pods_comment_percentage = max(80, min(100, self.comment_percentage))
+                        liking = (random.randint(0, 100) <= pods_like_percent)
+                        commenting = (random.randint(0, 100) <= pods_comment_percentage)
+
+                        if liking:
+                            like_state, msg = like_image(self.browser,
+                                                            user_name,
+                                                            self.blacklist,
+                                                            self.logger,
+                                                            self.logfolder)
+
+                        if commenting:
+                            comments = self.fetch_smart_comments(
+                                                            is_video,
+                                                            temp_comments=[])
+
+                            comment_state, msg = comment_image(
+                                                            self.browser,
+                                                            user_name,
+                                                            comments,
+                                                            self.blacklist,
+                                                            self.logger,
+                                                            self.logfolder)
+                except Exception as err:
+                    self.logger.error("Failed for {} with Error {}".format(pod_post_id, err))
 
         except Exception as err:
             self.logger.error(err)

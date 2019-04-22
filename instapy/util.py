@@ -106,6 +106,7 @@ def validate_username(browser,
                       skip_no_profile_pic,
                       skip_no_profile_pic_percentage,
                       skip_business,
+                      skip_non_business,
                       skip_business_percentage,
                       skip_business_categories,
                       dont_skip_business_categories,
@@ -326,7 +327,7 @@ def validate_username(browser,
                 username)
 
     # skip business
-    if skip_business:
+    if skip_business or skip_non_business:
         # if is business account skip under conditions
         try:
             is_business_account = getUserData(
@@ -336,6 +337,9 @@ def validate_username(browser,
             return False, "---> Sorry, couldn't get if user has business " \
                           "account active\n"
 
+        if skip_non_business and not is_business_account:
+            return False, '---> Skiping non business because skip_non_business set to True'
+            
         if is_business_account:
             try:
                 category = getUserData("graphql.user.business_category_name",
@@ -573,7 +577,7 @@ def get_active_users(browser, username, posts, boundary, logger):
                     sleep_actual(3)
                 else:
                     raise NoSuchElementException
-                    
+
             except (IndexError, NoSuchElementException):
                 # Video have no likes button / no posts in page
                 logger.info("video found, try next post until we run out of posts")
@@ -2107,6 +2111,9 @@ def parse_cli_args():
         help="Bypass suspicious attempt", action="store_true", default=None)
     parser.add_argument(
         "-bwm", "--bypass-with-mobile", help="Bypass with mobile phone",
+        action="store_true", default=None)
+    parser.add_argument(
+        "-sdb", "--split-db", help="Split sqlite-db as instapy_{username}.db",
         action="store_true", default=None)
 
     """ Style below can convert strings into booleans:

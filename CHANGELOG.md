@@ -4,6 +4,34 @@ The **goal** of this file is explaining to the users of our project the notable 
 _The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)_.
 
 
+## [0.4.2] - 2019-04-15
+### Fixed
+- Fail of whole pod run on exception
+
+
+## [0.4.1] - 2019-04-06
+### Added
+- Support for split database with -sdb flag to avoid SQLite lock up
+
+### Fixed
+- "Failed to find login button" when trying to login (add KEYS.ENTER to submit login data)
+
+
+## [0.4.0] - 2019-04-03
+### Added
+- Improved info provided by log messages in instapy.py and like_util.py
+- Possibility to skip non bussiness accounts
+
+### Changed
+- Remove docker from core, moved into instapy-docker repo
+- Remove quickstart templates and only reference instapy-quickstart
+- Restructure README and add new DOCUMENTATION file
+
+### Fixed
+- "UnboundLocalError: local variable 'tag' referenced before assignment" when there is no smart-hastag genereated
+- xPath to dialog_address
+
+
 ## [0.3.4] - 2019-03-17
 ### Added
 - (re) add page_reload, after cookie load, on login_user()
