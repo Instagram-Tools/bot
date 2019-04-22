@@ -83,6 +83,7 @@ class Bot(InstaPy):
                  proxy_address_port=None,
                  bypass_suspicious_attempt=False,
                  bypass_with_mobile=False,
+                 disable_image_load=True
                  ):
 
         if proxy_address_port:
@@ -139,7 +140,7 @@ class Bot(InstaPy):
                          proxy_address=proxy_address,
                          proxy_chrome_extension=proxy_chrome_extension,
                          proxy_port=proxy_port,
-                         disable_image_load=True,
+                         disable_image_load=disable_image_load,
                          bypass_suspicious_attempt=env.get("bypass_suspicious_attempt",
                                                            bypass_suspicious_attempt) == "True",
                          bypass_with_mobile=env.get("bypass_with_mobile", bypass_with_mobile) == "True",
