@@ -591,8 +591,11 @@ def check_link(browser, post_link, dont_like, mandatory_words,
     """If the image still has no description gets the first comment"""
     if image_text is None:
         if graphql:
-            image_text = media['edge_media_to_comment']['edges']
-            image_text = image_text[0]['node']['text'] if image_text else None
+            try:
+                image_text = media['edge_media_to_comment']['edges']
+                image_text = image_text[0]['node']['text'] if image_text else None
+            except:
+                image_text = None
 
         else:
             image_text = media['comments']['nodes']
