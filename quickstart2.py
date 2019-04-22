@@ -1,3 +1,7 @@
+import os
+import time
+from tempfile import gettempdir
+
 from include import Bot
 from env import insta_username, insta_password, settings
 from selenium.common.exceptions import NoSuchElementException
