@@ -806,12 +806,16 @@ def get_users_through_dialog(browser,
     sc_rolled = 0
 
     # find dialog box
-    dialog_address = "//body/div[3]/div/div[2]"
-    dialog = browser.find_element_by_xpath(dialog_address)
+    try:
+        dialog_address = "//body/div[3]/div/div[2]"
+        dialog = browser.find_element_by_xpath(dialog_address)
+        # scroll to end of follower list to initiate first load which hides the
+        # suggestions
+        scroll_to_bottom_of_followers_list(browser, dialog)
+    except:
+        dialog_address = '//*[@id="react-root"]/section/main/div[2]'
+        dialog = browser.find_element_by_xpath(dialog_address)
 
-    # scroll to end of follower list to initiate first load which hides the
-    # suggestions
-    scroll_to_bottom_of_followers_list(browser, dialog)
 
     buttons = get_buttons_from_dialog(dialog, channel)
 
