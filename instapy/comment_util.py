@@ -14,7 +14,7 @@ from .util import extract_text_from_element
 from .util import web_address_navigator
 from .quota_supervisor import quota_supervisor
 
-from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import WebDriverException, StaleElementReferenceException
 from selenium.common.exceptions import InvalidElementStateException
 from selenium.common.exceptions import NoSuchElementException
 
@@ -64,15 +64,20 @@ def comment_image(browser, username, comments, blacklist, logger, logfolder):
 
     try:
         if len(comment_input) > 0:
-            comment_input[0].clear()
+            try:
+                comment_input[0].clear()
+            except Exception as e:
+                print(e)
+
             comment_input = get_comment_input(browser)
             # below, an extra space is added to force
             # the input box to update the reactJS core
             comment_to_be_sent = rand_comment + ' '
 
-            browser.execute_script(
-                "arguments[0].value = arguments[1];",
-                comment_input[0], comment_to_be_sent)
+            # browser.execute_script(
+            #     "arguments[0].value = arguments[1];",
+            #     comment_input[0], comment_to_be_sent)
+            comment_input[0].send_keys(comment_to_be_sent)
             # below, it also will remove that extra space added above
             # COS '\b' is a backspace char in ASCII
             comment_input[0].send_keys('\b')
