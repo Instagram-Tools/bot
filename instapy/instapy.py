@@ -1826,6 +1826,7 @@ class InstaPy:
                             self.jumps["consequent"]["likes"] += 1
 
                         # comments
+                        checked_img = True
                         if (self.do_comment and
                                 user_name not in self.dont_include and
                                 checked_img and
