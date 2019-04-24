@@ -33,7 +33,7 @@ def run():
         bot = Bot(multi_logs=True, selenium_local_session=False,
                   proxy_address_port=get_proxy(os.environ.get('INSTA_USER')))
         selenium_url = "http://%s:%d/wd/hub" % (os.environ.get('SELENIUM', 'selenium'), 4444)
-        bot.set_selenium_remote_session(selenium_url=selenium_url, selenium_driver=selenium_driver())
+        bot.set_selenium_remote_session(selenium_url=selenium_url, selenium_driver=selenium_driver(selenium_url))
         bot.login()
         bot.set_settings()
         bot.act()
