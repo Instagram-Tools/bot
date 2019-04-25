@@ -1259,6 +1259,8 @@ def dump_record_activity(profile_name, logger, logfolder):
             "Pow! Error occurred while dumping record activity data to a "
             "local JSON:\n\t{}".format(
                 str(exc).encode("utf-8")))
+        import traceback
+        logger.error("Exception in dump_record_activity(): %s" % traceback.format_exc())
 
     finally:
         if conn:
