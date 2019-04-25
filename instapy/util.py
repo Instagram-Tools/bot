@@ -1248,7 +1248,7 @@ def dump_record_activity(profile_name, logger, logfolder):
             # data (keys)
             # current_data.update({profile_name: ordered_user_data})
             update_dict(current_data, {profile_name: ordered_user_data})
-            # logger.error("updated cr_d: %s" % current_data)
+            logger.error("dump_record_activity: %s" % current_data)
 
             # dump the fresh record data to a local human readable JSON
             with open(filename, 'w') as recordActFile:
