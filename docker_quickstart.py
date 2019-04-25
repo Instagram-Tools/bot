@@ -54,6 +54,7 @@ def run():
                                       "once": True
                                       }))
     finally:
+        print("END")
         bot.end()
 
 

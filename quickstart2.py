@@ -40,4 +40,5 @@ except Exception as exc:
 
 finally:
     # end the bot session
+    print("END")
     bot.end()
