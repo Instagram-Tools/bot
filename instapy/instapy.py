@@ -1282,6 +1282,7 @@ class InstaPy:
 
         # ADJUSTMENTS
         checked_img = True
+        temp_comments = []
         commenting = random.randint(
             0, 100) <= self.comment_percentage
         following = random.randint(
@@ -1697,6 +1698,7 @@ class InstaPy:
 
         # ADJUSTMENTS
         checked_img = True
+        temp_comments = []
         commenting = random.randint(
             0, 100) <= self.comment_percentage
         following = random.randint(
