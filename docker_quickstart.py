@@ -8,6 +8,7 @@ from selenium.common.exceptions import WebDriverException
 from include import Bot
 from include.proxy import get_proxy
 
+
 # Write your automation here
 # Stuck ? Look at the github page or the examples in the examples folder
 
@@ -31,7 +32,7 @@ def run():
     global bot
     try:
         bot = Bot(multi_logs=True, selenium_local_session=False,
-                  proxy_address_port=get_proxy(os.environ.get('INSTA_USER')))
+                  proxy_address_port=get_proxy(os.environ.get('INSTA_USER')), disable_image_load=False)
         selenium_url = "http://%s:%d/wd/hub" % (os.environ.get('SELENIUM', 'selenium'), 4444)
         bot.set_selenium_remote_session(selenium_url=selenium_url, selenium_driver=selenium_driver(selenium_url))
         bot.login()

@@ -294,7 +294,7 @@ class Bot(InstaPy):
                         amount=env.get("like_by_tags_amount", random.randint(2, 4)),
                         skip_top_posts=env.get("like_by_tags_skip_top_posts", True),
                         use_smart_hashtags=env.get("like_by_tags_use_smart_hashtags", False),
-                        interact=env.get("like_by_tags_interact", False)),
+                        interact=env.get("like_by_tags_interact", True)),
             },
             {
                 "name": "like_by_locations",

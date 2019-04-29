@@ -17,7 +17,7 @@ bot = Bot(username=insta_username,
           password=insta_password,
           headless_browser=False,
           multi_logs=True,
-          disable_image_load=True,
+          disable_image_load=False,
           env=settings)
 
 try:
