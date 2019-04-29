@@ -267,7 +267,7 @@ class Bot(InstaPy):
                     '*' * 70, file_path))
                 # full stacktrace when raising Github issue
                 self.logger.exception(exc)
-            except urllib3.exceptions.MaxRetryError as exc:
+            except (urllib3.exceptions.MaxRetryError, urllib3.exceptions.ProtocolError) as exc:
                 self.logger.warning("ABORTING because of: %s \n %s" % (exc, traceback.format_exc()))
                 return
             except Exception as exc:
