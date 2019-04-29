@@ -1282,6 +1282,10 @@ class InstaPy:
 
         # ADJUSTMENTS
         checked_img = True
+        commenting = random.randint(
+            0, 100) <= self.comment_percentage
+        following = random.randint(
+            0, 100) <= self.follow_percentage
 
         if self.aborting:
             return self
@@ -1693,6 +1697,10 @@ class InstaPy:
 
         # ADJUSTMENTS
         checked_img = True
+        commenting = random.randint(
+            0, 100) <= self.comment_percentage
+        following = random.randint(
+            0, 100) <= self.follow_percentage
 
         if self.aborting:
             return self
