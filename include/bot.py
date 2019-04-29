@@ -6,6 +6,7 @@ import time
 import traceback
 from tempfile import gettempdir
 
+import urllib3
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
 
 from instapy import InstaPy
@@ -229,10 +230,10 @@ class Bot(InstaPy):
                                env.get("user_interact_media", None))
         self.set_quota_supervisor(enabled=True,
                                   sleepyhead=True, stochastic_flow=True, notify_me=True,
-                                  peak_likes=(70, None),
-                                  peak_comments=(50, None),
-                                  peak_follows=(40, None),
-                                  peak_unfollows=(50, None),
+                                  peak_likes=(None, None),
+                                  peak_comments=(None, None),
+                                  peak_follows=(None, None),
+                                  peak_unfollows=(None, None),
                                   peak_server_calls=(None, None))
         self.logger.warning("SETTINGS: %s" % env)
 
@@ -266,6 +267,9 @@ class Bot(InstaPy):
                     '*' * 70, file_path))
                 # full stacktrace when raising Github issue
                 self.logger.exception(exc)
+            except urllib3.exceptions.MaxRetryError as exc:
+                self.logger.warning("ABORTING because of: %s \n %s" % (exc, traceback.format_exc()))
+                return
             except Exception as exc:
                 self.logger.error("Excepiton in act(): %s \n %s" % (exc, traceback.format_exc()))
                 raise
