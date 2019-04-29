@@ -41,12 +41,14 @@ def open_comment_section(browser, logger):
     if len(comment_elem) > 0:
         try:
             click_element(browser, comment_elem[0])
+            return True
 
         except WebDriverException:
             logger.warning(missing_comment_elem_warning)
 
     else:
         logger.warning(missing_comment_elem_warning)
+    return False
 
 
 def comment_image(browser, username, comments, blacklist, logger, logfolder):
@@ -59,7 +61,11 @@ def comment_image(browser, username, comments, blacklist, logger, logfolder):
     rand_comment = emoji.demojize(rand_comment)
     rand_comment = emoji.emojize(rand_comment, use_aliases=True)
 
-    open_comment_section(browser, logger)
+    if not open_comment_section(browser, logger):
+        logger.warning("--> Comment Action Likely Failed!"
+                       "\t~comment Element was not found")
+        return False, "comment Element was not found"
+
     comment_input = get_comment_input(browser)
 
     try:
