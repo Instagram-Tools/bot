@@ -1279,6 +1279,10 @@ class InstaPy:
                           media=None,
                           skip_top_posts=True):
         """Likes (default) 50 images per given locations"""
+
+        # ADJUSTMENTS
+        checked_img = True
+
         if self.aborting:
             return self
 
@@ -1686,6 +1690,10 @@ class InstaPy:
                      randomize=False,
                      media=None):
         """Likes (default) 50 images per given tag"""
+
+        # ADJUSTMENTS
+        checked_img = True
+
         if self.aborting:
             return self
 
@@ -1826,7 +1834,6 @@ class InstaPy:
                             self.jumps["consequent"]["likes"] += 1
 
                         # comments
-                        checked_img = True
                         if (self.do_comment and
                                 user_name not in self.dont_include and
                                 checked_img and
