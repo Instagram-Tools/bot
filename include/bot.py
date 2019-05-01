@@ -197,7 +197,7 @@ class Bot(InstaPy):
                                     max=delimit_commenting_max,
                                     min=delimit_commenting_min)
         self.set_do_comment(enabled=env.get("do_comment_enabled", True) and len(env.get("comments", [])),
-                            percentage=40)
+                            percentage=60)
         self.set_do_follow(enabled=env.get("do_follow_enabled", True),
                            percentage=60,
                            times=env.get("do_follow_times", 1))
@@ -216,7 +216,7 @@ class Bot(InstaPy):
                                      max_following=env.get("relationship_bounds_max_following", 66834),
                                      min_followers=env.get("relationship_bounds_min_followers", 35),
                                      min_following=env.get("relationship_bounds_min_following", 27))
-        self.set_sleep_reduce(env.get("speed", 100) * 2)
+        self.set_sleep_reduce(env.get("speed", 100))
         self.set_smart_hashtags(env.get("smart_hashtags_tags", []),
                                 env.get("smart_hashtags_limit", 3),
                                 env.get("smart_hashtags_top", "top"),
@@ -230,10 +230,10 @@ class Bot(InstaPy):
                                env.get("user_interact_media", None))
         self.set_quota_supervisor(enabled=True,
                                   sleepyhead=True, stochastic_flow=True, notify_me=True,
-                                  peak_likes=(None, None),
-                                  peak_comments=(None, None),
-                                  peak_follows=(None, None),
-                                  peak_unfollows=(None, None),
+                                  peak_likes=(70, None),
+                                  peak_comments=(50, None),
+                                  peak_follows=(40, None),
+                                  peak_unfollows=(50, None),
                                   peak_server_calls=(None, None))
         self.logger.warning("SETTINGS: %s" % env)
 
