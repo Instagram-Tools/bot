@@ -183,7 +183,7 @@ class Bot(InstaPy):
         self.set_simulation(enabled=True, percentage=66)
         self.set_blacklist(env.get("blacklist_enabled", True),
                            env.get("blacklist_campaign", ''))
-        self.set_comments(env.get("comments", []))
+        self.set_comments(self.encode_comments(env.get("comments", [])))
 
         delimit_liking_max = env.get('delimit_liking_max')
         delimit_liking_min = env.get('delimit_liking_min')
@@ -236,6 +236,9 @@ class Bot(InstaPy):
                                   peak_unfollows=(50, None),
                                   peak_server_calls=(None, None))
         self.logger.warning("SETTINGS: %s" % env)
+
+    def encode_comments(self, comments):
+        return list(map(lambda c: u'%s'%c, comments))
 
     def act(self):
         if self.aborting:
