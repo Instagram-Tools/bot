@@ -293,7 +293,7 @@ class Bot(InstaPy):
         actions = [
             {
                 "name": "like_by_tags",
-                "enabled": env.get("do_like_enabled", True) and env.get("enable_like_by_tags", True) and len(
+                "enabled": self.do_like and env.get("enable_like_by_tags", True) and len(
                     env.get("like_by_tags", [])) > 0,
                 "fun":
                     lambda: self.like_by_tags(
@@ -305,7 +305,7 @@ class Bot(InstaPy):
             },
             {
                 "name": "like_by_locations",
-                "enabled": env.get("do_like_enabled", True) and env.get("enable_like_by_locations", True) and len(
+                "enabled": self.do_like and env.get("enable_like_by_locations", True) and len(
                     env.get("like_by_locations", [])) > 0,
                 "fun": lambda: self.like_by_locations(
                     locations=shuffle3(env.get("like_by_locations", [])),

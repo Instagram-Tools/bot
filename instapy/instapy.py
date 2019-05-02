@@ -1370,43 +1370,47 @@ class InstaPy:
                             web_address_navigator(self.browser, link)
 
                         # try to like
-                        like_state, msg = like_image(self.browser,
-                                                     user_name,
-                                                     self.blacklist,
-                                                     self.logger,
-                                                     self.logfolder)
+                        if self.do_like is True:
+                            like_state, msg = like_image(self.browser,
+                                                         user_name,
+                                                         self.blacklist,
+                                                         self.logger,
+                                                         self.logfolder)
 
-                        if like_state is True:
-                            liked_img += 1
-                            # reset jump counter after a successful like
-                            self.jumps["consequent"]["likes"] = 0
+                            if like_state is False and msg == "like blocked":
+                                self.deal_with_like_block()
 
-                            checked_img = True
-                            temp_comments = []
+                            if like_state is True:
+                                liked_img += 1
+                                # reset jump counter after a successful like
+                                self.jumps["consequent"]["likes"] = 0
 
-                            commenting = random.randint(
-                                0, 100) <= self.comment_percentage
-                            following = random.randint(
-                                0, 100) <= self.follow_percentage
+                                checked_img = True
+                                temp_comments = []
 
-                            if self.use_clarifai and (following or commenting):
-                                try:
-                                    checked_img, temp_comments, \
-                                    clarifai_tags = (
-                                        self.query_clarifai())
+                                commenting = random.randint(
+                                    0, 100) <= self.comment_percentage
+                                following = random.randint(
+                                    0, 100) <= self.follow_percentage
 
-                                except Exception as err:
-                                    self.logger.error(
-                                        'Image check error: {}'.format(err))
+                                if self.use_clarifai and (following or commenting):
+                                    try:
+                                        checked_img, temp_comments, \
+                                        clarifai_tags = (
+                                            self.query_clarifai())
+
+                                    except Exception as err:
+                                        self.logger.error(
+                                            'Image check error: {}'.format(err))
 
 
-                        elif msg == "already liked":
-                            already_liked += 1
+                            elif msg == "already liked":
+                                already_liked += 1
 
-                        elif msg == "jumped":
-                            # will break the loop after certain consecutive
-                            # jumps
-                            self.jumps["consequent"]["likes"] += 1
+                            elif msg == "jumped":
+                                # will break the loop after certain consecutive
+                                # jumps
+                                self.jumps["consequent"]["likes"] += 1
 
                         # comments
                         if (self.do_comment and
@@ -1792,56 +1796,59 @@ class InstaPy:
                             web_address_navigator(self.browser, link)
 
                         # try to like
-                        like_state, msg = like_image(self.browser,
-                                                     user_name,
-                                                     self.blacklist,
-                                                     self.logger,
-                                                     self.logfolder)
+                        if self.do_like is True:
+                            like_state, msg = like_image(self.browser,
+                                                         user_name,
+                                                         self.blacklist,
+                                                         self.logger,
+                                                         self.logfolder)
+                            if like_state is False and msg == "like blocked":
+                                self.deal_with_like_block()
 
-                        if like_state is True:
-                            liked_img += 1
-                            # reset jump counter after a successful like
-                            self.jumps["consequent"]["likes"] = 0
+                            if like_state is True:
+                                liked_img += 1
+                                # reset jump counter after a successful like
+                                self.jumps["consequent"]["likes"] = 0
 
-                            checked_img = True
-                            temp_comments = []
+                                checked_img = True
+                                temp_comments = []
 
-                            commenting = (random.randint(0, 100) <=
-                                          self.comment_percentage)
-                            following = (random.randint(0, 100) <=
-                                         self.follow_percentage)
+                                commenting = (random.randint(0, 100) <=
+                                              self.comment_percentage)
+                                following = (random.randint(0, 100) <=
+                                             self.follow_percentage)
 
-                            if self.use_clarifai and (following or commenting):
-                                try:
-                                    checked_img, temp_comments, \
-                                    clarifai_tags = (
-                                        self.query_clarifai())
+                                if self.use_clarifai and (following or commenting):
+                                    try:
+                                        checked_img, temp_comments, \
+                                        clarifai_tags = (
+                                            self.query_clarifai())
 
-                                except Exception as err:
-                                    self.logger.error(
-                                        'Image check error: {}'.format(err))
+                                    except Exception as err:
+                                        self.logger.error(
+                                            'Image check error: {}'.format(err))
 
 
-                            # interactions (if any)
-                            if interact:
-                                self.logger.info(
-                                    "--> User gonna be interacted: '{}'"
-                                    .format(user_name))
+                                # interactions (if any)
+                                if interact:
+                                    self.logger.info(
+                                        "--> User gonna be interacted: '{}'"
+                                        .format(user_name))
 
-                                # disable revalidating user in like_by_users
-                                with self.feature_in_feature("like_by_users", False):
-                                    self.like_by_users(user_name,
-                                                       self.user_interact_amount,
-                                                       self.user_interact_random,
-                                                       self.user_interact_media)
+                                    # disable revalidating user in like_by_users
+                                    with self.feature_in_feature("like_by_users", False):
+                                        self.like_by_users(user_name,
+                                                           self.user_interact_amount,
+                                                           self.user_interact_random,
+                                                           self.user_interact_media)
 
-                        elif msg == "already liked":
-                            already_liked += 1
+                            elif msg == "already liked":
+                                already_liked += 1
 
-                        elif msg == "jumped":
-                            # will break the loop after certain consecutive
-                            # jumps
-                            self.jumps["consequent"]["likes"] += 1
+                            elif msg == "jumped":
+                                # will break the loop after certain consecutive
+                                # jumps
+                                self.jumps["consequent"]["likes"] += 1
 
                         # comments
                         if (self.do_comment and
@@ -2056,76 +2063,80 @@ class InstaPy:
                                                              self.logger)
 
                     if not inappropriate and self.liking_approved:
-                        like_state, msg = like_image(self.browser,
-                                                     user_name,
-                                                     self.blacklist,
-                                                     self.logger,
-                                                     self.logfolder)
-                        if like_state is True:
-                            total_liked_img += 1
-                            liked_img += 1
-                            # reset jump counter after a successful like
-                            self.jumps["consequent"]["likes"] = 0
+                        if self.do_like is True:
+                            like_state, msg = like_image(self.browser,
+                                                         user_name,
+                                                         self.blacklist,
+                                                         self.logger,
+                                                         self.logfolder)
+                            if like_state is False and msg == "like blocked":
+                                self.deal_with_like_block()
 
-                            checked_img = True
-                            temp_comments = []
+                            if like_state is True:
+                                total_liked_img += 1
+                                liked_img += 1
+                                # reset jump counter after a successful like
+                                self.jumps["consequent"]["likes"] = 0
 
-                            commenting = random.randint(
-                                0, 100) <= self.comment_percentage
+                                checked_img = True
+                                temp_comments = []
 
-                            if self.use_clarifai and (following or commenting):
-                                try:
-                                    checked_img, temp_comments, \
-                                    clarifai_tags = (
-                                        self.query_clarifai())
+                                commenting = random.randint(
+                                    0, 100) <= self.comment_percentage
 
-                                except Exception as err:
-                                    self.logger.error(
-                                        'Image check error: {}'.format(err))
+                                if self.use_clarifai and (following or commenting):
+                                    try:
+                                        checked_img, temp_comments, \
+                                        clarifai_tags = (
+                                            self.query_clarifai())
 
-                            if (self.do_comment and
-                                    user_name not in self.dont_include and
-                                    checked_img and
-                                    commenting):
+                                    except Exception as err:
+                                        self.logger.error(
+                                            'Image check error: {}'.format(err))
 
-                                if self.delimit_commenting:
-                                    (self.commenting_approved,
-                                     disapproval_reason) = verify_commenting(
-                                        self.browser,
-                                        self.max_comments,
-                                        self.min_comments,
-                                        self.comments_mandatory_words,
-                                        self.logger)
-                                if self.commenting_approved:
-                                    # smart commenting
-                                    comments = self.fetch_smart_comments(
-                                        is_video,
-                                        temp_comments)
-                                    if comments:
-                                        comment_state, msg = comment_image(
+                                if (self.do_comment and
+                                        user_name not in self.dont_include and
+                                        checked_img and
+                                        commenting):
+
+                                    if self.delimit_commenting:
+                                        (self.commenting_approved,
+                                         disapproval_reason) = verify_commenting(
                                             self.browser,
-                                            user_name,
-                                            comments,
-                                            self.blacklist,
-                                            self.logger,
-                                            self.logfolder)
-                                        if comment_state is True:
-                                            commented += 1
+                                            self.max_comments,
+                                            self.min_comments,
+                                            self.comments_mandatory_words,
+                                            self.logger)
+                                    if self.commenting_approved:
+                                        # smart commenting
+                                        comments = self.fetch_smart_comments(
+                                            is_video,
+                                            temp_comments)
+                                        if comments:
+                                            comment_state, msg = comment_image(
+                                                self.browser,
+                                                user_name,
+                                                comments,
+                                                self.blacklist,
+                                                self.logger,
+                                                self.logfolder)
+                                            if comment_state is True:
+                                                commented += 1
+
+                                    else:
+                                        self.logger.info(disapproval_reason)
 
                                 else:
-                                    self.logger.info(disapproval_reason)
+                                    self.logger.info('--> Not commented')
+                                    sleep(1)
 
-                            else:
-                                self.logger.info('--> Not commented')
-                                sleep(1)
+                            elif msg == "already liked":
+                                already_liked += 1
 
-                        elif msg == "already liked":
-                            already_liked += 1
-
-                        elif msg == "jumped":
-                            # will break the loop after certain consecutive
-                            # jumps
-                            self.jumps["consequent"]["likes"] += 1
+                            elif msg == "jumped":
+                                # will break the loop after certain consecutive
+                                # jumps
+                                self.jumps["consequent"]["likes"] += 1
 
                     else:
                         self.logger.info(
@@ -2328,6 +2339,9 @@ class InstaPy:
                                                          self.blacklist,
                                                          self.logger,
                                                          self.logfolder)
+                            if like_state is False and msg == "like blocked":
+                                self.deal_with_like_block()
+
                             if like_state is True:
                                 total_liked_img += 1
                                 liked_img += 1
@@ -2622,6 +2636,9 @@ class InstaPy:
                                                          self.blacklist,
                                                          self.logger,
                                                          self.logfolder)
+                            if like_state is False and msg == "like blocked":
+                                self.deal_with_like_block()
+
                             if like_state is True:
                                 total_liked_img += 1
                                 liked_img += 1
@@ -3692,61 +3709,64 @@ class InstaPy:
                                     web_address_navigator(self.browser, link)
 
                                 # try to like
-                                like_state, msg = like_image(self.browser,
-                                                             user_name,
-                                                             self.blacklist,
-                                                             self.logger,
-                                                             self.logfolder)
+                                if self.do_like is True:
+                                    like_state, msg = like_image(self.browser,
+                                                                 user_name,
+                                                                 self.blacklist,
+                                                                 self.logger,
+                                                                 self.logfolder)
+                                    if like_state is False and msg == "like blocked":
+                                        self.deal_with_like_block()
 
-                                if like_state is True:
-                                    liked_img += 1
-                                    # reset jump counter after a successful
-                                    # like
-                                    self.jumps["consequent"]["likes"] = 0
+                                    if like_state is True:
+                                        liked_img += 1
+                                        # reset jump counter after a successful
+                                        # like
+                                        self.jumps["consequent"]["likes"] = 0
 
-                                    checked_img = True
-                                    temp_comments = []
+                                        checked_img = True
+                                        temp_comments = []
 
-                                    commenting = random.randint(
-                                        0, 100) <= self.comment_percentage
-                                    following = random.randint(
-                                        0, 100) <= self.follow_percentage
+                                        commenting = random.randint(
+                                            0, 100) <= self.comment_percentage
+                                        following = random.randint(
+                                            0, 100) <= self.follow_percentage
 
-                                    if (self.use_clarifai and
-                                            (following or commenting)):
-                                        try:
-                                            (checked_img,
-                                             temp_comments,
-                                             clarifai_tags) = \
-                                                self.query_clarifai()
+                                        if (self.use_clarifai and
+                                                (following or commenting)):
+                                            try:
+                                                (checked_img,
+                                                 temp_comments,
+                                                 clarifai_tags) = \
+                                                    self.query_clarifai()
 
-                                        except Exception as err:
-                                            self.logger.error(
-                                                'Image check error:'
-                                                ' {}'.format(err))
+                                            except Exception as err:
+                                                self.logger.error(
+                                                    'Image check error:'
+                                                    ' {}'.format(err))
 
 
-                                    # interactions (if any)
-                                    if interact:
-                                        self.logger.info(
-                                            "--> User gonna be interacted: "
-                                            "'{}'".format(user_name))
+                                        # interactions (if any)
+                                        if interact:
+                                            self.logger.info(
+                                                "--> User gonna be interacted: "
+                                                "'{}'".format(user_name))
 
-                                        self.like_by_users(
-                                            user_name,
-                                            self.user_interact_amount,
-                                            self.user_interact_random,
-                                            self.user_interact_media)
-                                    # :P
-                                    yield self
+                                            self.like_by_users(
+                                                user_name,
+                                                self.user_interact_amount,
+                                                self.user_interact_random,
+                                                self.user_interact_media)
+                                        # :P
+                                        yield self
 
-                                elif msg == "already liked":
-                                    already_liked += 1
+                                    elif msg == "already liked":
+                                        already_liked += 1
 
-                                elif msg == "jumped":
-                                    # will break the loop after
-                                    # certain consecutive jumps
-                                    self.jumps["consequent"]["likes"] += 1
+                                    elif msg == "jumped":
+                                        # will break the loop after
+                                        # certain consecutive jumps
+                                        self.jumps["consequent"]["likes"] += 1
 
                                 # commenting
                                 if (self.do_comment and
@@ -4439,111 +4459,114 @@ class InstaPy:
                         web_address_navigator(self.browser, url)
 
                     # try to like
-                    like_state, msg = like_image(self.browser,
-                                                 user_name,
-                                                 self.blacklist,
-                                                 self.logger,
-                                                 self.logfolder)
+                    if self.do_like is True:
+                        like_state, msg = like_image(self.browser,
+                                                     user_name,
+                                                     self.blacklist,
+                                                     self.logger,
+                                                     self.logfolder)
+                        if like_state is False and msg == "like blocked":
+                            self.deal_with_like_block()
 
-                    if like_state is True:
-                        liked_img += 1
-                        # reset jump counter after a successful like
-                        self.jumps["consequent"]["likes"] = 0
+                        if like_state is True:
+                            liked_img += 1
+                            # reset jump counter after a successful like
+                            self.jumps["consequent"]["likes"] = 0
 
-                        checked_img = True
-                        temp_comments = []
+                            checked_img = True
+                            temp_comments = []
 
-                        commenting = (random.randint(0, 100) <=
-                                      self.comment_percentage)
-                        following = (random.randint(0, 100) <=
-                                     self.follow_percentage)
+                            commenting = (random.randint(0, 100) <=
+                                          self.comment_percentage)
+                            following = (random.randint(0, 100) <=
+                                         self.follow_percentage)
 
-                        if self.use_clarifai and (following or commenting):
-                            try:
-                                (checked_img,
-                                 temp_comments,
-                                 clarifai_tags) = self.query_clarifai()
+                            if self.use_clarifai and (following or commenting):
+                                try:
+                                    (checked_img,
+                                     temp_comments,
+                                     clarifai_tags) = self.query_clarifai()
 
-                            except Exception as err:
-                                self.logger.error(
-                                    'Image check error: {}'.format(err))
+                                except Exception as err:
+                                    self.logger.error(
+                                        'Image check error: {}'.format(err))
 
-                        if (self.do_comment and
-                                user_name not in self.dont_include and
-                                checked_img and
-                                commenting):
+                            if (self.do_comment and
+                                    user_name not in self.dont_include and
+                                    checked_img and
+                                    commenting):
 
-                            if self.delimit_commenting:
-                                (self.commenting_approved,
-                                 disapproval_reason) = verify_commenting(
-                                    self.browser,
-                                    self.max_comments,
-                                    self.min_comments,
-                                    self.comments_mandatory_words,
-                                    self.logger)
-                            if self.commenting_approved:
-                                # smart commenting
-                                comments = self.fetch_smart_comments(is_video,
-                                                                     temp_comments)
-                                if comments:
-                                    comment_state, msg = comment_image(
+                                if self.delimit_commenting:
+                                    (self.commenting_approved,
+                                     disapproval_reason) = verify_commenting(
                                         self.browser,
-                                        user_name,
-                                        comments,
-                                        self.blacklist,
-                                        self.logger,
-                                        self.logfolder)
+                                        self.max_comments,
+                                        self.min_comments,
+                                        self.comments_mandatory_words,
+                                        self.logger)
+                                if self.commenting_approved:
+                                    # smart commenting
+                                    comments = self.fetch_smart_comments(is_video,
+                                                                         temp_comments)
+                                    if comments:
+                                        comment_state, msg = comment_image(
+                                            self.browser,
+                                            user_name,
+                                            comments,
+                                            self.blacklist,
+                                            self.logger,
+                                            self.logfolder)
 
-                                    if comment_state is True:
-                                        commented += 1
+                                        if comment_state is True:
+                                            commented += 1
+                                else:
+                                    self.logger.info(disapproval_reason)
+
                             else:
-                                self.logger.info(disapproval_reason)
+                                self.logger.info('--> Not commented')
+                                sleep(1)
 
-                        else:
-                            self.logger.info('--> Not commented')
-                            sleep(1)
-
-                        if (self.do_follow and
-                                user_name not in self.dont_include and
-                                checked_img and following and
-                                not follow_restriction("read",
-                                                       user_name,
-                                                       self.follow_times,
-                                                       self.logger)):
-                            follow_state, msg = follow_user(
-                                self.browser,
-                                "post",
-                                self.username,
-                                user_name,
-                                None,
-                                self.blacklist,
-                                self.logger,
-                                self.logfolder)
-
-                            if follow_state is True:
-                                followed += 1
-                        else:
-                            self.logger.info('--> Not following')
-                            sleep(1)
-
-                        # check if interaction is expected
-                        if interact is True:
-                            do_interact = (random.randint(0, 100)
-                                           <= self.user_interact_percentage)
-                            # do interactions if any
-                            if do_interact and self.user_interact_amount > 0:
-                                self.interact_by_users(
+                            if (self.do_follow and
+                                    user_name not in self.dont_include and
+                                    checked_img and following and
+                                    not follow_restriction("read",
+                                                           user_name,
+                                                           self.follow_times,
+                                                           self.logger)):
+                                follow_state, msg = follow_user(
+                                    self.browser,
+                                    "post",
+                                    self.username,
                                     user_name,
-                                    self.user_interact_amount,
-                                    self.user_interact_random,
-                                    self.user_interact_media)
+                                    None,
+                                    self.blacklist,
+                                    self.logger,
+                                    self.logfolder)
 
-                    elif msg == "already liked":
-                        already_liked += 1
+                                if follow_state is True:
+                                    followed += 1
+                            else:
+                                self.logger.info('--> Not following')
+                                sleep(1)
 
-                    elif msg == "jumped":
-                        # will break the loop after certain consecutive jumps
-                        self.jumps["consequent"]["likes"] += 1
+                            # check if interaction is expected
+                            if interact is True:
+                                do_interact = (random.randint(0, 100)
+                                               <= self.user_interact_percentage)
+                                # do interactions if any
+                                if do_interact and self.user_interact_amount > 0:
+                                    self.interact_by_users(
+                                        user_name,
+                                        self.user_interact_amount,
+                                        self.user_interact_random,
+                                        self.user_interact_media)
+
+                        elif msg == "already liked":
+                            already_liked += 1
+
+                        elif msg == "jumped":
+                            # will break the loop after certain consecutive jumps
+                            self.jumps["consequent"]["likes"] += 1
 
                 else:
                     self.logger.info(
@@ -4996,24 +5019,28 @@ class InstaPy:
                     continue
 
                 # like the post before interacting on comments
-                image_like_state, msg = like_image(self.browser,
-                                                   user_name,
-                                                   self.blacklist,
-                                                   self.logger,
-                                                   self.logfolder)
-                if image_like_state is True:
-                    like_failures_tracker["consequent"]["post_likes"] = 0
-                    self.liked_img += 1
+                if self.do_like is True:
+                    image_like_state, msg = like_image(self.browser,
+                                                       user_name,
+                                                       self.blacklist,
+                                                       self.logger,
+                                                       self.logfolder)
+                    if image_like_state is False and msg == "like blocked":
+                        self.deal_with_like_block()
 
-                elif msg == "already liked":
-                    self.already_liked += 1
+                    if image_like_state is True:
+                        like_failures_tracker["consequent"]["post_likes"] = 0
+                        self.liked_img += 1
 
-                else:
-                    self.logger.info(
-                        "Can't interact by comments unless"
-                        " the post is liked! :(\t~skipping this post\n")
-                    like_failures_tracker["consequent"]["post_likes"] += 1
-                    continue
+                    elif msg == "already liked":
+                        self.already_liked += 1
+
+                    else:
+                        self.logger.info(
+                            "Can't interact by comments unless"
+                            " the post is liked! :(\t~skipping this post\n")
+                        like_failures_tracker["consequent"]["post_likes"] += 1
+                        continue
 
                 # perfect! now going to work with comments...
                 for commenter, comment in comment_data:
@@ -5355,3 +5382,7 @@ class InstaPy:
             self.logger.error(err)
 
         return self
+
+    def deal_with_like_block(self):
+        self.logger.warning("set do_like to False, because of LikeBlock")
+        self.set_do_like(enabled=False)

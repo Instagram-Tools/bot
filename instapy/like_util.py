@@ -671,6 +671,11 @@ def check_link(browser, post_link, dont_like, mandatory_words,
     return False, user_name, is_video, 'None', "Success"
 
 
+def is_like_blocked(browser):
+    dialog_elem = browser.find_elements_by_xpath("/html/body/div[3]/div[@role='dialog']")
+    return len(dialog_elem) == 1
+
+
 def like_image(browser, username, blacklist, logger, logfolder):
     """Likes the browser opened image"""
     # check action availability
@@ -690,7 +695,7 @@ def like_image(browser, username, blacklist, logger, logfolder):
         # check now we have unlike instead of like
         liked_elem = browser.find_elements_by_xpath(unlike_xpath)
 
-        if len(liked_elem) == 1:
+        if len(liked_elem) == 1 and not is_like_blocked(browser):
             logger.info('--> Image Liked!')
             update_activity('likes')
 
@@ -707,7 +712,7 @@ def like_image(browser, username, blacklist, logger, logfolder):
         else:
             # if like not seceded wait for 2 min
             logger.info('--> Image was not able to get Liked! maybe blocked ?')
-            sleep(120)
+            return False, "like blocked"
 
     else:
         liked_elem = browser.find_elements_by_xpath(unlike_xpath)
