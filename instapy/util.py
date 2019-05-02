@@ -1254,6 +1254,8 @@ def dump_record_activity(profile_name, logger, logfolder):
             with open(filename, 'w') as recordActFile:
                 json.dump(current_data, recordActFile)
 
+            return current_data
+
     except Exception as exc:
         logger.error(
             "Pow! Error occurred while dumping record activity data to a "

@@ -158,8 +158,17 @@ class Bot(InstaPy):
             print("WebDriverException in login(): %s \n%s" % (wde, wde.stacktrace))
             raise
 
-    def send_mail(self, mail_body, mail_subject):
-        email = os.environ.get("EMAIL")
+    def deal_with_like_block(self):
+        super().deal_with_like_block()
+
+        from instapy.util import dump_record_activity
+        activity = dump_record_activity(self.username,
+                             self.logger,
+                             self.logfolder)
+        email = os.environ.get("DEV_EMAIL")
+        self.send_mail(mail_subject="LikeBlock: %s" % self.username, mail_body=activity, email=email)
+
+    def send_mail(self, mail_subject, mail_body, email=os.environ.get("EMAIL")):
         email_api = os.environ.get("EMAIL_API")
         if email and email_api:
             import requests
@@ -169,10 +178,13 @@ class Bot(InstaPy):
                                              "body": mail_body,
                                              "once": True
                                              }))
+            self.logger.warning("send_mail(%s, %s, %s)" % (mail_subject, mail_body, email))
+        else:
+            self.logger.warning("failed: send_mail(%s, %s, %s)" % (mail_subject, mail_body, email))
 
     def send_mail_wrong_login_data(self):
         print("Send Mail for %s" % self.username)
-        self.send_mail("Please check your password settings for %s" % self.username, "Wrong Login Data")
+        self.send_mail(mail_subject="Wrong Login Data", mail_body="Please check your password settings for %s" % self.username)
 
     def set_settings(self, settings=None):
         if self.aborting:
