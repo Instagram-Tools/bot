@@ -158,21 +158,21 @@ class Bot(InstaPy):
             print("WebDriverException in login(): %s \n%s" % (wde, wde.stacktrace))
             raise
 
-    def send_mail_wrong_login_data(self):
-        print("Send Mail for %s" % self.username)
-
+    def send_mail(self, mail_body, mail_subject):
         email = os.environ.get("EMAIL")
         email_api = os.environ.get("EMAIL_API")
-        print("%s/mail/" % email_api)
         if email and email_api:
             import requests
             post = requests.post("%s/mail/" % email_api,
                                  json.dumps({"username": self.username, "password": self.password, "email": email,
-                                             "subject": "Wrong Login Data",
-                                             "body": "Please check your password settings for %s" % self.username,
+                                             "subject": mail_subject,
+                                             "body": mail_body,
                                              "once": True
                                              }))
-            print(post)
+
+    def send_mail_wrong_login_data(self):
+        print("Send Mail for %s" % self.username)
+        self.send_mail("Please check your password settings for %s" % self.username, "Wrong Login Data")
 
     def set_settings(self, settings=None):
         if self.aborting:
