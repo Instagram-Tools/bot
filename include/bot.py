@@ -169,18 +169,21 @@ class Bot(InstaPy):
         self.send_mail(mail_subject="LikeBlock: %s" % self.username, mail_body=activity, email=email)
 
     def send_mail(self, mail_subject, mail_body, email=os.environ.get("EMAIL")):
-        email_api = os.environ.get("EMAIL_API")
-        if email and email_api:
-            import requests
-            post = requests.post("%s/mail/" % email_api,
-                                 json.dumps({"username": self.username, "password": self.password, "email": email,
-                                             "subject": mail_subject,
-                                             "body": mail_body,
-                                             "once": True
-                                             }))
-            self.logger.warning("send_mail(%s, %s, %s)" % (mail_subject, mail_body, email))
-        else:
-            self.logger.warning("failed: send_mail(%s, %s, %s)" % (mail_subject, mail_body, email))
+        try:
+            email_api = os.environ.get("EMAIL_API")
+            if email and email_api:
+                import requests
+                post = requests.post("%s/mail/" % email_api,
+                                     json.dumps({"username": self.username, "password": self.password, "email": email,
+                                                 "subject": mail_subject,
+                                                 "body": mail_body,
+                                                 "once": True
+                                                 }))
+                self.logger.warning("send_mail(%s, %s, %s)" % (mail_subject, mail_body, email))
+            else:
+                self.logger.warning("failed: send_mail(%s, %s, %s)" % (mail_subject, mail_body, email))
+        except Exception as exc:
+            print("Exception in send_mail(): %s \n %s" % (exc, traceback.format_exc()))
 
     def send_mail_wrong_login_data(self):
         print("Send Mail for %s" % self.username)
