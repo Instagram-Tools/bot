@@ -189,7 +189,10 @@ def get_following_status(browser, track, username, person, person_id, logger,
             return None, None
 
     # get follow status
-    following_status = follow_button.text
+    try:
+        following_status = follow_button.text
+    except:
+        return "UNAVAILABLE", None
 
     return following_status, follow_button
 
