@@ -8,6 +8,7 @@ from tempfile import gettempdir
 
 import urllib3
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
+from urllib3.exceptions import NewConnectionError
 
 from instapy import InstaPy
 from instapy.time_util import sleep
@@ -147,12 +148,19 @@ class Bot(InstaPy):
                          bypass_with_mobile=env.get("bypass_with_mobile", bypass_with_mobile) == "True",
                          multi_logs=multi_logs)
 
-    def login(self):
+    def login(self, count=0):
         try:
             super().login()
 
             if self.aborting:
                 self.send_mail_wrong_login_data()
+
+        except NewConnectionError:
+            self.logger.warning("NewConnectionError try again; count=%s" % count)
+            if count >= 3:
+                raise
+            else:
+                self.act(count=count + 1)
 
         except WebDriverException as wde:
             print("WebDriverException in login(): %s \n%s" % (wde, wde.stacktrace))
@@ -255,7 +263,7 @@ class Bot(InstaPy):
     def encode_comments(self, comments):
         return list(map(lambda c: u'%s'%c, comments))
 
-    def act(self):
+    def act(self, count=0):
         if self.aborting:
             return
 
@@ -272,6 +280,7 @@ class Bot(InstaPy):
 
                     self.logger.warning("RUN: %s" % f["name"])
                     f["fun"]()
+                    count = 0
                     sleep(1 * 60)
 
                 sleep(2 * 60)
@@ -285,6 +294,13 @@ class Bot(InstaPy):
                     '*' * 70, file_path))
                 # full stacktrace when raising Github issue
                 self.logger.exception(exc)
+            except NewConnectionError:
+                self.logger.warning("NewConnectionError try again; count=%s" % count)
+                if count >= 3:
+                    raise
+                else:
+                    self.act(count=count+1)
+
             except (urllib3.exceptions.MaxRetryError, urllib3.exceptions.ProtocolError) as exc:
                 self.logger.warning("ABORTING because of: %s \n %s" % (exc, traceback.format_exc()))
                 return
