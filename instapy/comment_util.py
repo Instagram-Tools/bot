@@ -104,7 +104,7 @@ def comment_image(browser, username, comments, blacklist, logger, logfolder):
                            "\t~comment Element was not found")
             return False, "commenting disabled"
 
-    except InvalidElementStateException:
+    except (InvalidElementStateException, StaleElementReferenceException):
         logger.warning("--> Comment Action Likely Failed!"
                        "\t~encountered `InvalidElementStateException` :/")
         return False, "invalid element state"
