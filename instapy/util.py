@@ -36,7 +36,7 @@ from .quota_supervisor import quota_supervisor
 from .settings import Settings
 from .settings import Selectors
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.common.exceptions import WebDriverException
 from selenium.common.exceptions import TimeoutException
 
@@ -838,45 +838,51 @@ def click_element(browser, element, tryNum=0):
         # click attempt failed
         # try something funky and try again
 
-        if tryNum == 0:
-            # try scrolling the element into view
-            browser.execute_script(
-                "document.getElementsByClassName('" + element.get_attribute(
-                    "class") + "')[0].scrollIntoView({ inline: 'center' });")
+        try:
+            if tryNum == 0:
+                # try scrolling the element into view
+                browser.execute_script(
+                    "document.getElementsByClassName('" + element.get_attribute(
+                        "class") + "')[0].scrollIntoView({ inline: 'center' });")
 
-        elif tryNum == 1:
-            # well, that didn't work, try scrolling to the top and then
-            # clicking again
-            browser.execute_script("window.scrollTo(0,0);")
+            elif tryNum == 1:
+                # well, that didn't work, try scrolling to the top and then
+                # clicking again
+                browser.execute_script("window.scrollTo(0,0);")
 
-        elif tryNum == 2:
-            # that didn't work either, try scrolling to the bottom and then
-            # clicking again
-            browser.execute_script(
-                "window.scrollTo(0,document.body.scrollHeight);")
+            elif tryNum == 2:
+                # that didn't work either, try scrolling to the bottom and then
+                # clicking again
+                browser.execute_script(
+                    "window.scrollTo(0,document.body.scrollHeight);")
 
-        else:
-            # try `execute_script` as a last resort
-            # print("attempting last ditch effort for click, `execute_script`")
-            browser.execute_script(
-                "document.getElementsByClassName('" + element.get_attribute(
-                    "class") + "')[0].click()")
+            else:
+                # try `execute_script` as a last resort
+                # print("attempting last ditch effort for click, `execute_script`")
+                browser.execute_script(
+                    "document.getElementsByClassName('" + element.get_attribute(
+                        "class") + "')[0].click()")
+                # update server calls after last click attempt by JS
+                update_activity()
+                # end condition for the recursive function
+                return
+
+            # update server calls after the scroll(s) in 0, 1 and 2 attempts
+            update_activity()
+
+            # sleep for 1 second to allow window to adjust (may or may not be
+            # needed)
+            sleep_actual(1)
+
+            tryNum += 1
+
+            # try again!
+            click_element(browser, element, tryNum)
+        except StaleElementReferenceException:
             # update server calls after last click attempt by JS
             update_activity()
             # end condition for the recursive function
             return
-
-        # update server calls after the scroll(s) in 0, 1 and 2 attempts
-        update_activity()
-
-        # sleep for 1 second to allow window to adjust (may or may not be
-        # needed)
-        sleep_actual(1)
-
-        tryNum += 1
-
-        # try again!
-        click_element(browser, element, tryNum)
 
 
 def format_number(number):
