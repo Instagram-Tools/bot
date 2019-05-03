@@ -4,6 +4,7 @@ import os
 import random
 import time
 import traceback
+from http.client import RemoteDisconnected
 from tempfile import gettempdir
 
 import urllib3
@@ -294,14 +295,14 @@ class Bot(InstaPy):
                     '*' * 70, file_path))
                 # full stacktrace when raising Github issue
                 self.logger.exception(exc)
-            except NewConnectionError:
-                self.logger.warning("NewConnectionError try again; count=%s" % count)
+            except (NewConnectionError, WebDriverException) as exc:
+                self.logger.warning("Exception in act: %s; try again: count=%s" % (exc, count))
                 if count >= 3:
                     raise
                 else:
                     self.act(count=count+1)
 
-            except (urllib3.exceptions.MaxRetryError, urllib3.exceptions.ProtocolError) as exc:
+            except (urllib3.exceptions.MaxRetryError, RemoteDisconnected) as exc:
                 self.logger.warning("ABORTING because of: %s \n %s" % (exc, traceback.format_exc()))
                 return
             except Exception as exc:
