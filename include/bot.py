@@ -306,6 +306,10 @@ class Bot(InstaPy):
                 self.logger.warning("ABORTING because of: %s \n %s" % (exc, traceback.format_exc()))
                 return
             except Exception as exc:
+                if 'RemoteDisconnected' in str(exc):
+                    self.logger.warning("Exception in act: %s; try again: count=%s" % (exc, count))
+                    self.act(count=count + 1)
+
                 self.logger.error("Excepiton in act(): %s \n %s" % (exc, traceback.format_exc()))
                 raise
 
