@@ -7,9 +7,8 @@ import traceback
 from http.client import RemoteDisconnected
 from tempfile import gettempdir
 
-import urllib3
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
-from urllib3.exceptions import NewConnectionError
+from urllib3.exceptions import NewConnectionError, MaxRetryError
 
 from instapy import InstaPy
 from instapy.time_util import sleep
@@ -156,16 +155,8 @@ class Bot(InstaPy):
             if self.aborting:
                 self.send_mail_wrong_login_data()
 
-        except NewConnectionError:
-            self.logger.warning("NewConnectionError try again; count=%s" % count)
-            if count >= 3:
-                raise
-            else:
-                self.act(count=count + 1)
-
-        except WebDriverException as wde:
-            print("WebDriverException in login(): %s \n%s" % (wde, wde.stacktrace))
-            raise
+        except (ConnectionRefusedError, NewConnectionError, RemoteDisconnected, WebDriverException) as exc:
+            return self.try_again(count, exc)
 
     def deal_with_like_block(self):
         super().deal_with_like_block()
@@ -262,7 +253,7 @@ class Bot(InstaPy):
         self.logger.warning("SETTINGS: %s" % env)
 
     def encode_comments(self, comments):
-        return list(map(lambda c: u'%s'%c, comments))
+        return list(map(lambda c: u'%s' % c, comments))
 
     def act(self, count=0):
         if self.aborting:
@@ -295,23 +286,23 @@ class Bot(InstaPy):
                     '*' * 70, file_path))
                 # full stacktrace when raising Github issue
                 self.logger.exception(exc)
-            except (NewConnectionError, RemoteDisconnected, WebDriverException) as exc:
-                self.logger.warning("Exception in act: %s; try again: count=%s" % (exc, count))
-                if count >= 3:
-                    raise
-                else:
-                    self.act(count=count+1)
-
-            except (urllib3.exceptions.MaxRetryError) as exc:
-                self.logger.warning("ABORTING because of: %s \n %s" % (exc, traceback.format_exc()))
-                return
+            except (
+                    ConnectionRefusedError, MaxRetryError, NewConnectionError, RemoteDisconnected,
+                    WebDriverException) as exc:
+                return self.try_again(count, exc)
             except Exception as exc:
                 if 'RemoteDisconnected' in str(exc):
-                    self.logger.warning("Exception in act: %s; try again: count=%s" % (exc, count))
-                    self.act(count=count + 1)
+                    return self.try_again(count, exc)
 
                 self.logger.error("Excepiton in act(): %s \n %s" % (exc, traceback.format_exc()))
                 raise
+
+    def try_again(self, count, exc):
+        self.logger.warning("Exception in act: %s; try again: count=%s" % (exc, count))
+        if count >= 3:
+            raise
+        else:
+            self.act(count=count + 1)
 
     def shuffle_actions(self, actions):
         if len(actions) <= 1:
