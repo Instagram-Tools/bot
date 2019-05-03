@@ -3,7 +3,6 @@ import os
 import traceback
 
 from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
 
 from include import Bot
 from include.proxy import get_proxy
@@ -53,9 +52,9 @@ def run():
             import requests
             requests.post("%s/mail/" % email_api,
                           json.dumps({"username": "ERROR", "email": email,
-                                      "subject": "Something went wrong with %s " % os.environ.get('INSTA_USER',
-                                                                                                  'UnknownUser'),
-                                      "body": "Excepiton in act(): %s \n %s" % (exc, traceback.format_exc()),
+                                      "subject": "%s: Excepiton: %s" % (
+                                          os.environ.get('INSTA_USER', 'UnknownUser'), exc),
+                                      "body": "%s" % traceback.format_exc(),
                                       "once": True
                                       }))
     finally:
