@@ -164,7 +164,7 @@ def validate_username(browser,
     blacklist_file_exists = os.path.isfile(blacklist_file)
     if blacklist_file_exists:
         with open("{}blacklist.csv".format(logfolder), 'rt') as f:
-            reader = csv.reader(f, delimiter=',')
+            reader = csv.reader((line.replace('\0', '') for line in f), delimiter=',')
             for row in reader:
                 for field in row:
                     if field == username:
