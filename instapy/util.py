@@ -1216,12 +1216,13 @@ def dump_record_activity(profile_name, logger, logfolder):
             current_data = {}
 
             # get the existing data
-            filename = "{}recordActivity.json".format(logfolder)
-            if os.path.isfile(filename):
-                with open(filename) as recordActFile:
-                    current_data = json.load(recordActFile) or {}
-
-            # logger.error("current_data: %s" % current_data)
+            try:
+                filename = "{}recordActivity.json".format(logfolder)
+                if os.path.isfile(filename):
+                    with open(filename) as recordActFile:
+                        current_data = json.load(recordActFile) or {}
+            except Exception as exc:
+                logger.warning("current_data: can not be loaded: %s" % exc)
 
             # re-order live user data in the required structure
             for hourly_data in user_data:
