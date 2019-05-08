@@ -3,6 +3,7 @@ import os
 import traceback
 
 from selenium import webdriver
+from urllib3.exceptions import NewConnectionError
 
 from include import Bot
 from include.proxy import get_proxy
@@ -33,7 +34,7 @@ def selenium_driver(selenium_url):
     return selenium_driver
 
 
-def run():
+def run(count=0):
     global bot
     try:
         bot = Bot(multi_logs=True, selenium_local_session=False,
@@ -43,23 +44,33 @@ def run():
         bot.login()
         bot.set_settings()
         bot.act()
-    except Exception as exc:
-        print("Exception in run(): %s \n %s" % (exc, traceback.format_exc()))
+    except NewConnectionError as exc:
+        bot.logger.warning("Exception in run: %s; try again: count=%s" % (exc, count))
+        if count > 3:
+            report_exception(exc)
+        else:
+            run(count=count + 1)
 
-        email = os.environ.get("DEV_EMAIL")
-        email_api = os.environ.get("EMAIL_API")
-        if email and email_api:
-            import requests
-            requests.post("%s/mail/" % email_api,
-                          json.dumps({"username": "ERROR", "email": email,
-                                      "subject": "%s: Excepiton: %s" % (
-                                          os.environ.get('INSTA_USER', 'UnknownUser'), exc),
-                                      "body": "%s" % traceback.format_exc(),
-                                      "once": True
-                                      }))
+    except Exception as exc:
+        report_exception(exc)
     finally:
         print("END")
         bot.end()
+
+
+def report_exception(exc):
+    print("Exception in run(): %s \n %s" % (exc, traceback.format_exc()))
+    email = os.environ.get("DEV_EMAIL")
+    email_api = os.environ.get("EMAIL_API")
+    if email and email_api:
+        import requests
+        requests.post("%s/mail/" % email_api,
+                      json.dumps({"username": "ERROR", "email": email,
+                                  "subject": "%s: Excepiton: %s" % (
+                                      os.environ.get('INSTA_USER', 'UnknownUser'), exc),
+                                  "body": "%s" % traceback.format_exc(),
+                                  "once": True
+                                  }))
 
 
 run()

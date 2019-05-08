@@ -155,7 +155,7 @@ class Bot(InstaPy):
             if self.aborting:
                 self.send_mail_wrong_login_data()
 
-        except (ConnectionRefusedError, NewConnectionError, RemoteDisconnected, WebDriverException) as exc:
+        except (ConnectionRefusedError, RemoteDisconnected, WebDriverException) as exc:
             return self.try_again(count, exc)
 
     def deal_with_like_block(self):
@@ -287,7 +287,7 @@ class Bot(InstaPy):
                 # full stacktrace when raising Github issue
                 self.logger.exception(exc)
             except (
-                    ConnectionRefusedError, MaxRetryError, NewConnectionError, RemoteDisconnected,
+                    ConnectionRefusedError, MaxRetryError, RemoteDisconnected,
                     WebDriverException) as exc:
                 return self.try_again(count, exc)
             except Exception as exc:
@@ -299,7 +299,7 @@ class Bot(InstaPy):
 
     def try_again(self, count, exc):
         self.logger.warning("Exception in act: %s; try again: count=%s" % (exc, count))
-        if count >= 3:
+        if count > 3:
             raise
         else:
             self.act(count=count + 1)
