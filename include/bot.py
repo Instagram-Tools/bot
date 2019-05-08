@@ -39,21 +39,14 @@ def load_env():
     env = os.environ.get('ENV')
     if not env:
         return {}
-    print("env: %s" % env)
     if env[0] == "'":
         env = env[1:]
-        print("cut Start: %s" % env)
     if env[-1] == "'":
         env = env[:-1]
-        print("cut End: %s" % env)
 
     env1 = json.loads(env)
-    print("rep: %s" % env1)
     env_join = json.loads(" ".join(env1))
-    print("env_json: %s" % env_join)
-    env_json_join = json.loads(env_join)
-    print("env_json_join: %s" % env_json_join)
-    return clean_settings(env_json_join)
+    return json.loads(env_join)
 
 
 def clean_settings(settings={}):
@@ -109,7 +102,7 @@ class Bot(InstaPy):
                 proxy_address = p_address
                 proxy_port = p_port
 
-        self.settings = env
+        self.settings = clean_settings(env)
         self.end_time = parse_datetime_prefix(
             str(env.get("end_time", datetime.datetime.now() + datetime.timedelta(hours=1))), '%Y-%m-%d %H:%M:%S')
         os.environ["INSTA_USER"] = username or os.environ.get('INSTA_USER')
@@ -147,6 +140,7 @@ class Bot(InstaPy):
                                                            bypass_suspicious_attempt) == "True",
                          bypass_with_mobile=env.get("bypass_with_mobile", bypass_with_mobile) == "True",
                          multi_logs=multi_logs)
+        self.logger.info("Settings: %s" % self.settings)
 
     def login(self, count=0):
         try:
