@@ -1249,7 +1249,7 @@ def dump_record_activity(profile_name, logger, logfolder):
                                                       "server_calls": hourly_data[5] + cur["server_calls"]}})
 
             ordered_user_data = {k: v for k, v in ordered_user_data.items() if
-                            (datetime.datetime.now() - datetime.datetime.strptime(k, '%Y-%m-%d')).days <= 14}
+                            (datetime.datetime.now() - datetime.datetime.strptime(k, '%Y-%m-%d')).days <= 7}
 
             # update user data with live data whilst preserving all other
             # data (keys)
