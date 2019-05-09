@@ -311,11 +311,17 @@ def is_commenting_enabled(browser, logger):
 def get_comments_count(browser, logger):
     """ Get the number of total comments in the post """
     try:
-        comments_count = browser.execute_script(
-            "return window._sharedData.entry_data."
-            "PostPage[0].graphql.shortcode_media."
-            "edge_media_to_comment.count")
+        try:
+            comments_count = browser.execute_script(
+                "return window._sharedData.entry_data."
+                "PostPage[0].graphql.shortcode_media."
+                "edge_media_to_comment.count")
 
+        except Exception:
+            comments_count = browser.execute_script(
+                "return window._sharedData.entry_data."
+                "PostPage[0].graphql.shortcode_media."
+                "edge_media_to_parent_comment.count")
     except Exception as e:
         msg = ("Failed to get comments' count!\n\t{}"
                .format(str(e).encode("utf-8")))
