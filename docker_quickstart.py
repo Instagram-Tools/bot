@@ -47,11 +47,13 @@ def run(count=0):
     except NewConnectionError as exc:
         bot.logger.warning("Exception in run: %s; try again: count=%s" % (exc, count))
         if count > 3:
+            print("Exception in run(): %s \n %s" % (exc, traceback.format_exc()))
             report_exception(exc)
         else:
             run(count=count + 1)
 
     except Exception as exc:
+        print("Exception in run(): %s \n %s" % (exc, traceback.format_exc()))
         report_exception(exc)
     finally:
         print("END")
@@ -59,7 +61,6 @@ def run(count=0):
 
 
 def report_exception(exc):
-    print("Exception in run(): %s \n %s" % (exc, traceback.format_exc()))
     email = os.environ.get("DEV_EMAIL")
     email_api = os.environ.get("EMAIL_API")
     if email and email_api:
