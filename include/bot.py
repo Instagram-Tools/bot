@@ -233,10 +233,10 @@ class Bot(InstaPy):
         self.set_use_clarifai(env.get("use_clarifai_enabled", False),
                               env.get("use_clarifai_api_key", None),
                               env.get("use_clarifai_full_match", False))
-        self.set_user_interact(env.get("user_interact_amount", 3),
-                               env.get("user_interact_percentage", 80),
-                               env.get("user_interact_randomize", False),
-                               env.get("user_interact_media", None))
+        self.set_user_interact(amount=random.randint(5, 10),
+                               percentage=env.get("user_interact_percentage", 80),
+                               randomize=env.get("user_interact_randomize", False),
+                               media=env.get("user_interact_media", None))
         self.set_quota_supervisor(enabled=True,
                                   sleepyhead=True, stochastic_flow=True, notify_me=True,
                                   peak_likes=(50, None),
