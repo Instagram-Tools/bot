@@ -323,6 +323,8 @@ def get_comments_count(browser, logger):
                 "PostPage[0].graphql.shortcode_media."
                 "edge_media_to_parent_comment.count")
     except Exception as e:
+        from docker_quickstart import report_exception
+        report_exception(e)
         msg = ("Failed to get comments' count!\n\t{}"
                .format(str(e).encode("utf-8")))
         return None, msg
