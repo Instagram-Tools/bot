@@ -9,7 +9,7 @@
 /.gitignore
 /.dockerignore
 /README.md
-/env.py
+env*
 /docker*
 !docker_quickstart.py
 
