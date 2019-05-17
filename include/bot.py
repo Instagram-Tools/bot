@@ -319,7 +319,7 @@ class Bot(InstaPy):
                 "fun":
                     lambda: self.like_by_tags(
                         tags=shuffle3(env.get("like_by_tags", [])),
-                        amount=env.get("like_by_tags_amount", random.randint(2, 4)),
+                        amount=random.randint(2, 4),
                         skip_top_posts=env.get("like_by_tags_skip_top_posts", True),
                         use_smart_hashtags=env.get("like_by_tags_use_smart_hashtags", False),
                         interact=True),
@@ -330,7 +330,7 @@ class Bot(InstaPy):
                     env.get("like_by_locations", [])) > 0,
                 "fun": lambda: self.like_by_locations(
                     locations=shuffle3(env.get("like_by_locations", [])),
-                    amount=env.get("like_by_locations_amount", random.randint(2, 4)),
+                    amount=random.randint(2, 4),
                     skip_top_posts=env.get("like_by_locations_skip_top_posts", True))
             },
             {
@@ -339,7 +339,7 @@ class Bot(InstaPy):
                     env.get("like_by_locations", [])) > 0,
                 "fun": lambda: self.like_by_locations(
                     locations=shuffle3(env.get("like_by_locations", [])),
-                    amount=env.get("like_by_locations_amount", random.randint(8, 12)),
+                    amount=random.randint(8, 12),
                     skip_top_posts=env.get("like_by_locations_skip_top_posts", True))
             },
             {
@@ -369,7 +369,7 @@ class Bot(InstaPy):
                 "name": "unfollow_users",
                 "enabled": env.get("enable_unfollow", True),
                 "fun": lambda: self.unfollow_users(
-                    amount=env.get("unfollow_users_amount", random.randint(8, 12)),
+                    amount=random.randint(8, 12),
                     # customList=(False, [], "all"),
                     InstapyFollowed=(True, "all"),
                     # 'all' or 'nonfollowers'
