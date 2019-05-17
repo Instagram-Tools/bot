@@ -60,14 +60,14 @@ def run(count=0):
         bot.end()
 
 
-def report_exception(exc):
+def report_exception(exc, subject="%s: Excepiton: %s"):
     email = os.environ.get("DEV_EMAIL")
     email_api = os.environ.get("EMAIL_API")
     if email and email_api:
         import requests
         requests.post("%s/mail/" % email_api,
                       json.dumps({"username": "ERROR", "email": email,
-                                  "subject": "%s: Excepiton: %s" % (
+                                  "subject": subject % (
                                       os.environ.get('INSTA_USER', 'UnknownUser'), exc),
                                   "body": "%s" % traceback.format_exc(),
                                   "once": True
