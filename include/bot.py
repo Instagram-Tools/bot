@@ -334,6 +334,15 @@ class Bot(InstaPy):
                     skip_top_posts=env.get("like_by_locations_skip_top_posts", True))
             },
             {
+                "name": "comment_by_locations",
+                "enabled": self.do_comment and env.get("enable_like_by_locations", True) and len(
+                    env.get("like_by_locations", [])) > 0,
+                "fun": lambda: self.like_by_locations(
+                    locations=shuffle3(env.get("like_by_locations", [])),
+                    amount=env.get("like_by_locations_amount", random.randint(8, 12)),
+                    skip_top_posts=env.get("like_by_locations_skip_top_posts", True))
+            },
+            {
                 "name": "follow_user_followers",
                 "enabled": env.get("enable_follow_user_followers", True) and len(
                     env.get("follow_user_followers", [])) > 0,
