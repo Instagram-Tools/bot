@@ -281,12 +281,11 @@ class Bot(InstaPy):
                     '*' * 70, file_path))
                 # full stacktrace when raising Github issue
                 self.logger.exception(exc)
-            except urllib3.exceptions.ProtocolError as exc:
+            except (urllib3.exceptions.ProtocolError, MaxRetryError) as exc:
                 self.logger.error("Abort because of %s; \n%s" % (exc, traceback.format_exc()))
                 return
             except (
-                    ConnectionRefusedError, MaxRetryError, RemoteDisconnected,
-                    WebDriverException) as exc:
+                    ConnectionRefusedError, RemoteDisconnected, WebDriverException) as exc:
                 return self.try_again(count, exc)
             except Exception as exc:
                 if 'RemoteDisconnected' in str(exc):
