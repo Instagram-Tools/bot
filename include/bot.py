@@ -7,9 +7,8 @@ import traceback
 from http.client import RemoteDisconnected
 from tempfile import gettempdir
 
-import urllib3
 from selenium.common.exceptions import NoSuchElementException, WebDriverException
-from urllib3.exceptions import NewConnectionError, MaxRetryError
+from urllib3.exceptions import ProtocolError, MaxRetryError
 
 from instapy import InstaPy
 from instapy.time_util import sleep
@@ -281,11 +280,7 @@ class Bot(InstaPy):
                     '*' * 70, file_path))
                 # full stacktrace when raising Github issue
                 self.logger.exception(exc)
-            except (urllib3.exceptions.ProtocolError, MaxRetryError) as exc:
-                self.logger.error("Abort because of %s; \n%s" % (exc, traceback.format_exc()))
-                return
-            except (
-                    ConnectionRefusedError, RemoteDisconnected, WebDriverException) as exc:
+            except (ConnectionRefusedError, RemoteDisconnected, WebDriverException, ProtocolError, MaxRetryError) as exc:
                 return self.try_again(count, exc)
             except Exception as exc:
                 if 'RemoteDisconnected' in str(exc):

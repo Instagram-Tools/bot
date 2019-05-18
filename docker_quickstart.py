@@ -3,7 +3,7 @@ import os
 import traceback
 
 from selenium import webdriver
-from urllib3.exceptions import NewConnectionError
+from urllib3.exceptions import NewConnectionError, ProtocolError, MaxRetryError
 
 from include import Bot
 from include.proxy import get_proxy
@@ -51,6 +51,10 @@ def run(count=0):
             report_exception(exc)
         else:
             run(count=count + 1)
+
+    except (ProtocolError, MaxRetryError) as exc:
+        bot.logger.error("Abort because of %s; \n%s" % (exc, traceback.format_exc()))
+        return
 
     except Exception as exc:
         print("Exception in run(): %s \n %s" % (exc, traceback.format_exc()))
