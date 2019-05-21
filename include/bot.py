@@ -220,8 +220,7 @@ class Bot(InstaPy):
                       'name or password recently, please go to the settings page, correct and safe it.\n 3. If you open '
                       'Instagram and your phone number is required, type it in.\n 4. If Instagram asks you if the '
                       'last log-in was from you, click the option "yes, it was me". By doing this, you allow our '
-                      'service to interact in the name of your account!\n\nThank you and enjoy our service!' %
-                      self.username)
+                      'service to interact in the name of your account!\n\nThank you and enjoy our service!')
 
     def set_settings(self, settings=None):
         if self.aborting:
@@ -248,7 +247,7 @@ class Bot(InstaPy):
         self.set_do_comment(enabled=env.get("do_comment_enabled", True) and len(env.get("comments", [])),
                             percentage=40)
         self.set_do_follow(enabled=env.get("do_follow_enabled", True),
-                           percentage=60,
+                           percentage=65,
                            times=env.get("do_follow_times", 1))
         self.set_do_like(enabled=env.get("do_like_enabled", True),
                          percentage=40)
@@ -378,7 +377,7 @@ class Bot(InstaPy):
                     env.get("like_by_locations", [])) > 0,
                 "fun": lambda: self.like_by_locations(
                     locations=shuffle3(env.get("like_by_locations", [])),
-                    amount=random.randint(10, 20),
+                    amount=random.randint(15, 30),
                     skip_top_posts=env.get("like_by_locations_skip_top_posts", True))
             },
             {
