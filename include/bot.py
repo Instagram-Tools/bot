@@ -159,14 +159,24 @@ class Bot(InstaPy):
 
             if self.aborting:
                 self.send_mail(mail_subject="Welcome to Pink Parrot!",
-                               mail_body="Unfortunately Pink Parrot wasn't able to log-in to your account. Please go "
-                                         "to the settings page and type in your correct Instagram log-in data. Thank "
-                                         "you and enjoy our service!" % self.username)
+                               mail_body="Unfortunately Pink Parrot wasn\'t able to log-in to your account. Please "
+                                         "help us to solve this problem with one of the following options:\n 1. make "
+                                         "sure your Instagram 2-factor-authorization is switched off, as our service "
+                                         "might have problems logging in to your account. "
+                                         "\n 2. please go to the "
+                                         "settings page and make sure you typed in the right password.\n 3. If you "
+                                         "open Instagram and your "
+                                         "phone number is required, type it in.\n 4. If Instagram asks you if the "
+                                         "last log-in was from you, click the option \"yes, it was me\". By doing "
+                                         "this, you allow our service to interact in the name of your "
+                                         "account!\n\nThank you and enjoy our service!" % self.username)
             else:
                 self.send_mail(mail_subject="Welcome to Pink Parrot!",
                                mail_body="Congratulations and welcome to Pink Parrot! We successfully connected to "
                                          "your Instagram account and will now start interacting with your target "
-                                         "groups! Now lean back and let us do the work! :)" % self.username)
+                                         "groups! Now lean back and let us do the work! :)\n\nP.S.: Please make "
+                                         "sure your Instagram 2-factor-authorization is switched off, as our service "
+                                         "might have problems logging in to your account. " % self.username)
 
         except (ConnectionRefusedError, RemoteDisconnected, WebDriverException) as exc:
             return self.try_again(count, exc)
@@ -176,8 +186,8 @@ class Bot(InstaPy):
 
         from instapy.util import dump_record_activity
         activity = dump_record_activity(self.username,
-                             self.logger,
-                             self.logfolder)
+                                        self.logger,
+                                        self.logfolder)
         email = os.environ.get("DEV_EMAIL")
         self.send_mail(mail_subject="LikeBlock: %s" % self.username, mail_body=activity, email=email)
 
@@ -201,14 +211,17 @@ class Bot(InstaPy):
     def send_mail_wrong_login_data(self):
         print("Send Mail for %s" % self.username)
         self.send_mail(
-            mail_subject="Action needed ! Help us to start your interaction!", mail_body='Hey, this is the team of '
-                         'Pink Parrot,\nwe had a problem logging in to your instagram account. Please help us to '
-                         'solve this problem with one of the following options:\n 1. If you changed your Instagram '
-                         'name or password, please go to the settings page, correct and safe it.\n 2. If you open '
-                         'Instagram and your phone number is required, type it in.\n 3. If Instagram asks you if the '
-                         'last log-in was from you, click the option "yes, it was me". By doing this, you allow our '
-                         'service to interact in the name of you account!\n\nThank you and enjoy our service!' %
-                         self.username)
+            mail_subject="Action needed! Help us to start your interaction!",
+            mail_body='Hey, this is the team of '
+                      'Pink Parrot,\nwe had a problem logging in to your instagram account. Please help us to '
+                      'solve this problem with one of the following options:\n 1. make sure your Instagram '
+                      '2-factor-authorization is switched off, as our service might have problems logging in to your '
+                      'account. \n 2. If you changed your Instagram '
+                      'name or password recently, please go to the settings page, correct and safe it.\n 3. If you open '
+                      'Instagram and your phone number is required, type it in.\n 4. If Instagram asks you if the '
+                      'last log-in was from you, click the option "yes, it was me". By doing this, you allow our '
+                      'service to interact in the name of your account!\n\nThank you and enjoy our service!' %
+                      self.username)
 
     def set_settings(self, settings=None):
         if self.aborting:
