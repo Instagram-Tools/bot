@@ -181,7 +181,15 @@ class Bot(InstaPy):
 
     def send_mail_wrong_login_data(self):
         print("Send Mail for %s" % self.username)
-        self.send_mail(mail_subject="Wrong Login Data", mail_body="Please check your password settings for %s" % self.username)
+        self.send_mail(
+            mail_subject="Action needed ! Help us to start your interaction!", mail_body='Hey, this is the team of '
+                         'Pink Parrot,\nwe had a problem logging in to your instagram account. Please help us to '
+                         'solve this problem with one of the following options:\n 1. If you changed your Instagram '
+                         'name or password, please go to the settings page, correct and safe it.\n 2. If you open '
+                         'Instagram and your phone number is required, type it in.\n 3. If Instagram asks you if the '
+                         'last log-in was from you, click the option "yes, it was me". By doing this, you allow our '
+                         'service to interact in the name of you account!\n\nThank you and enjoy our service!' %
+                         self.username)
 
     def set_settings(self, settings=None):
         if self.aborting:
