@@ -152,6 +152,25 @@ class Bot(InstaPy):
         except (ConnectionRefusedError, RemoteDisconnected, WebDriverException) as exc:
             return self.try_again(count, exc)
 
+    def try_first_login(self, count=0):
+        try:
+            self.logger.warning("Try first login: \n%s\n%s" % (self.username, self.password))
+            super().login()
+
+            if self.aborting:
+                self.send_mail(mail_subject="Welcome to Pink Parrot!",
+                               mail_body="Unfortunately Pink Parrot wasn't able to log-in to your account. Please go "
+                                         "to the settings page and type in your correct Instagram log-in data. Thank "
+                                         "you and enjoy our service!" % self.username)
+            else:
+                self.send_mail(mail_subject="Welcome to Pink Parrot!",
+                               mail_body="Congratulations and welcome to Pink Parrot! We successfully connected to "
+                                         "your Instagram account and will now start interacting with your target "
+                                         "groups! Now lean back and let us do the work! :)" % self.username)
+
+        except (ConnectionRefusedError, RemoteDisconnected, WebDriverException) as exc:
+            return self.try_again(count, exc)
+
     def deal_with_like_block(self):
         super().deal_with_like_block()
 
