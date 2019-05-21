@@ -206,12 +206,12 @@ class Bot(InstaPy):
                                     max=delimit_commenting_max,
                                     min=delimit_commenting_min)
         self.set_do_comment(enabled=env.get("do_comment_enabled", True) and len(env.get("comments", [])),
-                            percentage=30)
+                            percentage=40)
         self.set_do_follow(enabled=env.get("do_follow_enabled", True),
                            percentage=60,
                            times=env.get("do_follow_times", 1))
         self.set_do_like(enabled=env.get("do_like_enabled", True),
-                         percentage=50)
+                         percentage=40)
         self.set_dont_include(set(env.get("dont_include", [])))
         self.set_dont_like(env.get("dont_like", []))
         self.set_dont_unfollow_active_users(env.get("dont_unfollow_active_users_enabled", False),
@@ -239,7 +239,7 @@ class Bot(InstaPy):
                                media=env.get("user_interact_media", None))
         self.set_quota_supervisor(enabled=True,
                                   sleepyhead=True, stochastic_flow=True, notify_me=True,
-                                  peak_likes=(50, None),
+                                  peak_likes=(60, None),
                                   peak_comments=(50, None),
                                   peak_follows=(40, None),
                                   peak_unfollows=(50, None),
@@ -338,7 +338,7 @@ class Bot(InstaPy):
                     env.get("like_by_locations", [])) > 0,
                 "fun": lambda: self.like_by_locations(
                     locations=shuffle3(env.get("like_by_locations", [])),
-                    amount=random.randint(8, 12),
+                    amount=random.randint(10, 20),
                     skip_top_posts=env.get("like_by_locations_skip_top_posts", True))
             },
             {
