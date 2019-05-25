@@ -45,7 +45,11 @@ def load_env():
         env = env[:-1]
 
     env1 = json.loads(env)
+    if type(env1) is dict:
+        return env1
     env_join = json.loads(" ".join(env1))
+    if type(env_join) is dict:
+        return env_join
     return json.loads(env_join)
 
 
@@ -169,14 +173,14 @@ class Bot(InstaPy):
                                          "phone number is required, type it in.\n 4. If Instagram asks you if the "
                                          "last log-in was from you, click the option \"yes, it was me\". By doing "
                                          "this, you allow our service to interact in the name of your "
-                                         "account!\n\nThank you and enjoy our service!" % self.username)
+                                         "account!\n\nThank you and enjoy our service!")
             else:
                 self.send_mail(mail_subject="Welcome to Pink Parrot!",
                                mail_body="Congratulations and welcome to Pink Parrot! We successfully connected to "
                                          "your Instagram account and will now start interacting with your target "
                                          "groups! Now lean back and let us do the work! :)\n\nP.S.: Please make "
                                          "sure your Instagram 2-factor-authorization is switched off, as our service "
-                                         "might have problems logging in to your account. " % self.username)
+                                         "might have problems logging in to your account. ")
 
         except (ConnectionRefusedError, RemoteDisconnected, WebDriverException) as exc:
             return self.try_again(count, exc)
