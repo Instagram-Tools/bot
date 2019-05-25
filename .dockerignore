@@ -12,6 +12,7 @@
 env*
 /docker*
 !docker_quickstart.py
+!docker_tryLogin.py
 
 /.*/
 /logs/
