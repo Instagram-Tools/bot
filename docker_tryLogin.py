@@ -42,7 +42,7 @@ def run(count=0):
         selenium_url = "http://%s:%d/wd/hub" % (os.environ.get('SELENIUM', 'selenium'), 4444)
         bot.set_selenium_remote_session(selenium_url=selenium_url, selenium_driver=selenium_driver(selenium_url))
         bot.try_first_login()
-    except NewConnectionError as exc:
+    except (NewConnectionError, NewConnectionError) as exc:
         bot.logger.warning("Exception in run: %s; try again: count=%s" % (exc, count))
         if count > 3:
             print("Exception in run(): %s \n %s" % (exc, traceback.format_exc()))

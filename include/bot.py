@@ -7,7 +7,7 @@ import traceback
 from http.client import RemoteDisconnected
 from tempfile import gettempdir
 
-from selenium.common.exceptions import NoSuchElementException, WebDriverException
+from selenium.common.exceptions import NoSuchElementException
 from urllib3.exceptions import ProtocolError, MaxRetryError
 
 from instapy import InstaPy
@@ -153,7 +153,7 @@ class Bot(InstaPy):
             if self.aborting:
                 self.send_mail_wrong_login_data()
 
-        except (ConnectionRefusedError, RemoteDisconnected, WebDriverException) as exc:
+        except (ConnectionRefusedError, RemoteDisconnected) as exc:
             return self.try_again(count, exc)
 
     def try_first_login(self, count=0):
@@ -182,7 +182,7 @@ class Bot(InstaPy):
                                          "sure your Instagram 2-factor-authorization is switched off, as our service "
                                          "might have problems logging in to your account. ")
 
-        except (ConnectionRefusedError, RemoteDisconnected, WebDriverException) as exc:
+        except (ConnectionRefusedError, RemoteDisconnected) as exc:
             return self.try_again(count, exc)
 
     def deal_with_like_block(self):
@@ -323,7 +323,7 @@ class Bot(InstaPy):
                     '*' * 70, file_path))
                 # full stacktrace when raising Github issue
                 self.logger.exception(exc)
-            except (ConnectionRefusedError, RemoteDisconnected, WebDriverException, ProtocolError,
+            except (ConnectionRefusedError, RemoteDisconnected, ProtocolError,
                     MaxRetryError, AttributeError) as exc:
                 return self.try_again(count, exc)
             except Exception as exc:

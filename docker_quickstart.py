@@ -3,6 +3,7 @@ import os
 import traceback
 
 from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
 from urllib3.exceptions import NewConnectionError, ProtocolError, MaxRetryError
 
 from include import Bot
@@ -44,7 +45,7 @@ def run(count=0):
         bot.login()
         bot.set_settings()
         bot.act()
-    except NewConnectionError as exc:
+    except (NewConnectionError, WebDriverException) as exc:
         bot.logger.warning("Exception in run: %s; try again: count=%s" % (exc, count))
         if count > 3:
             print("Exception in run(): %s \n %s" % (exc, traceback.format_exc()))
