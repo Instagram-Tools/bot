@@ -249,7 +249,7 @@ class Bot(InstaPy):
                                     max=delimit_commenting_max,
                                     min=delimit_commenting_min)
         self.set_do_comment(enabled=env.get("do_comment_enabled", True) and len(env.get("comments", [])),
-                            percentage=40)
+                            percentage=100)
         self.set_do_follow(enabled=env.get("do_follow_enabled", True),
                            percentage=65,
                            times=env.get("do_follow_times", 1))
