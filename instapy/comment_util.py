@@ -235,9 +235,12 @@ def get_comments_on_post(browser,
                 else:
                     continue
 
-                comment_elem = comment_line.find_elements_by_tag_name(
-                    "span")[0]
-                comment = extract_text_from_element(comment_elem)
+                try:
+                    comment_elem = comment_line.find_elements_by_tag_name(
+                        "span")[0]
+                    comment = extract_text_from_element(comment_elem)
+                except:
+                    comment = None
                 if comment:
                     comments.append(comment)
                 else:
