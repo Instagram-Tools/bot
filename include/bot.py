@@ -282,7 +282,7 @@ class Bot(InstaPy):
                                media=env.get("user_interact_media", None))
         self.set_quota_supervisor(enabled=True,
                                   sleepyhead=True, stochastic_flow=True, notify_me=True,
-                                  peak_likes=(50, None),
+                                  peak_likes=(50, 700),
                                   peak_comments=(50, None),
                                   peak_follows=(40, None),
                                   peak_unfollows=(50, None),
