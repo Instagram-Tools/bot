@@ -249,7 +249,7 @@ class Bot(InstaPy):
                                     max=delimit_commenting_max,
                                     min=delimit_commenting_min)
         self.set_do_comment(enabled=env.get("do_comment_enabled", True) and len(env.get("comments", [])),
-                            percentage=100)
+                            percentage=30)
         self.set_do_follow(enabled=env.get("do_follow_enabled", True),
                            percentage=65,
                            times=env.get("do_follow_times", 1))
@@ -377,7 +377,7 @@ class Bot(InstaPy):
             },
             {
                 "name": "comment_by_locations",
-                "enabled": self.do_comment and env.get("enable_like_by_locations", True) and len(
+                "enabled": False and self.do_comment and env.get("enable_like_by_locations", True) and len(
                     env.get("like_by_locations", [])) > 0,
                 "fun": lambda: self.like_by_locations(
                     locations=shuffle3(env.get("like_by_locations", [])),
