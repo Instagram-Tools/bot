@@ -19,13 +19,11 @@ from selenium.common.exceptions import InvalidElementStateException
 from selenium.common.exceptions import NoSuchElementException
 
 
-def get_comment_input(browser):
-    comment_input = browser.find_elements_by_xpath(
-        '//textarea[@placeholder = "Add a comment…"]')
+def get_comment_input(browser, logger):
+    comment_input = explicit_wait(browser, "VOEL", ['//textarea[@placeholder = "Add a comment…"]', "XPath"], logger, 7, False)
 
-    if len(comment_input) <= 0:
-        comment_input = browser.find_elements_by_xpath(
-            '//input[@placeholder = "Add a comment…"]')
+    if not comment_input:
+        comment_input = explicit_wait(browser, "VOEL", ['//input[@placeholder = "Add a comment…"]', "XPath"], logger, 7, False)
 
     return comment_input
 
@@ -66,28 +64,28 @@ def comment_image(browser, username, comments, blacklist, logger, logfolder):
                        "\t~comment Element was not found")
         return False, "comment Element was not found"
 
-    comment_input = get_comment_input(browser)
+    comment_input = get_comment_input(browser, logger)
 
     try:
-        if len(comment_input) > 0:
+        if comment_input:
             try:
-                comment_input[0].clear()
+                comment_input.clear()
 
-                comment_input = get_comment_input(browser)
+                comment_input = get_comment_input(browser, logger)
                 # below, an extra space is added to force
                 # the input box to update the reactJS core
                 comment_to_be_sent = rand_comment + ' '
 
-                comment_input[0].send_keys(' ')
+                comment_input.send_keys(' ')
                 browser.execute_script(
                     "arguments[0].value = arguments[1];",
-                    comment_input[0], comment_to_be_sent)
-                # comment_input[0].send_keys(comment_to_be_sent)
+                    comment_input, comment_to_be_sent)
+                # comment_input.send_keys(comment_to_be_sent)
                 # below, it also will remove that extra space added above
                 # COS '\b' is a backspace char in ASCII
-                comment_input[0].send_keys('\b')
-                comment_input = get_comment_input(browser)
-                comment_input[0].submit()
+                comment_input.send_keys('\b')
+                comment_input = get_comment_input(browser, logger)
+                comment_input.submit()
                 update_activity('comments')
 
                 if blacklist['enabled'] is True:
