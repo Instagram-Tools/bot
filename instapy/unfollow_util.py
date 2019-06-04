@@ -143,6 +143,7 @@ def get_following_status(browser, track, username, person, person_id, logger,
 
     follow_button_XP = ("//button[text()='Following' or \
                                   text()='Requested' or \
+                                  text()='Message' or \
                                   text()='Follow' or \
                                   text()='Follow Back' or \
                                   text()='Unblock']"
@@ -708,8 +709,8 @@ def follow_user(browser, track, login, user_name, button, blacklist, logger,
             if follow_state is not True:
                 return False, msg
 
-        elif following_status in ["Following", "Requested"]:
-            if following_status == "Following":
+        elif following_status in ["Following", "Message", "Requested"]:
+            if following_status in ["Following", "Message"]:
                 logger.info("--> Already following '{}'!\n".format(user_name))
 
             elif following_status == "Requested":
@@ -1327,8 +1328,10 @@ def unfollow_user(browser, track, username, person, person_id, button,
                                                                person_id,
                                                                logger,
                                                                logfolder)
+        if following_status in ["Message"]:
+            follow_button = explicit_wait(follow_button, "VOEL", ["./../../div[2]//button", "XPath"], logger, 14, False)
 
-        if following_status in ["Following", "Requested"]:
+        if following_status in ["Following", "Message", "Requested"]:
             click_element(browser, follow_button)  # click to unfollow
             sleep(4)  # TODO: use explicit wait here
             confirm_unfollow(browser)
@@ -1516,12 +1519,12 @@ def verify_action(browser, action, track, username, person, person_id, logger,
         button_change = False
 
         if action == "follow":
-            post_action_text_correct = ["Following", "Requested"]
+            post_action_text_correct = ["Following", "Message", "Requested"]
             post_action_text_fail = ["Follow", "Follow Back", "Unblock"]
 
         elif action == "unfollow":
             post_action_text_correct = ["Follow", "Follow Back", "Unblock"]
-            post_action_text_fail = ["Following", "Requested"]
+            post_action_text_fail = ["Following", "Message", "Requested"]
 
         while True:
 
