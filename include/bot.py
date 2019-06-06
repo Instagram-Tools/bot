@@ -377,7 +377,7 @@ class Bot(InstaPy):
             },
             {
                 "name": "comment_by_locations",
-                "enabled": False and self.do_comment and env.get("enable_like_by_locations", True) and len(
+                "enabled": self.do_comment and env.get("enable_like_by_locations", True) and len(
                     env.get("like_by_locations", [])) > 0,
                 "fun": lambda: self.like_by_locations(
                     locations=shuffle3(env.get("like_by_locations", [])),
