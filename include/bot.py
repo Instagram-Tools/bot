@@ -284,7 +284,7 @@ class Bot(InstaPy):
                                   sleepyhead=True, stochastic_flow=True, notify_me=True,
                                   peak_likes=(50, 700),
                                   peak_comments=(50, None),
-                                  peak_follows=(40, None),
+                                  peak_follows=(40, 500),
                                   peak_unfollows=(50, None),
                                   peak_server_calls=(None, None))
         self.logger.warning("SETTINGS: %s" % env)
