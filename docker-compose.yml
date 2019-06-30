@@ -31,7 +31,7 @@ services:
       - .env/.proxy-manager.env
 
   selenium:
-    image: selenium/standalone-chrome:3.141.59
+    image: selenium/standalone-chrome:3.7
     environment:
       - NODE_MAX_INSTANCES=1
       - NODE_MAX_SESSION=1

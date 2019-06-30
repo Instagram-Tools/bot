@@ -20,7 +20,7 @@ from include.proxy import get_proxy
 
 
 def selenium_driver(selenium_url):
-    mobile_emulation = {"deviceName": "iPhone 6/7/8"}
+    mobile_emulation = {"deviceName": "iPhone 5"}
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument('--incognito')
     chrome_options.add_argument("start-maximized")  # open Browser in maximized mode

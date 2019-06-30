@@ -3,7 +3,7 @@ import time
 from tempfile import gettempdir
 
 from include import Bot
-from env_l9jbxqrhlwx9 import insta_username, insta_password, settings
+from env import insta_username, insta_password, settings
 from selenium.common.exceptions import NoSuchElementException
 
 # set headless_browser=True if you want to run InstaPy on a server
@@ -41,4 +41,4 @@ except Exception as exc:
 finally:
     # end the bot session
     print("END")
-    bot.end()
+    # bot.end()
