@@ -161,19 +161,19 @@ class Bot(InstaPy):
             self.logger.warning("Try first login: \n%s\n%s" % (self.username, self.password))
             super().login()
 
+            if self.aborting and os.environ.get("SEC_CODE"):
+                self.aborting = False
+                self.bypass_suspicious_attempt = True
+                super().login()
+
+
             if self.aborting:
+                email = email = os.environ.get("EMAIL", "")
                 self.send_mail(mail_subject="Welcome to Pink Parrot!",
                                mail_body="Unfortunately Pink Parrot wasn\'t able to log-in to your account. Please "
-                                         "help us to solve this problem with one of the following options:\n 1. make "
-                                         "sure your Instagram 2-factor-authorization is switched off, as our service "
-                                         "might have problems logging in to your account. "
-                                         "\n 2. please go to the "
-                                         "settings page and make sure you typed in the right password.\n 3. If you "
-                                         "open Instagram and your "
-                                         "phone number is required, type it in.\n 4. If Instagram asks you if the "
-                                         "last log-in was from you, click the option \"yes, it was me\". By doing "
-                                         "this, you allow our service to interact in the name of your "
-                                         "account!\n\nThank you and enjoy our service!")
+                                         "help us to solve this problem. Go to this url: \n"
+                                         "https://pinkparrot.co/insta_verify/?email=%s&username=%s"
+                                         "\n\nThank you and enjoy our service!" % (email, self.username))
             else:
                 self.send_mail(mail_subject="Welcome to Pink Parrot!",
                                mail_body="Congratulations and welcome to Pink Parrot! We successfully connected to "

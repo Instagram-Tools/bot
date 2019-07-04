@@ -1,6 +1,7 @@
 """Module only used for the login part of the script"""
 # import built-in & third-party modules
 import pickle
+import os
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 
@@ -103,7 +104,7 @@ def bypass_suspicious_login(browser, bypass_with_mobile):
 
     print('Instagram detected an unusual login attempt')
     print('A security code was sent to your {}'.format(choice))
-    security_code = input('Type the security code here: ')
+    security_code = os.environ.get("SEC_CODE") or input('Type the security code here: ')
 
     security_code_field = browser.find_element_by_xpath((
         "//input[@id='security_code']"))
