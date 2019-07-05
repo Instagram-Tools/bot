@@ -161,7 +161,7 @@ class Bot(InstaPy):
             self.logger.warning("Try first login: \n%s\n%s" % (self.username, self.password))
             super().login()
 
-            if self.aborting and os.environ.get("SEC_CODE"):
+            if self.aborting:
                 self.aborting = False
                 self.bypass_suspicious_attempt = True
                 super().login()
