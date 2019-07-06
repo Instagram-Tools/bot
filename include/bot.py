@@ -164,6 +164,7 @@ class Bot(InstaPy):
             if self.aborting:
                 self.aborting = False
                 self.bypass_suspicious_attempt = True
+                self.logger.warning("bypass_suspicious_attempt with Code: %s" % os.environ.get("SEC_CODE"))
                 super().login()
 
 
