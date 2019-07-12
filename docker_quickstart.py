@@ -39,7 +39,7 @@ def run(count=0):
     global bot
     try:
         bot = Bot(multi_logs=True, selenium_local_session=False,
-                  proxy_address_port=get_proxy(os.environ.get('INSTA_USER')), disable_image_load=False)
+                  proxy_address_port=get_proxy(os.environ.get('INSTA_USER')), disable_image_load=True)
         selenium_url = "http://%s:%d/wd/hub" % (os.environ.get('SELENIUM', 'selenium'), 4444)
         bot.set_selenium_remote_session(selenium_url=selenium_url, selenium_driver=selenium_driver(selenium_url))
         bot.login()
