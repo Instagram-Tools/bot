@@ -169,7 +169,7 @@ class Bot(InstaPy):
 
 
             if self.aborting:
-                email = email = os.environ.get("EMAIL", "")
+                email = os.environ.get("EMAIL", "")
                 self.send_mail(mail_subject="Welcome to Pink Parrot!",
                                mail_body="Unfortunately Pink Parrot wasn\'t able to log-in to your account. Please "
                                          "help us to solve this problem. Go to this url: \n"
