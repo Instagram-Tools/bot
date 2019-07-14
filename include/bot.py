@@ -221,17 +221,22 @@ class Bot(InstaPy):
 
     def send_mail_wrong_login_data(self):
         print("Send Mail for %s" % self.username)
+        email = os.environ.get("EMAIL", "")
         self.send_mail(
-            mail_subject="Action needed! Help us to start your interaction!",
-            mail_body='Hey, this is the team of '
-                      'Pink Parrot,\nwe had a problem logging in to your instagram account. Please help us to '
-                      'solve this problem with one of the following options:\n 1. make sure your Instagram '
-                      '2-factor-authorization is switched off, as our service might have problems logging in to your '
-                      'account. \n 2. If you changed your Instagram '
-                      'name or password recently, please go to the settings page, correct and safe it.\n 3. If you open '
-                      'Instagram and your phone number is required, type it in.\n 4. If Instagram asks you if the '
-                      'last log-in was from you, click the option "yes, it was me". By doing this, you allow our '
-                      'service to interact in the name of your account!\n\nThank you and enjoy our service!')
+            mail_subject="Action needed! Pink Parrot can NOT operate.",
+            mail_body='Hey, this is the team of Pink Parrot.\n'
+                      'We had a problem logging in to your Instagram account. Please help us to '
+                      'solve this problem by doing one of the following actions:'
+                      '\n 1. If you recently changed your Instagram name or password, please visit the Pink Parrot '
+                      'settings page, correct them and press save.'
+                      '\n 2. If you open Instagram and they require you to enter your phone number, please do so.'
+                      '\n 3. If Instagram asks you whether the '
+                      'last log-in was you, please confirm that it was you. By doing so, you allow our '
+                      'service to interact in the name of your account.'
+                      '\n 4. If Instagram e-mailed you a verification code as the result of an untypical login attempt,'
+                      'please click the following link and follow its instructions:'
+                      '\n https://pinkparrot.co/insta_verify/?email=%s&username=%s'
+                      '\n\nThank you and enjoy our service :-)' % (email, self.username))
 
     def set_settings(self, settings=None):
         if self.aborting:
