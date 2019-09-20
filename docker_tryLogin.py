@@ -1,6 +1,7 @@
 import json
 import os
 import traceback
+import logging
 
 from selenium import webdriver
 from urllib3.exceptions import NewConnectionError, ProtocolError, MaxRetryError
@@ -40,7 +41,7 @@ def run(count=0):
         bot = Bot(multi_logs=True, selenium_local_session=False,
                   proxy_address_port=get_proxy(os.environ.get('INSTA_USER')), disable_image_load=False)
         selenium_url = "http://%s:%d/wd/hub" % (os.environ.get('SELENIUM', 'selenium'), 4444)
-        bot.set_selenium_remote_session(selenium_url=selenium_url, selenium_driver=selenium_driver(selenium_url))
+        bot.set_selenium_remote_session(logger=logging.getLogger(), selenium_url=selenium_url, selenium_driver=selenium_driver(selenium_url))
         bot.try_first_login()
     except (NewConnectionError, NewConnectionError) as exc:
         bot.logger.warning("Exception in run: %s; try again: count=%s" % (exc, count))
