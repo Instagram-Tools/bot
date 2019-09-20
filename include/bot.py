@@ -250,14 +250,14 @@ class Bot(InstaPy):
         delimit_liking_max = env.get('delimit_liking_max')
         delimit_liking_min = env.get('delimit_liking_min')
         self.set_delimit_liking(enabled=delimit_liking_max or delimit_liking_min,
-                                max=delimit_liking_max,
-                                min=delimit_liking_min)
+                                max_likes=delimit_liking_max,
+                                min_likes=delimit_liking_min)
 
         delimit_commenting_max = env.get('delimit_commenting_max')
         delimit_commenting_min = env.get('delimit_commenting_min')
         self.set_delimit_commenting(enabled=delimit_commenting_max or delimit_commenting_min,
-                                    max=delimit_commenting_max,
-                                    min=delimit_commenting_min)
+                                    max_comments=delimit_commenting_max,
+                                    min_comments=delimit_commenting_min)
         self.set_do_comment(enabled=env.get("do_comment_enabled", True) and len(env.get("comments", [])),
                             percentage=30)
         self.set_do_follow(enabled=env.get("do_follow_enabled", True),
@@ -292,11 +292,15 @@ class Bot(InstaPy):
                                media=env.get("user_interact_media", None))
         self.set_quota_supervisor(enabled=True,
                                   sleepyhead=True, stochastic_flow=True, notify_me=True,
-                                  peak_likes=(50, 700),
-                                  peak_comments=(50, None),
-                                  peak_follows=(40, 500),
-                                  peak_unfollows=(50, None),
-                                  peak_server_calls=(None, None))
+                                  peak_likes_hourly=50,
+                                  peak_likes_daily=700,
+                                  peak_comments_hourly=50,
+                                  peak_comments_daily=None,
+                                  peak_follows_hourly=40,
+                                  peak_follows_daily=500,
+                                  peak_unfollows_hourly=50,
+                                  peak_server_calls_hourly=None,
+                                  peak_server_calls_daily=None)
         self.logger.warning("SETTINGS: %s" % env)
 
     def encode_comments(self, comments):
@@ -422,8 +426,8 @@ class Bot(InstaPy):
                 "enabled": env.get("enable_unfollow", True),
                 "fun": lambda: self.unfollow_users(
                     amount=random.randint(8, 12),
-                    # customList=(False, [], "all"),
-                    InstapyFollowed=(True, "all"),
+                    instapy_followed_enabled=True,
+                    instapy_followed_param="all",
                     # 'all' or 'nonfollowers'
                     # nonFollowers=False,
                     # allFollowing=False,
