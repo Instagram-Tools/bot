@@ -693,7 +693,11 @@ def check_link(
             )
 
     image_text_lower = [x.lower() for x in image_text]
-    ignore_if_contains_lower = [x.lower() for x in ignore_if_contains]
+    try:
+        ignore_if_contains_lower = [x.lower() for x in ignore_if_contains]
+    except:
+        ignore_if_contains_lower = []
+
     if any((word in image_text_lower for word in ignore_if_contains_lower)):
         return False, user_name, is_video, "None", "Pass"
 
