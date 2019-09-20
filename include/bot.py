@@ -140,9 +140,7 @@ class Bot(InstaPy):
                          proxy_chrome_extension=proxy_chrome_extension,
                          proxy_port=proxy_port,
                          disable_image_load=disable_image_load,
-                         bypass_suspicious_attempt=env.get("bypass_suspicious_attempt",
-                                                           bypass_suspicious_attempt) == "True",
-                         bypass_with_mobile=env.get("bypass_with_mobile", bypass_with_mobile) == "True",
+                         bypass_security_challenge_using='sms',
                          multi_logs=multi_logs)
         self.logger.info("Settings: %s" % self.settings)
 

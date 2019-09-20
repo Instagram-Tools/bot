@@ -164,8 +164,8 @@ def check_browser(browser, logfolder, logger, proxy_address):
     # check connection status
     try:
         logger.info("-- Connection Checklist [1/3] (Internet Connection Status)")
-        browser.get("view-source:https://api.myip.com/")
-        pre = browser.find_element_by_tag_name("pre").text
+        browser.get("https://api.myip.com/")
+        pre = browser.find_element_by_tag_name("body").text
         current_ip_info = json.loads(pre)
         if (
             proxy_address is not None
@@ -196,8 +196,8 @@ def check_browser(browser, logfolder, logger, proxy_address):
                 logfolder=logfolder,
                 logger=logger,
             )
-    except Exception:
-        logger.warn("- Internet Connection Status: error")
+    except Exception as e:
+        logger.warn("- Internet Connection Status: error", e)
         update_activity(
             browser,
             action=None,

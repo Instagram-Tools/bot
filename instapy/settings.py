@@ -8,11 +8,12 @@ Vice verse, it'd produce circular dependent imports.
 from sys import platform
 from os import environ as environmental_variables
 from os.path import join as join_path
+from os.path import exists as path_exists
 
 
 WORKSPACE = {
     "name": "InstaPy",
-    "path": environmental_variables.get("INSTAPY_WORKSPACE"),
+    "path": environmental_variables.get("INSTAPY_WORKSPACE", environmental_variables.get("HOME")+"/InstaPy"),
 }
 OS_ENV = (
     "windows" if platform == "win32" else "osx" if platform == "darwin" else "linux"
@@ -36,6 +37,14 @@ class Settings:
     # locations
     log_location = localize_path("logs")
     database_location = localize_path("db", "instapy.db")
+    specific_chromedriver = "chromedriver_{}".format(OS_ENV)
+    chromedriver_location = localize_path("assets", specific_chromedriver)
+    if (not chromedriver_location
+            or not path_exists(chromedriver_location)):
+        chromedriver_location = localize_path("assets", "chromedriver")
+
+    # minimum supported version of chromedriver
+    chromedriver_min_version = 2.36
 
     # set a logger cache outside the InstaPy object to avoid
     # re-instantiation issues
