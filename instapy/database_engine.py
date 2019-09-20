@@ -34,6 +34,12 @@ SQL_CREATE_SHARE_WITH_PODS_RESTRICTION_TABLE = """
         `postid` TEXT NOT NULL,
         `times` TINYINT UNSIGNED NOT NULL);"""
 
+SQL_CREATE_COMMENT_RESTRICTION_TABLE = """
+    CREATE TABLE IF NOT EXISTS `commentRestriction` (
+        `profile_id` INTEGER REFERENCES `profiles` (id),
+        `postid` TEXT NOT NULL,
+        `times` TINYINT UNSIGNED NOT NULL);"""
+
 SQL_CREATE_ACCOUNTS_PROGRESS_TABLE = """
     CREATE TABLE IF NOT EXISTS `accountsProgress` (
         `profile_id` INTEGER NOT NULL,
@@ -47,19 +53,20 @@ SQL_CREATE_ACCOUNTS_PROGRESS_TABLE = """
 
 
 def get_database(make=False):
-    address = Settings.database_location
     logger = Settings.logger
     credentials = Settings.profile
 
-    id, name = credentials["id"], credentials['name']
+    profile_id, name = credentials["id"], credentials["name"]
     address = validate_database_address()
 
     if not os.path.isfile(address) or make:
         create_database(address, logger, name)
 
-    id = get_profile(name, address, logger) if id is None or make else id
+    profile_id = (
+        get_profile(name, address, logger) if profile_id is None or make else profile_id
+    )
 
-    return address, id
+    return address, profile_id
 
 
 def create_database(address, logger, name):
@@ -69,18 +76,26 @@ def create_database(address, logger, name):
             connection.row_factory = sqlite3.Row
             cursor = connection.cursor()
 
-            create_tables(cursor, ["profiles",
-                                   "recordActivity",
-                                   "followRestriction",
-                                   "shareWithPodsRestriction",
-                                   "accountsProgress"])
+            create_tables(
+                cursor,
+                [
+                    "profiles",
+                    "recordActivity",
+                    "followRestriction",
+                    "shareWithPodsRestriction",
+                    "commentRestriction",
+                    "accountsProgress",
+                ],
+            )
 
             connection.commit()
 
     except Exception as exc:
         logger.warning(
-            "Wah! Error occurred while getting a DB for '{}':\n\t{}"
-            .format(name, str(exc).encode("utf-8")))
+            "Wah! Error occurred while getting a DB for '{}':\n\t{}".format(
+                name, str(exc).encode("utf-8")
+            )
+        )
 
     finally:
         if connection:
@@ -100,6 +115,9 @@ def create_tables(cursor, tables):
 
     if "shareWithPodsRestriction" in tables:
         cursor.execute(SQL_CREATE_SHARE_WITH_PODS_RESTRICTION_TABLE)
+
+    if "commentRestriction" in tables:
+        cursor.execute(SQL_CREATE_COMMENT_RESTRICTION_TABLE)
 
     if "accountsProgress" in tables:
         cursor.execute(SQL_CREATE_ACCOUNTS_PROGRESS_TABLE)
@@ -137,19 +155,21 @@ def get_profile(name, address, logger):
                 profile = select_profile_by_username(cursor, name)
     except Exception as exc:
         logger.warning(
-            "Heeh! Error occurred while getting a DB profile for '{}':\n\t{}"
-            .format(name, str(exc).encode("utf-8")))
+            "Heeh! Error occurred while getting a DB profile for '{}':\n\t{}".format(
+                name, str(exc).encode("utf-8")
+            )
+        )
     finally:
         if conn:
             # close the open connection
             conn.close()
 
     profile = dict(profile)
-    id = profile["id"]
+    profile_id = profile["id"]
     # assign the id to its child in `Settings` class
-    Settings.profile["id"] = id
+    Settings.profile["id"] = profile_id
 
-    return id
+    return profile_id
 
 
 def add_profile(conn, cursor, name):

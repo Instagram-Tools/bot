@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://i.imgur.com/sJzfZsL.jpg" width="150">
+  <img src="https://i.imgur.com/sJzfZsL.jpg" width="154">
   <h1 align="center">InstaPy</h1>
   <p align="center">Tooling that <b>automates</b> your social media interactions to “farm” Likes, Comments, and Followers on Instagram
 Implemented in Python using the Selenium module.<p>
@@ -37,14 +37,41 @@ Implemented in Python using the Selenium module.<p>
 **Offical Video Guide: [Get it here!](https://www.udemy.com/instapy-guide/?couponCode=INSTAPY_OFFICIAL)**
 
 
+## Table of contents
+- [How to install and run InstaPy](#installation)
+  * [Installing InstaPy](#installation)
+  * [Running Instapy](#running-instapy)
+  * [Updating InstaPy](#updating-instapy)
+  * [Guides and tutorials](#guides)
+    * [Video tutorials](#video-tutorials)
+    * [Written guides](#written-guides)
+- [Externals and additionals tools](#external-tools)
+  * [Dashboard](#dashboard)
+  * [Web Interface](#gui)
+- [Running InstaPy on Docker](#docker)
+- [Documentation of all Instapy's features](#documentation)
+- [Support](#support)
+- [Credits](#credits)
+- [Disclaimer](#disclaimer)
+
 ## **Installation**
 ```elm
 pip install instapy
 ```
+__Important:__ depending on your system, make sure to use `pip3` and `python3` instead.
+
+
 **That's it! 🚀**   
 If you're on Ubuntu, read the specific guide on [Installing on Ubuntu (64-Bit)](https://github.com/InstaPy/instapy-docs/blob/master/How_Tos/How_To_DO_Ubuntu_on_Digital_Ocean.md). If you're on a Raspberry Pi, read the [Installing on RaspberryPi](https://github.com/InstaPy/instapy-docs/blob/master/How_Tos/How_to_Raspberry.md) guide instead.
 
-Download a **[quickstart](https://github.com/InstaPy/instapy-quickstart)** script of your choice to your machine. It tells InstaPy how it should run, and this is the file you'll be working on when changing how InstaPy works.
+>If you would like to install a specific version of Instapy you may do so with:
+>```elm
+>pip install instapy==0.1.1
+>```
+
+#### Running Instapy
+
+To run InstaPy, you'll need to run the **[quickstart](https://github.com/InstaPy/instapy-quickstart)** script you've just downloaded.
 
 - [Here is the easiest **quickstart** script you can use](https://github.com/InstaPy/instapy-quickstart/blob/master/quickstart.py)  
 
@@ -52,20 +79,20 @@ Download a **[quickstart](https://github.com/InstaPy/instapy-quickstart)** scrip
 
 You can put in your account details now by passing the username and password parameters to the `InstaPy()` function in your **quickstart** script, like so: 
 ```python
-InstaPy(username="abc", 
-        password="123")
+InstaPy(username="abcd", 
+        password="1234")
 ```
 Or you can [pass them using the Command Line Interface (CLI)](#pass-arguments-by-cli).
 
 > If you've used _InstaPy_ before installing it by **pip**, you have to move your _old_ data to the new **workspace** folder for once.
 [Read how to do this here](./DOCUMENTATION.md#migrating-your-data-to-the-workspace-folder).
 
-To run InstaPy, you'll need to run the **[quickstart](https://github.com/InstaPy/instapy-quickstart)** script you've just downloaded.
+Once you have your **quickstart** script configured you can execute the script with the following commands.
 
 ```elm
 python quickstart.py
 -- or
-python quickstart.py --username abc --password 123
+python quickstart.py --username abcd --password 1234
 ```
 
 InstaPy will now open a browser window and start working.
@@ -77,6 +104,7 @@ Or add the `headless_browser=True` parameter to the `InstaPy(headless_browser=Tr
 ```elm
 pip install instapy -U
 ```
+
 
 ## Guides
 
@@ -97,11 +125,17 @@ pip install instapy -U
 **[How to RaspberryPi](https://github.com/InstaPy/instapy-docs/blob/master/How_Tos/How_to_Raspberry.md) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**
 
 
-#### External Tools:
+## External Tools:
 
-**[InstaPy Dashboard](https://github.com/converge/instapy-dashboard)**
+**[InstaPy Dashboard](https://github.com/converge/instapy-dashboard)**<a name="dashboard" />
 > InstaPy Dashboard is an Open Source project developed by [@converge](https://github.com/converge/) to visualize Instagram accounts progress and real-time InstaPy logs on the browser.
 
+**[InstaPy GUI](https://github.com/breuerfelix/instapy-gui)**<a name="gui" />
+> InstaPy GUI is a Graphical User Interface including some useful Analytics developed by [@breuerfelix](https://github.com/breuerfelix).
+
+
+## Docker
+All information on how to use InstaPy with Docker can be found in the [instapy-docker](https://github.com/InstaPy/instapy-docker) repository.
 
 
 ## Documentation
@@ -110,17 +144,17 @@ A list of **all features** of InstaPy [can be found here](./DOCUMENTATION.md).
 
 ## Support
 
-### Do you need help ?
+### Do you need help?
 If you should encounter any issue, please first [search for similar issues](https://github.com/timgrossmann/InstaPy/issues) and only if you can't find any, create a new issue or use the [discord channel](https://discord.gg/FDETsht) for help.
 
 <a href="https://discord.gg/FDETsht">
   <img hspace="3" alt="Discord channel" src="https://camo.githubusercontent.com/e4a739df27356a78e9cae2e2dda642d118567e7c/68747470733a2f2f737465616d63646e2d612e616b616d616968642e6e65742f737465616d636f6d6d756e6974792f7075626c69632f696d616765732f636c616e732f32373039303534312f386464356339303766326130656563623733646336613437373666633961323538373865626364642e706e67" width=214/>
 </a>
 
-### Do you want to support us ?
+### Do you want to support us?
 
 <a href="https://opencollective.com/instapy/donate" target="_blank">
-  <img align="left" hspace="10" src="https://opencollective.com/instapy/contribute/button@2x.png?color=blue" width=300 />
+  <img align="left" hspace="11" src="https://opencollective.com/instapy/contribute/button@2x.png?color=blue" width=300 />
 </a>
 
 <a href="https://www.paypal.me/supportInstaPy">
@@ -153,4 +187,4 @@ Support this project by becoming a sponsor. Your logo will show up here with a l
 
 ---
 
-> **Disclaimer**: Please Note that this is a research project. I am by no means responsible for any usage of this tool. Use on your own behalf. I'm also not responsible if your accounts get banned due to extensive use of this tool.
+> **Disclaimer**<a name="disclaimer" />: Please Note that this is a research project. I am by no means responsible for any usage of this tool. Use on your own behalf. I'm also not responsible if your accounts get banned due to extensive use of this tool.

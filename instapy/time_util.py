@@ -2,11 +2,13 @@
 from time import sleep as original_sleep
 from datetime import datetime
 from random import gauss
+from random import uniform
 
 # Amount of variance to be introduced
 # i.e. random time will be in the range: TIME +/- STDEV %
 STDEV = 0.5
 sleep_percentage = 1
+sleep_percentage = sleep_percentage * uniform(0.9, 1.1)
 
 
 def randomize_time(mean):
@@ -23,6 +25,7 @@ def randomize_time(mean):
 def set_sleep_percentage(percentage):
     global sleep_percentage
     sleep_percentage = percentage / 100
+    sleep_percentage = sleep_percentage * uniform(0.9, 1.1)
 
 
 def sleep(t, custom_percentage=None):
@@ -46,16 +49,13 @@ def get_time(labels):
 
     for label in labels:
         if label == "this_minute":
-            results.append(datetime.now()
-                           .strftime("%M"))
+            results.append(datetime.now().strftime("%M"))
 
         if label == "this_hour":
-            results.append(datetime.now()
-                           .strftime("%H"))
+            results.append(datetime.now().strftime("%H"))
 
         elif label == "today":
-            results.append(datetime.now()
-                           .strftime("%Y-%m-%d"))
+            results.append(datetime.now().strftime("%Y-%m-%d"))
 
     results = results if len(results) > 1 else results[0]
 

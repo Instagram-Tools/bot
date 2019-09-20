@@ -21,11 +21,11 @@ bot = Bot(username=insta_username,
           env=settings)
 
 try:
-    bot.login()
+    bot.try_first_login()
 
-    bot.set_settings()
-
-    bot.act()
+    # bot.set_settings()
+    #
+    # bot.act()
 
 except Exception as exc:
     # if changes to IG layout, upload the file to help us locate the change

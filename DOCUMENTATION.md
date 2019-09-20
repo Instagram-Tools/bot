@@ -27,7 +27,7 @@
   - [Custom action delays](#custom-action-delays)
   
  <br />
-  
+
 - **[Actions](#actions)**
   - [Like by Tags](#like-by-tags)
   - [Like by Feeds](#like-by-feeds)
@@ -50,27 +50,28 @@
   - [Interact by Comments](#interact-by-comments)
   - [Accept pending follow requests](#accept-pending-follow-requests)
   - [Remove outgoing follow requests](#remove-outgoing-follow-requests)
+  - [Skip based on Profile Bio](#skip-based-on-profile-bio)
   - [InstaPy Pods](#instapy-pods)
+  - [InstaPy Stories](#instapy-stories)
   
  <br />
-  
+
 - **[Third Party features](#third-party-features)**
   - [Clarifai ImageAPI](#clarifai-imageapi)
   - [Text Analytics](#text-analytics)
     - [Yandex Translate API](#yandex-translate-api)
     - [MeaningCloud Sentiment Analysis API](#meaningcloud-sentiment-analysis-api)
-
+  - [Integration with Telegram](#telegram-integration)
  <br />
 
 - **[Instance Settings](#instance-settings)**
   - [Running on a Headless Browser](#running-on-a-headless-browser)
   - [Bypass Suspicious Login Attempt](#bypass-suspicious-login-attempt)
-  - [Use a proxy (Chrome)](#use-a-proxy-chrome)
-  - [Switching to Firefox](#switching-to-firefox)
-  - [Use a proxy (Firefox)](#use-a-proxy-firefox)
+  - [Use a proxy](#use-a-proxy)
+  - [Running in threads](#running-in-threads)
   
  <br />
-  
+
 - **[Relationship tools](#relationship-tools)**
   - [Grab Followers of a user](#grab-followers-of-a-user)
   - [Grab Following of a user](#grab-following-of-a-user)
@@ -87,21 +88,20 @@
   - [Schedule](#schedule)  
   
  <br />
-  
+
 - **[Additional Information](#additional-information)**
   - [Advanced Installation](#advanced-installation)
   - [Workspace folders](#workspace-folders)
   - [Pass arguments by CLI](#pass-arguments-by-cli)
-  - [Docker](#docker)
   - [Extensions](#extensions)
-  - [Custom chromedriver version](#custom-chromedriver-version)
+  - [Custom geckodriver](#custom-geckodriver)
   - [Using one of the templates](#using-one-of-the-templates)
   - [How not to be banned](#how-not-to-be-banned)
   - [Disable Image Loading](#disable-image-loading)
-  - [Using Multiple Chromedrivers](#using-multiple-chromedrivers)
-  - [Changing DB or Chromedriver locations](#changing-db-or-chromedriver-locations)
+  - [Changing DB location](#changing-db-location)
   - [Split SQLite DB by Username](#split-sqlite-by-username)
   - [How to avoid _python_ & pip confusion](#how-to-avoid-python--pip-confusion)
+  - [Dealing with Selenium Common Exception Issues](#dealing-with-selenium-common-exception-issues)
 
 ---
 
@@ -185,7 +185,7 @@ session.like_by_tags(amount=10, use_smart_hashtags=True)
 
  session.set_smart_location_hashtags(['204517928/chicago-illinois', '213570652/nagoya-shi-aichi-japan'], radius=20, limit=10)
  session.like_by_tags(amount=10, use_smart_location_hashtags=True)
- ```
+  ```
 
   #### Parameters
  `radius`: Radius around the location in Miles   
@@ -198,33 +198,26 @@ session.like_by_tags(amount=10, use_smart_hashtags=True)
 
 ```python
 session.set_quota_supervisor(enabled=True, sleep_after=["likes", "comments_d", "follows", "unfollows", "server_calls_h"], sleepyhead=True, stochastic_flow=True, notify_me=True,
-                              peak_likes=(57, 585),
-                               peak_comments=(21, 182),
-                                peak_follows=(48, None),
-                                 peak_unfollows=(35, 402),
-                                  peak_server_calls=(None, 4700))
+                              peak_likes_hourly=57,
+                              peak_likes_daily=585,
+                               peak_comments_hourly=21,
+                               peak_comments_daily=182,
+                                peak_follows_hourly=48,
+                                peak_follows_daily=None,
+                                 peak_unfollows_hourly=35,
+                                 peak_unfollows_daily=402,
+                                  peak_server_calls_hourly=None,
+                                  peak_server_calls_daily=4700)
 ```
 #### Parameters:
 `enabled`: put `True` to **activate** or `False` to **deactivate** supervising any time
 
-
-`peak_likes`: the **first value** indicates the **hourly** and the **second** indicates the **daily** peak value  
-+ _e.g._ in `peak_likes=(66, 700)` - `66` is the **hourly**, and `700` is the **daily** peak value  
-_such as_,
-    + `peak_server_calls=(500, 4745)` will _supervise_ server calls with **hourly** peak of `500` and **daily** peak of `4745`
-    + `peak_likes=(70, None)` will _supervise_ only hourly likes with the peak of `70`
-    + `peak_unfollows=(None, 350)` will _supervise_ only daily unfollows with the peak of `350`
-    + `peak_comments=(None, None)` will not _supervise_ comments at all
 
 If you **don't want to** _supervise_ likes **at all**, simply **remove** `peak_likes` parameter **OR** use `peak_likes=(None, None)`.  
 _Once_ likes **reach** peak, it will **jump** every other like, _yet_, **will do all available actions** (_e.g. follow or unfollow_).  
 + Only `server calls` **does not** jump, it exits the program **once reaches the peak**.
 > Although, you can put server calls to sleep once reaches peak, read `sleep_after` parameter.  
 + _Every action_ will be **jumped** separately after reaching it's peak, _except_ comments. Cos commenting without a like isn't welcomed that's why as like peak is reached, it will jump comments, too.
-
-**Notice**: `peak_likes=(50)` will not work, use `peak_likes=(50, None)` to supervise **hourly** peak and `peak_likes=(None, 50)` for **daily** peak.  
->_Same **form**_ **applies** to **all** actions. Just specify the peaks in desired intervals- **hourly** or **daily** you want to _supervise_.
-
 
 `sleep_after`: is used to put **InstaPy** to _sleep_ **after reaching peak** _rather than_ **jumping the action** (_or exiting- **for** server calls_)  
 _Any action_ can be included `["likes", "comments", "follows", "unfollows", "server_calls"]`.  
@@ -251,7 +244,7 @@ _such as_,
 #### Mini-Examples:
 + Claudio has written **a new 😊 quickstart** script where it **mostly** _put likes and comments_. He wants the program to **comment safely** cos he is _afraid of exceeding_ **hourly** & **daily** comment limits,
 ```python
-session.set_quota_supervisor(enabled=True, peak_comments=(21, 240))
+session.set_quota_supervisor(enabled=True, peak_comments_daily=21, peak_comments_hourly=240)
 ```
 >_That's it! When it reaches the comments peak, it will just jump all of the comments and will again continue to put comments when is available [in the next  hour/day]_.
 
@@ -259,7 +252,7 @@ session.set_quota_supervisor(enabled=True, peak_comments=(21, 240))
     + **wants** the program to **sleep after** reaching **hourly** _server calls_ peak: **adds** `"server_calls_h"` into `sleep_after` parameter
     + **wants** the program to **wake up** _a little bit later_ than real sleep time [once reaches the peaks]: **uses** `sleepyhead=True` parameter
 ```python
-session.set_quota_supervisor(enabled=True, peak_server_calls=(490, None), sleep_after=["server_calls_h"], sleepyhead=True)
+session.set_quota_supervisor(enabled=True, peak_server_calls_daily=490, sleep_after=["server_calls_h"], sleepyhead=True)
 ```
 >_It will sleep after **hourly** server calls reaches its peak given - `490` and **never allow** one more extra request to the server out of the peak and **wake up** when **new hour** comes in WHILST **daily** server calls **will not be** supervised at all- as Alicia wishes_.
 
@@ -268,7 +261,7 @@ session.set_quota_supervisor(enabled=True, peak_server_calls=(490, None), sleep_
     + **wants** QS to _randomize_ his `pre-defined` peak values [at close range] each new _hour_/_day_: **uses** `stochastic_flow=True` parameter
     + **wants** the program to sleep after reaching **hourly** _follow_ peak and **daily** _unfollow_ peak: **adds** `"follows_h"` and `"unfollows_d"`into `sleep_after` parameter
 ```python
-session.set_quota_supervisor(enabled=True, peak_follows=(56, 660), peak_unfollows=(49, 550), sleep_after=["follows_h", "unfollows_d"], stochastic_flow=True, notify_me=True)
+session.set_quota_supervisor(enabled=True, peak_follows_daily=560, peak_follows_hourly=56, peak_unfollows_hourly=49, peak_unfollows_daily=550, sleep_after=["follows_h", "unfollows_d"], stochastic_flow=True, notify_me=True)
 ```
 
 ---
@@ -334,10 +327,11 @@ will like the image if **any** of those words are in there
 ### Mandatory Language
 
 ```python
-session.set_mandatory_language(enabled=True, character_set='LATIN')
+session.set_mandatory_language(enabled=True, character_set=['LATIN'])
+session.set_mandatory_language(enabled=True, character_set=['LATIN', 'CYRILLIC'])
 ```
 
-`.set_mandatory_language` restrict the interactions, liking and following if any character of the description is outside of the character set selected (the location is not included and non-alphabetic characters are ignored). For example if you choose `LATIN`, any character in Cyrillic will flag the post as inappropriate.
+`.set_mandatory_language` restrict the interactions, liking and following if any character of the description is outside of the character sets you selected (the location is not included and non-alphabetic characters are ignored). For example if you choose `LATIN`, any character in Cyrillic will flag the post as inappropriate. If you choose 'LATIN' and 'CYRILLIC', any other character sets will flag the post as inappropriate as well.
 
 * Available character sets: `LATIN`,  `GREEK`, `CYRILLIC`, `ARABIC`, `HEBREW`, `CJK`, `HANGUL`, `HIRAGANA`, `KATAKANA` and `THAI`
 
@@ -468,20 +462,20 @@ This will skip all business accounts except the ones that have a category that m
 ### Liking based on the number of existing likes a post has
 ##### This is used to check the number of existing likes a post has and if it _either_ **exceed** the _maximum_ value set OR **does not pass** the _minimum_ value set then it will not like that post
 ```python
-session.set_delimit_liking(enabled=True, max=1005, min=20)
+session.set_delimit_liking(enabled=True, max_likes=1005, min_likes=20)
 ```
 Use `enabled=True` to **activate** and `enabled=False` to **deactivate** it, _any time_  
 `max` is the maximum number of likes to compare  
 `min` is the minimum number of likes to compare
 > You can use **both** _max_ & _min_ values OR **one of them** _as you desire_, just **put** the value of `None` _to the one_ you **don't want to** check for., _e.g._,
 ```python
-session.set_delimit_liking(enabled=True, max=242, min=None)
+session.set_delimit_liking(enabled=True, max_likes=242, min_likes=None)
 ```
 _at this configuration above, it **will not** check number of the existing likes against **minimum** value_
 
 * **_Example_**:  
 ```python
-session.set_delimit_liking(enabled=True, max=500, min=7)
+session.set_delimit_liking(enabled=True, max_likes=500, min_likes=7)
 ```
 _**Now**, if a post has more existing likes than maximum value of `500`, then it will not like that post,
 **similarly**, if that post has less existing likes than the minimum value of `7`, then it will not like that post..._
@@ -490,22 +484,22 @@ _**Now**, if a post has more existing likes than maximum value of `500`, then it
 ### Commenting based on the number of existing comments a post has
 ##### This is used to check the number of existing comments a post has and if it _either_ **exceed** the _maximum_ value set OR **does not pass** the _minimum_ value set then it will not comment on that post
 ```python
-session.set_delimit_commenting(enabled=True, max=32, min=0)
+session.set_delimit_commenting(enabled=True, max_comments=32, min_comments=0)
 ```
 Use `enabled=True` to **activate** and `enabled=False` to **deactivate** it, _any time_  
 `max` is the maximum number of comments to compare  
 `min` is the minimum number of comments to compare
 > You can use **both** _max_ & _min_ values OR **one of them** _as you desire_, just **leave** it out or **put** it to `None` _to the one_ you **don't want to** check for., _e.g._,
 ```python
-session.set_delimit_commenting(enabled=True, min=4)
+session.set_delimit_commenting(enabled=True, min_comments=4)
 # or
-session.set_delimit_commenting(enabled=True, max=None, min=4)
+session.set_delimit_commenting(enabled=True, max_comments=None, min_comments=4)
 ```
 _at this configuration above, it **will not** check number of the existing comments against **maximum** value_
 
 * **_Example_**:  
 ```python
-session.set_delimit_commenting(enabled=True, max=70, min=5)
+session.set_delimit_commenting(enabled=True, max_comments=70, min_comments=5)
 ```
 _**Now**, if a post has more comments than the maximum value of `70`, then it will not comment on that post,
 **similarly**, if that post has less comments than the minimum value of `5`, then it will not comment on that post..._
@@ -589,14 +583,15 @@ Will skip only users that have more than 1000 posts in their feed
 
 
 ### Custom action delays
-###### _After doing each action- like, comment, follow or unfollow, there is a sleep delay to provide smooth activity flow_.  
+###### _After doing each action- like, comment, follow, unfollow or story, there is a sleep delay to provide smooth activity flow_.  
 ##### But you can set a _custom_ sleep delay for each action yourself by using the `set_action_delays` setting!
 ```python
 session.set_action_delays(enabled=True,
                            like=3,
                            comment=5,
                            follow=4.17,
-                           unfollow=28)
+                           unfollow=28,
+                           story=10)
 ```
 _Now it will sleep `3` seconds **after putting every single like**, `5` seconds for every single comment and similarly for the others.._
 
@@ -606,26 +601,26 @@ You can also customize the sleep delay of _e.g._ **only the likes**:
 session.set_action_delays(enabled=True, like=3)
 ```
 
-##### Wanna go smarter? - use `random_range(min, max)`  
+##### Wanna go smarter? - use `random_range_from` and `random_range_to`  
 By just enabling `randomize` parameter, you can **enjoy** having random sleep delays at desired range, e.g.,
 ```python
-session.set_action_delays(enabled=True, like=5.2, randomize=True, random_range=(70, 140))
+session.set_action_delays(enabled=True, like=5.2, randomize=True, random_range_from=70, random_range_to=140)
 ```
 _There, it will have a **random sleep delay between** `3.64` (_`70`% of `5.2`_) and `7.28`(_`140`% of `5.2`_) seconds _each time_ **after putting a like**._  
-+ You can also put **only the max range** as- `random_range=(None, 200)`  
++ You can also put **only the max range** as- `random_range_from=None, random_range_to=200`  
 Then, the _min range will automatically be_ `100`%- the same time delay itself.  
 And the random sleep delays will be between `5.2` and `10.4` seconds.  
-+ If you put **only the min range** as- `random_range=(70, None)`  
++ If you put **only the min range** as- `random_range_from=70, random_range_to=None`  
 Then, the _max range will automatically be_ `100`%- the same time delay itself.  
 And the random sleep delays will be between `3.64` and `5.2` seconds.  
-+ But if you **put `None` to both** min & max ranges as- `random_range=(None, None)`  
++ But if you **put `None` to both** min & max ranges as- `random_range_from=None, random_range_to=None`  
 Then no randomization will occur and the sleep delay will always be `5.2` seconds.
-+ Heh! You **mistakenly put** min range instead of max range as- `random_range=(100, 70)`?  
++ Heh! You **mistakenly put** min range instead of max range as- `random_range_from=100, random_range_to=70`?  
 No worries. It will automatically take the smaller number as min and the bigger one as max.
 + Make sure to use the values **bigger than `0`** for the `random_rage` percentages.  
-E.g. `random_range=(-10, 140)` is an invalid range and no randomization will happen.
+E.g. `random_range_from=-10, random_range_to=140` is an invalid range and no randomization will happen.
 + You can provide **floating point numbers** as percentages, too!  
-`random_range=(70.7, 200.45)` will work greatly.
+`random_range_from=70.7, random_range_to=200.45` will work greatly.
 
 ###### Note: There is a _minimum_ **default** delay for each action and if you enter a smaller time of delay than the default value, then it will **pick the default value**. You can turn that behaviour off with `safety_match` parameter.
 ```python
@@ -653,9 +648,9 @@ session.like_by_tags(['natgeo', 'world'], amount=10)
 
   `skip_top_posts`: Determines whether the first 9 top posts should be liked or not (default is True)
 
-  `use_smart_hashtags`: Make use of the [smart hashtag feature]()
+  `use_smart_hashtags`: Make use of the [smart hashtag feature](#smart-hashtags)
 
-  `use_smart_location_hashtags`: Make use of the [smart location hashtag feature]()
+  `use_smart_location_hashtags`: Make use of the [smart location hashtag feature](#smart-location-hashtags)
 
   `interact`: Defines whether the users of the given post should also be interacted with (needs `set_user_interact` to be also set)
 
@@ -840,7 +835,7 @@ session.follow_user_followers(['friend1', 'friend2', 'friend3'], amount=10, rand
 ##### This will follow the people those liked photos of given list of users   
 ```python
 session.follow_likers(['user1' , 'user2'], photos_grab_amount = 2, follow_likers_per_photo = 3, randomize=True, sleep_delay=600, interact=False)
-```   
+```
 _in this case 2 random photos from each given user will be analyzed and 3 people who liked them will be followed, so 6 follows in total_  
 The `usernames` can be any list   
 The `photos_grab_amount` is how many photos will I grat from users profile and analyze who liked it  
@@ -862,7 +857,7 @@ session.follow_likers(['user1' , 'user2'], photos_grab_amount = 2, follow_likers
 ##### This will follow the people those commented on photos of given list of users
 ```python
 session.follow_commenters(['user1', 'user2', 'user3'], amount=100, daysold=365, max_pic = 100, sleep_delay=600, interact=False)
-```   
+```
 _in this case (max 100 newest photos & maximum 365 days old) from each given user will be analyzed and 100 people who commented the most will be followed_  
 The `usernames` can be any list  
 The `amount` is how many people to follow  
@@ -891,23 +886,23 @@ _It will unfollow ~`10` accounts and sleep for ~`10` minutes and then will conti
 _when **track** is `"all"`, it will unfollow **all of the users** in a given list_;
 ```python
 custom_list = ["user_1", "user_2", "user_49", "user332", "user50921", "user_n"]
-session.unfollow_users(amount=84, customList=(True, custom_list, "all"), style="RANDOM", unfollow_after=55*60*60, sleep_delay=600)
+session.unfollow_users(amount=84, custom_list_enabled=True, custom_list=custom_list, custom_list_param="all", style="RANDOM", unfollow_after=55*60*60, sleep_delay=600)
 ```
 _if **track** is `"nonfollowers"`, it will unfollow all of the users in a given list **WHO are not following you back**_;
 ```python
 custom_list = ["user_1", "user_2", "user_49", "user332", "user50921", "user_n"]
-session.unfollow_users(amount=84, customList=(True, custom_list, "nonfollowers"), style="RANDOM", unfollow_after=55*60*60, sleep_delay=600)
+session.unfollow_users(amount=84, custom_list_enabled=True, custom_list=custom_list, custom_list_param="nonfollowers", style="RANDOM", unfollow_after=55*60*60, sleep_delay=600)
 ```
 * **PRO**: `customList` method can take any kind of _iterable container_, such as `list`, `tuple` or `set`.
 
 **2** - Unfollow the users **WHO** was _followed by `InstaPy`_ (_has `2` **track**s- `"all"` and `"nonfollowers"`_):  
 _again, if you like to unfollow **all of the users** followed by InstaPy, use the **track**- `"all"`_;
 ```python
-session.unfollow_users(amount=60, InstapyFollowed=(True, "all"), style="FIFO", unfollow_after=90*60*60, sleep_delay=501)
+session.unfollow_users(amount=60, instapy_followed_enabled=True, instapy_followed_param="all", style="FIFO", unfollow_after=90*60*60, sleep_delay=501)
 ```
 _but if you like you unfollow only the users followed by InstaPy **WHO do not follow you back**, use the **track**- `"nonfollowers"`_;
 ```python
-session.unfollow_users(amount=60, InstapyFollowed=(True, "nonfollowers"), style="FIFO", unfollow_after=90*60*60, sleep_delay=501)
+session.unfollow_users(amount=60, instapy_followed_enabled=True, instapy_followed_param="nonfollowers", style="FIFO", unfollow_after=90*60*60, sleep_delay=501)
 ```
 
 **3** - Unfollow the users **WHO** `do not` _follow you back_:
@@ -934,7 +929,7 @@ By using this, you can unfollow users **only after** following them certain amou
 _it will help to provide **seamless** unfollow activity without the notice of the target user_   
 To use it, just add `unfollow_after` parameter with the _desired time interval_, _e.g._,
 ```python
-session.unfollow_users(amount=94, InstapyFollowed=(True, "all"), style="RANDOM", unfollow_after=48*60*60, sleep_delay=600)
+session.unfollow_users(amount=94, instapy_followed_enabled=True, instapy_followed_param="all", style="RANDOM", unfollow_after=48*60*60, sleep_delay=600)
 ```
 _will unfollow users **only after following them** `48` hours (`2` days)_.  
 * Since `unfollow_after`s value is in _seconds_, you can simply give it `unfollow_after=3600` to unfollow after `3600` seconds.  
@@ -948,7 +943,7 @@ Sleep delay _sets_ the time it will sleep **after** every ~`10` unfollows (_defa
 > **NOTE**: You should know that, _in one RUN_, `unfollow_users` feature can take only one method from all `4` above.  
 That's why, **it is best** to **disable** other `3` methods _while using a one_:
 ```python
-session.unfollow_users(amount=200, customList=(True, ["user1", "user2", "user88", "user200"], "all"), InstapyFollowed=(False, "all"), nonFollowers=False, allFollowing=False, style="FIFO", unfollow_after=22*60*60, sleep_delay=600)
+session.unfollow_users(amount=200, custom_list_enabled=True, custom_list=["user1", "user2", "user88", "user200"], instapy_followed_enabled=False, nonFollowers=False, allFollowing=False, style="FIFO", unfollow_after=22*60*60, sleep_delay=600)
 ```
 _here the unfollow method- **customList** is used_  
 **OR** just keep the method you want to use and remove other 3 methods from the feature
@@ -1209,18 +1204,60 @@ session.remove_follow_requests(amount=200, sleep_delay=600)
  with smart_run(session):
      session.set_comments(photo_comments, media='Photo')
      session.join_pods()
- ```
+  ```
 
   #### Parameters:  
  `topic`:  
  Topic of the posts to be interacted with. `general` by default.
 
-  > Note :  Topics allowed are {'general', 'beauty', 'food', 'travel', 'sports', 'entertainment'}. But it is highly recomended to use 'general' till we gain sufficient users in each of the topics.
+  > Note :  Topics allowed are {'general', 'fashion', 'food', 'travel', 'sports', 'entertainment'}.
 
+ `engagement_mode`:
+ Desided engagement mode for your posts. There are four levels of engagement modes 'no_comments', 'light', 'normal' and 'heavy'(`normal` by default). Setting engagement_mode to 'no_comments' makes you receive zero comments on your posts from pod members, 'light' encourages approximately 10% of pod members to comment on your post, similarly it's around 30% and 90% for 'normal' and 'heavy' modes respectively. Note: Liking, following or any other kind of engagements doesn't follow these modes.
+
+### Skip based on profile bio
+
+```python
+session.set_skip_users(skip_bio_keyword = ['free shipping',' Order', 'visa', 'paypal'])
+```
+
+This will skip all users that have one these keywords on their bio.
+
+### Instapy Stories
+
+#### Watching Stories with interact
+
+Will add story watching while interacting with users
+
+```python
+session.set_do_story(enabled = True, percentage = 70, simulate = True)
+```
+
+ `simulate`:
+ If set to `True` InstaPy will simulate watching the stories (you won't see it in the browser), we just send commands to Instagram saying we have watched the stories.
+ If set to `False` Instapy will perform the exact same action as a human user (clicking on stories, waiting until watching finishes, etc...)
+
+  Please note: `simulate = False` is the safest settings as it fully disables all additional, simulated interactions
+
+#### Watch stories by Tags
+
+Will watch up to 20 stories published with specified tags.
+
+```python
+session.story_by_tags(['tag1', 'tag2'])
+```
+
+#### Watch stories from users
+
+Take a list of users and watch their stories.
+
+```python
+session.story_by_users(['user1', 'user2'])
+```
 
 ---
 
-<br /> 
+<br />
 <br />
 
 ## Third Party Features
@@ -1523,14 +1560,14 @@ _To have it configured, read its [documentation](#yandex-translate-api)_.
 : It indicates the polarity found (_or not found_) in the text and applies to the **global** polarity of the text;  
 _It's a **graduated** polarity - rates from **very** negative to **very** positive_.
 
-| `score_tag` |                   definition                    |  
-| ----------- | ----------------------------------------------- |    
-|    `"P+"`   |       match if text is _**strong** positive_    |  
-|    `"P"`    |       match if text is _positive_ or above      |   
-|    `"NEU"`  |       match if text is _neutral_ or above       |  
+| `score_tag` |                   definition                    |
+| ----------- | ----------------------------------------------- |
+|    `"P+"`   |       match if text is _**strong** positive_    |
+|    `"P"`    |       match if text is _positive_ or above      |
+|    `"NEU"`  |       match if text is _neutral_ or above       |
 |    `"N"`    |       match if text is _negative_ or above      |
-|    `"N+"`   | match if text is _**strong** negative_ or above |  
-|    `None`   |     do not match per _polarity_ found, at all   |  
+|    `"N+"`   | match if text is _**strong** negative_ or above |
+|    `None`   |     do not match per _polarity_ found, at all   |
 
   > By "_or above_" it means- _e.g._, if you set `polarity` to `"P"`, and text is `"P+"` then it'll also be appropriate (_as it always leans towards positivity_) ..
 
@@ -1538,22 +1575,22 @@ _It's a **graduated** polarity - rates from **very** negative to **very** positi
 : Identifies **opposing** opinions - _contradictory_, _ambiguous_;  
 _It marks the agreement **between** the sentiments detected in the text, the sentence or the segment it refers to_.
 
-|    `agreement`   |                            definition                                     |  
-| ---------------- | ------------------------------------------------------------------------- |    
-|   `"AGREEMENT"`  |       match if the different elements have **the same** polarity          |  
-| `"DISAGREEMENT"` | match if there is _disagreement_ between the different elements' polarity |   
-|      `None`      |              do not match per _agreement_ found, at all                   |    
+|    `agreement`   |                            definition                                     |
+| ---------------- | ------------------------------------------------------------------------- |
+|   `"AGREEMENT"`  |       match if the different elements have **the same** polarity          |
+| `"DISAGREEMENT"` | match if there is _disagreement_ between the different elements' polarity |
+|      `None`      |              do not match per _agreement_ found, at all                   |
 
 
 `subjectivity`
 : Identification of _opinions_ and _facts_ - **distinguishes** between _objective_ and _subjective_;  
 _It marks the subjectivity of the text_.
 
-| `subjectivity` |                          definition                           |  
-| -------------- | ------------------------------------------------------------- |    
-| `"SUBJECTIVE"` |           match if text that has _subjective_ marks           |  
-| `"OBJECTIVE"`  | match if text that does not have **any** _subjectivity_ marks |   
-|     `None`     |         do not match per _subjectivity_ found, at all         |    
+| `subjectivity` |                          definition                           |
+| -------------- | ------------------------------------------------------------- |
+| `"SUBJECTIVE"` |           match if text that has _subjective_ marks           |
+| `"OBJECTIVE"`  | match if text that does not have **any** _subjectivity_ marks |
+|     `None`     |         do not match per _subjectivity_ found, at all         |
 
 `confidence`
 : It represents the _confidence_ associated with the sentiment analysis **performed on the** text and takes an integer number in the _range of_ `(0, 100]`;  
@@ -1610,7 +1647,63 @@ _Now that text is gonna be labeled **inappropriate** COS its polarity is `"P"` w
 This project uses MeaningCloud™ (http://www.meaningcloud.com) for Text Analytics.
 
 ---
+### Telegram Integration
 
+This feature allows to connect your InstaPy session with a Telegram bot and send commands
+to the InstaPy session
+
+#### Prerequisites
+You will need to create a token, for this go into your Telegram App and talk with @fatherbot.
+You will also need to set your username as it is checked to ensure that you are authorized to 
+access the InstaPy session, to do so go to Settings -> Profile -> Username.
+
+#### Supported actions
+There are 3 supported actions:
+  - /start : will start the interaction between the bot and instapy. Please note: that the telegram bot 
+  cannot send you messages until you first send it a /start message. The bot will store the chat_id in the logs folder
+  file telegram_chat_id.txt to be reused in further sessions (so you have to actually do /start just one time)
+  - /report : will gather and show the current session statistics
+  - /stop: will set the aborting flag to True
+
+#### Examples
+```python
+from instapy.plugins import InstaPyTelegramBot
+
+        session = InstaPy(username=insta_username,
+                          password=insta_password,
+                          bypass_with_mobile=True)
+                          
+        telegram = InstaPyTelegramBot(token='insert_real_token_here', telegram_username='my_username', instapy_session=session)
+
+        # if you want to receive the information when the session ends
+        # just add the following before your session.end()
+        telegram.end()
+        session.end()
+````
+
+Additional parameters:
+   - debug=True if you want low level telegram debug information
+   - proxy if you need one, here is the structure that needs to be passed
+    
+```python 
+    {
+         'proxy_url': 'http://PROXY_HOST:PROXY_PORT/',
+         # Optional, if you need authentication:
+         'username': 'PROXY_USER',
+         'password': 'PROXY_PASS',
+     }
+```
+
+#### Additional functionality
+you can use 
+```python
+telegram.send_message(text="this is a message")
+```
+
+So you are able to send additional message inside your script if needed. Remember that the telegram bot
+is not able to send messages as long as you haven't done at least one /start
+
+   
 <br /> 
 <br />
 
@@ -1618,63 +1711,37 @@ This project uses MeaningCloud™ (http://www.meaningcloud.com) for Text Analyti
 ### Running on a Headless Browser
 Use `headless_browser` parameter to run the bot via the CLI. Works great if running the scripts locally, or to deploy on a server. No GUI, less CPU intensive. [Example](http://g.recordit.co/BhEgXANLhJ.gif)
 
-```
+**Warning:** Some users discourage the use of this feature as Instagram could [detect](https://antoinevastel.com/bot%20detection/2017/08/05/detect-chrome-headless.html) this headless mode!
+
+```python
 session = InstaPy(username='test', password='test', headless_browser=True)
+```
+
+**(Alternative)**
+If the web driver you're using doesn't support headless mode (or the headless mode becomes very detectable), you can use the `nogui` parameter which displays the window out of view. Keep in mind, this parameter lacks support and ease of use, only supporting Linux based operating systems (or those that have Xvfb, Xephyr and Xvnc display software).
+
+```python
+session = InstaPy(username='test', password='test', nogui=True)
 ```
 
 
 ### Bypass Suspicious Login Attempt
 
-If you're having issues with the "we detected an unusual login attempt" message,
-you can bypass it setting InstaPy in this way:
+InstaPy detects automatically if the Security Code Challenge
+is active, if yes, it will ask you for the Security Code on
+the terminal.
+
+The Security Code is send to your Email or SMS by Instagram, Email is the defaul option, but you can choose SMS also with:
+
+`bypass_security_challenge_using='sms'` or `bypass_security_challenge_using='email'`
 
 ```python
-session = InstaPy(username=insta_username, password=insta_password, bypass_suspicious_attempt=True)
+InstaPy(username=insta_username,
+        password=insta_password,
+        bypass_security_challenge_using='sms')
 ```
 
-```bypass_suspicious_attempt=True``` will send the verification code to your
-email, and you will be prompted to enter the security code sent to your email.
-It will login to your account, now you can set bypass_suspicious_attempt to False
-```bypass_suspicious_attempt=False``` and InstaPy will quickly login using cookies.
-
-If you want to bypass suspicious login attempt with your phone number, set `bypass_with_mobile` to `True`
-
-```python
-InstaPy(username=insta_username, password=insta_password, bypass_suspicious_attempt=True, bypass_with_mobile=True)
-```
-
-
-### Use a proxy (Chrome)
-
-You can use InstaPy behind a proxy by specifying server address and port
-
-Simple proxy setup example:
-```python
-session = InstaPy(username=insta_username, password=insta_password, proxy_address='8.8.8.8', proxy_port=8080)
-```
-
-To use proxy with authentication you should firstly import proxy chrome extension to you configuration file (the one with your Instagram username and password).
-
-Proxy setup using authentication example:
-```python
-from proxy_extension import create_proxy_extension
-
-proxy = 'login:password@ip:port'
-proxy_chrome_extension = create_proxy_extension(proxy)
-
-session = InstaPy(username=insta_username, password=insta_password, proxy_chrome_extension=proxy_chrome_extension, nogui=True)
-```
-
-
-### Switching to Firefox
-Chrome is the default browser, but InstaPy provides support for Firefox as well.
-
-```python
-session = InstaPy(username=insta_username, password=insta_password, use_firefox=True)
-```
-
-
-### Use a proxy (Firefox)
+### Use a proxy
 
 You can use InstaPy behind a proxy by specifying server address, port and/or proxy authentication credentials. It works with and without ```headless_browser``` option.
 
@@ -1682,7 +1749,6 @@ Simple proxy setup example:
 ```python
 session = InstaPy(username=insta_username, 
                   password=insta_password,
-		  use_firefox=True,
 		  proxy_address='8.8.8.8', 
 		  proxy_port=8080)
 
@@ -1695,8 +1761,28 @@ session = InstaPy(username=insta_username,
                   proxy_username='',
                   proxy_password='',
                   proxy_address='8.8.8.8',
-                  proxy_port=4444,
-                  use_firefox=True)
+                  proxy_port=4444)
+```
+
+### Running in threads
+If you're running InstaPy in threads and get exception `ValueError: signal only works in main thread` , you have to properly close the session.
+There is two ways to do it:
+
+Closing session in smart_run context:
+```python
+session = InstaPy()
+with smart_run(session, threaded=True):
+    """ Activity flow """
+    # some activity here ...
+```
+
+
+Closing session with `end()` method 
+```python
+session = InstaPy()
+session.login()
+# some activity here ...
+session.end(threaded_session=True)
 ```
 
 ---
@@ -1710,7 +1796,7 @@ session = InstaPy(username=insta_username,
 ```python
 popeye_followers = session.grab_followers(username="Popeye", amount="full", live_match=True, store_locally=True)
 ##now, `popeye_followers` variable which is a list- holds the `Followers` data of "Popeye" at requested time
-```  
+```
 #### Parameters:  
 `username`:  
 A desired username to grab its followers  
@@ -1760,7 +1846,7 @@ cinderella_followers = session.grab_followers(username="Cinderella", amount="ful
 popeye_cinderella_followers = [follower for follower in popeye_followers if follower in cinderella_followers]
 ```
 
-#### `PRO`s:
+#### PROs
 You can **use** this tool to take a **backup** of _your_ **or** _any other user's_ **current** followers.
 
 
@@ -1769,7 +1855,7 @@ You can **use** this tool to take a **backup** of _your_ **or** _any other user'
 ```python
 lazySmurf_following = session.grab_following(username="lazy.smurf", amount="full", live_match=True, store_locally=True)
 ##now, `lazySmurf_following` variable which is a list- holds the `Following` data of "lazy.smurf" at requested time
-```  
+```
 #### Parameters:  
 `username`:  
 A desired username to grab its following  
@@ -1822,7 +1908,7 @@ gargamel_following = session.grab_following(username="Gargamel", amount="full", 
 lazySmurf_gargamel_following = [following for following in lazySmurf_following if following in gargamel_following]
 ```
 
-#### `PRO`s:
+#### PROs
 You can **use** this tool to take a **backup** of _your_ **or** _any other user's_ **current** following.
 
 
@@ -1948,7 +2034,7 @@ There are **several** `use cases` of this tool for **various purposes**.
     shaggy_nonfollowers = session.pick_nonfollowers(username="Shaggy", live_match=True, store_locally=True)
 
     #now Scooby Doo will tell his friend Shaggy about this, who knows, maybe Shaggy will unfollow them all or even add to block :D
-    ```  
+    ```
 
 
 ### Pick Fans of a user
@@ -1994,7 +2080,7 @@ There are **several** `use cases` of this tool for **various purposes**.
     ##Smurfette is so famous in the place and she wonders which smurfs is following her WHOM she doesn't even know of :D
     smurfette_fans = session.pick_fans(username="Smurfette", live_match=True, store_locally=True)
     #and now, maybe she will follow back some of the smurfs whom she may know :P
-    ```  
+    ```
 
 
 ### Pick Mutual Following of a user
@@ -2040,7 +2126,7 @@ There are **several** `use cases` of this tool for **various purposes**.
     #Winnie The Pooh is a very friendly guy and almost everybody follows him back, but he wants to be sure about it :D
     Winnie_mutual_following = session.pick_mutual_following(username="WinnieThePooh", live_match=True, store_locally=True)
     ##now, he will write a message to his mutual followers to help him get a new honey pot :>
-    ```  
+    ```
 
 ---
 
@@ -2301,7 +2387,7 @@ In essence,
  - This is be the **only** _python_ library you should install as `root` (_e.g., with `sudo`_).  
  - All other _python_ libraries should be inside a **virtualenv**.  
  - Running `source venv/bin/activate` will activate the correct _python_ to run _InstaPy_.  
-  And to exit an activated **virtualenv** run `deactivate`.  
+    And to exit an activated **virtualenv** run `deactivate`.  
  - Now, copy & paste the **quickstart.py** _python_ code below and run your first _InstaPy_ script.  
  Remember to run it with _python_ from the **virtualenv**, so from **venv/bin/python**.  
  - To make sure which _python_ is used, run `which python` which would tell you the active version of _python_.
@@ -2336,7 +2422,7 @@ Simply copy and paste the content of your logs folder into that workspace folder
 By default, it is gonna be the **InstaPy** folder at your home folder.  
 Such as, if your username is `Cherry`, let's show where your InstaPy folder would be,
 
-|   OS    |       home folder     | _InstaPy_ **workspace** folder |  
+|   OS    |       home folder     | _InstaPy_ **workspace** folder |
 | ------- | --------------------- | ------------------------------ |
 | Windows | `C:\\Users\\Cherry\\` | `C:\\Users\\Cherry\\InstaPy\\` |
 |   Mac   |    `/Users/Cherry/`   |    `/Users/Cherry/InstaPy/`    |
@@ -2436,6 +2522,7 @@ E.g. setting the _location_ of the **database** file,
 ```python
 from instapy import InstaPy
 from instapy import set_workspace
+from instapy import Settings
 
 
 set_workspace(...)   # if you will set a custom workspace, set it before anything
@@ -2460,6 +2547,7 @@ _E.g. while instantiating _InstaPy_, you make a logger at that given location an
 ```python
 from instapy import InstaPy
 from instapy import set_workspace
+from instapy import Settings
 
 # first time settings custom workspace folder
 set_workspace("C:\\Users\\MMega\\Desktop\\My_InstaPy\\")
@@ -2512,9 +2600,6 @@ _And obviously, if you don't pass the flag, it'll try to get that argument from 
   🚩 `-pp` 8080, `--proxy-port` 8080
    - Sets the proxy port.
 
-  🚩 `-uf`, `--use-firefox`
-   - Enables Firefox.
-
   🚩 `-hb`, `--headless-browser`
    - Enables headless mode.
 
@@ -2542,13 +2627,6 @@ python quickstart.py -u Toto.Lin8  -p 4X27_Tibor
 python quickstart.py --username Toto.Lin8  --password 4X27_Tibor
 # or
 python quickstart.py -u "Toto.Lin8"  -p "4X27_Tibor"
-```
-
-⚽ Enable Firefox,
-```erlang
-python quickstart.py -uf
-# or
-python quickstart.py --use-firefox
 ```
 
 <details>
@@ -2611,21 +2689,19 @@ python quickstart.py -u abc
 </details>
 
 
-## Docker
-All information on how to use InstaPy with Docker can be found in the [instapy-docker](https://github.com/InstaPy/instapy-docker) repository.
-
-
 ## Extensions
 [1. Session scheduling with Telegram](https://github.com/Tkd-Alex/Telegram-InstaPy-Scheduling)
 
 
-### Custom chromedriver version
-By default, InstaPy downloads the latest version of the chromedriver.
-Unless you need a specific version of the chromdriver, you're ready to go.
+### Custom geckodriver
+By default, InstaPy downloads the latest version of the geckodriver.
+Unless you need a specific version of the geckodriver, you're ready to go.
 
-You have two options to install the version you want to have:
-1. You can get the desired version of chromedriver binary by installing the same version of instapy-chromedriver package by pip [per their python version].
-1. You can manually download and put the chromedriver binary into the assets folder [at their workspace] and then InstaPy will always use it. You can find the specific versions of **chromedriver** for your OS [here](https://sites.google.com/a/chromium.org/chromedriver/downloads). Extract the .**zip** file and put it into the **assets** folder [at your **workspace** folder].
+You can manually download the geckodriver binary and put the path as an argument to the InstaPy contructor:
+
+```python
+session = InstaPy(..., geckodriver_path = '/path/to/binary', ...)
+```
 
 ### Using one of the templates
 
@@ -2657,22 +2733,11 @@ session = InstaPy(username=insta_username,
                   multi_logs=True)
 ```
 
-
-### Using Multiple Chromedrivers
-If you need multiple os versions of chromedriver just rename it like:
-```bash
-chromedriver_linux
-chromedriver_osx
-chromedriver_windows
-```
-
-
-### Changing DB or Chromedriver locations
-If you want to change the location/path of either the DB or the chromedriver, simply head into the `instapy/settings.py` file and change the following lines.
+### Changing DB or location
+If you want to change the location/path of the DB, simply head into the `instapy/settings.py` file and change the following lines.
 Set these in instapy/settings.py if you're locating the library in the /usr/lib/pythonX.X/ directory.
 ```
 Settings.database_location = '/path/to/instapy.db'
-Settings.chromedriver_location = '/path/to/chromedriver'
 ```
 
 ### Split SQLite by Username 
@@ -2701,7 +2766,7 @@ Then you'll obviously have crazy aliases linked to _python_ and **pip** commands
 
 For example, let's assume you have _python_ 2.7 & _python_ 3.7 installed in your system,  
 
-| _python_ version | _python_ alias | **pip** alias |  
+| _python_ version | _python_ alias | **pip** alias |
 | ---------------- | -------------- | ------------- |
 |       2.7        |     `py2`      |     `pip`     |
 |       3.7        |    `python`    |     `pip3`    |
@@ -2740,6 +2805,74 @@ python -m pip show instapy
 ```
 
 Using this style, you will never have to worry about what is the correct alias of the **pip** for you specific _python_ installation and all you have to know is just the _python_'s alias you use.  
+
+### Dealing with Selenium Common Exception Issues
+
+##### selenium.common.exceptions.WebDriverException: Message: unknown error: Cannot read property 'entry_data' of undefined
+This error could also caused by unstable Internet connection or Instagram's web changed their data-structure.
+
+##### TL;DR - Make sure your chromedriver version is compatible with your Google Chrome version.
+Occasionally *Instapy* will stop working because one of the issues below has been thrown.
+
+>_Traceback (most recent call last):
+....// File list with the exception trace
+selenium.common.exceptions.WebDriverException: Message: unknown error: Cannot read property 'entry_data' of undefined
+(Session info: headless **chrome=75.0.3770.80**)
+(Driver info: **chromedriver=2.36.540469** (1881fd7f8641508feb5166b7cae561d87723cfa8),platform=Mac OS X 10.14.5 x86_64)
+
+>_Traceback (most recent call last):
+....// File list with the exception traceselenium.common.exceptions.WebDriverException: Message: unknown error: unknown sessionId
+(Session info: headless **chrome=75.0.3770.80**)
+(Driver info: **chromedriver=2.36.540469** (1881fd7f8641508feb5166b7cae561d87723cfa8),platform=Mac OS X 10.14.5 x86_64)
+
+Notice that *chrome* version is **75** and the *chromedriver* version is **2.36**. 
+
+According to the [release notes](https://chromedriver.storage.googleapis.com/2.36/notes.txt) for chromedriver, version 2.36 only supports Chrome versions 63-65.
+
+Which means, there is a mismatch in chromedriver and Chrome that installed on my machine. 
+
+There several steps to this fix.
+
+1. Completely uninstall Google Chrome.
+2. Download an older version.
+3. Prevent Google Chrome from auto-updating.
+
+
+#### MAC FIX
+Since *Instapy* seems to work well, in my experience on my Mac, with chromedriver version 2.36, I will downgrade my Google Chrome. I do not use Google Chrome, so this isn't an issue.
+
+
+1. **Uninstall Google Chrome**
+	I used an app called [App Cleaner]("https://freemacsoft.net/appcleaner/") to remove Chrome.
+	After you install App Cleaner, simply drag Google Chrome, from the Applications folder to App Cleaner and Remove All
+	
+2. **Download Chrome 65** *(Read this step completely before proceeding)*
+	- Find and install Chrome 65 from [sllimjet.com]("https://www.slimjet.com/chrome/google-chrome-old-version.php") 
+
+	- After you have installed Chrome 65, open and click the Apple Security Ok button that alerts you to the fact this was downloaded from the internet.
+	- THEN, immediately close Google Chrome completely by holding **`CMD+Q`**. This is extremely important! Google Chrome will being its auto-update function. So it must be completely closed, not just the window.
+	*We need Chrome to run first and put all its files where it needs them.*
+	
+3. **Prevent Google Chrome from updating**
+	- Open **Terminal** and type 
+	`sudo chmod -R 000 ~/Library/Google`
+	
+	- You will be asked for your computer password, enter it.
+	
+	- Next run the command
+	`sudo rm -rf /Library/Google/`
+	
+	Google Chrome should not be able to auto-update now.
+
+If for some reason Chrome is still updating, or you're unable to run the command in step 3, you can edit your `/etc/hosts file` to include the following line: `0.0.0.0 tools.google.com`
+
+
+#### Windows Fix
+Coming soon
+
+#### Raspberry Pi Fix
+Coming Soon
+
 
 ---
 
