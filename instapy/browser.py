@@ -142,6 +142,7 @@ def set_selenium_local_session(
         chrome_options.add_argument('--disable-setuid-sandbox')
         chrome_options.add_argument('--incognito')
         mobile_emulation = {"deviceName": "iPhone 5"}
+        chrome_options.add_experimental_option("excludeSwitches", ['enable-automation'])
         chrome_options.add_experimental_option("mobileEmulation", mobile_emulation)
 
         # this option implements Chrome Headless, a new (late 2017)

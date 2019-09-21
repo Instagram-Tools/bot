@@ -29,7 +29,7 @@ def selenium_driver(selenium_url):
     chrome_options.add_argument("--disable-extensions")  # disabling extensions
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")  # overcome limited resource problems
-
+    chrome_options.add_experimental_option("excludeSwitches", ['enable-automation'])
     chrome_options.add_experimental_option("mobileEmulation", mobile_emulation)
     selenium_driver = webdriver.Remote(command_executor=selenium_url,
                                        desired_capabilities=chrome_options.to_capabilities())
