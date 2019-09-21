@@ -899,7 +899,7 @@ def get_users_through_dialog_with_graphql(
     if query_hash is None:
         logger.info("Unable to locate GraphQL query hash")
 
-    graphql_query_URL = "view-source:https://www.instagram.com/graphql/query/?query_hash={}".format(
+    graphql_query_URL = "https://www.instagram.com/graphql/query/?query_hash={}".format(
         query_hash
     )
     variables = {
