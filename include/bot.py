@@ -301,6 +301,7 @@ class Bot(InstaPy):
                                   peak_unfollows_hourly=50,
                                   peak_server_calls_hourly=None,
                                   peak_server_calls_daily=None)
+        self.set_do_story(enabled=True, percentage=70, simulate=True)
         self.logger.warning("SETTINGS: %s" % env)
 
     def encode_comments(self, comments):
@@ -379,6 +380,15 @@ class Bot(InstaPy):
                         skip_top_posts=env.get("like_by_tags_skip_top_posts", True),
                         use_smart_hashtags=env.get("like_by_tags_use_smart_hashtags", False),
                         interact=True),
+            },
+            {
+                "name": "story_by_tags",
+                "enabled": env.get("story_by_tags", False) and len(
+                    env.get("like_by_tags", [])) > 0,
+                "fun":
+                    lambda: self.story_by_tags(
+                        tags=shuffle3(env.get("like_by_tags", [])),
+                    ),
             },
             {
                 "name": "like_by_locations",
