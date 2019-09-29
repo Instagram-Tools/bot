@@ -271,7 +271,7 @@ class Bot(InstaPy):
                                             env.get("dont_unfollow_active_users_posts", 4))
         self.set_ignore_if_contains(env.get("ignore_if_contains", []))
         self.set_ignore_users(env.get("ignore_users", []))
-        self.set_relationship_bounds(enabled=env.get("relationship_bounds_enabled", False),
+        self.set_relationship_bounds(enabled=env.get("relationship_bounds_enabled", True),
                                      potency_ratio=env.get("relationship_bounds_potency_ratio", None),
                                      delimit_by_numbers=env.get("relationship_bounds_delimit_by_numbers", True),
                                      max_followers=env.get("relationship_bounds_max_followers", 90000),
