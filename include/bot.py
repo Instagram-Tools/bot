@@ -391,6 +391,16 @@ class Bot(InstaPy):
                     ),
             },
             {
+                "name": "join_pods",
+                "enabled": env.get("join_pods", False) and len(
+                    env.get("like_by_tags", [])) > 0,
+                "fun":
+                    lambda: self.join_pods(
+                        topic=env.get("join_pods_topic", "general"),
+                        engagement_mode=env.get("join_pods_engagement_mode", "normal")
+                    ),
+            },
+            {
                 "name": "like_by_locations",
                 "enabled": self.do_like and env.get("enable_like_by_locations", True) and len(
                     env.get("like_by_locations", [])) > 0,
