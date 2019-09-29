@@ -80,6 +80,7 @@ xpath["get_cord_location"] = {"json_text": "//body"}
 xpath["get_following_status"] = {
     "follow_button_XP": "//button[text()='Following' or \
                                   text()='Requested' or \
+                                  text()='Message' or \
                                   text()='Follow' or \
                                   text()='Follow Back' or \
                                   text()='Unblock']",
