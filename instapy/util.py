@@ -2391,15 +2391,19 @@ def take_rotative_screenshot(browser, logfolder):
         Make a sequence of screenshots, based on hour:min:secs
     """
     global next_screenshot
-
-    if next_screenshot == 1:
-        browser.save_screenshot("{}screenshot_1.png".format(logfolder))
-    elif next_screenshot == 2:
-        browser.save_screenshot("{}screenshot_2.png".format(logfolder))
-    else:
-        browser.save_screenshot("{}screenshot_3.png".format(logfolder))
+    try:
+        if next_screenshot == 1:
+            browser.save_screenshot("{}screenshot_1.png".format(logfolder))
+        elif next_screenshot == 2:
+            browser.save_screenshot("{}screenshot_2.png".format(logfolder))
+        else:
+            browser.save_screenshot("{}screenshot_3.png".format(logfolder))
+            next_screenshot = 0
+            # sum +1 next
+    except Exception as e:
+        print("Exception in take_rotative_screenshot(): %s" % e)
         next_screenshot = 0
-        # sum +1 next
+
 
     # update next
     next_screenshot += 1
