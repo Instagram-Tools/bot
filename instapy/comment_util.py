@@ -82,7 +82,7 @@ def comment_image(browser, username, comments, blacklist, logger, logfolder):
             comment_input = get_comment_input(browser)
             # below, an extra space is added to force
             # the input box to update the reactJS core
-            comment_to_be_sent = rand_comment
+            comment_to_be_sent = rand_comment + ' '
 
             # wait, to avoid crash
             sleep(2)
@@ -91,15 +91,20 @@ def comment_image(browser, username, comments, blacklist, logger, logfolder):
                 ActionChains(browser)
                 .move_to_element(comment_input[0])
                 .click()
-                .send_keys(comment_to_be_sent)
+                .send_keys(' ')
                 .perform()
             )
+            browser.execute_script("arguments[0].value = arguments[1];", comment_input[0], comment_to_be_sent)
+
             # wait, to avoid crash
             sleep(2)
+            # below, it also will remove that extra space added above
+            # COS '\b' is a backspace char in ASCII
             # post comment / <enter>
             (
                 ActionChains(browser)
                 .move_to_element(comment_input[0])
+                .send_keys('\b')
                 .send_keys(Keys.ENTER)
                 .perform()
             )
