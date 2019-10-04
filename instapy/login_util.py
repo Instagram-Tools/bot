@@ -243,7 +243,7 @@ def check_browser(browser, logfolder, logger, proxy_address):
             logfolder=logfolder,
             logger=logger,
         )
-        return False
+        # return False
 
     # check if hide-selenium extension is running
     logger.info("-- Connection Checklist [3/3] (Hide Selenium Extension)")
