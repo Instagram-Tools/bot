@@ -190,8 +190,8 @@ class Bot(InstaPy):
         except (ConnectionRefusedError, RemoteDisconnected) as exc:
             return self.try_again(count, exc)
 
-    def deal_with_like_block(self):
-        super().deal_with_like_block()
+    def deal_with_block(self, action="like"):
+        super().deal_with_block(action=action)
 
         from instapy.util import dump_record_activity
         activity = dump_record_activity(self.username,

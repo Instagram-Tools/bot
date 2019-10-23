@@ -1523,7 +1523,7 @@ class InstaPy:
                             )
 
                             if like_state is False and msg == "block on likes":
-                                self.deal_with_like_block()
+                                self.deal_with_block()
 
                             if like_state is True:
                                 liked_img += 1
@@ -1964,7 +1964,7 @@ class InstaPy:
                             )
 
                             if like_state is False and msg == "block on likes":
-                                self.deal_with_like_block()
+                                self.deal_with_block()
 
                             if like_state is True:
                                 liked_img += 1
@@ -2265,7 +2265,7 @@ class InstaPy:
                                 total_liked_img,
                             )
                             if like_state is False and msg == "block on likes":
-                                self.deal_with_like_block()
+                                self.deal_with_block()
 
                             if like_state is True:
                                 total_liked_img += 1
@@ -2567,7 +2567,7 @@ class InstaPy:
                                 total_liked_img,
                             )
                             if like_state is False and msg == "block on likes":
-                                self.deal_with_like_block()
+                                self.deal_with_block()
 
                             if like_state is True:
                                 total_liked_img += 1
@@ -2885,7 +2885,7 @@ class InstaPy:
                                 total_liked_img,
                             )
                             if like_state is False and msg == "block on likes":
-                                self.deal_with_like_block()
+                                self.deal_with_block()
 
                             if like_state is True:
                                 total_liked_img += 1
@@ -3839,6 +3839,10 @@ class InstaPy:
                 self.logger,
                 self.logfolder,
             )
+            if unfollowed in ["temporary block", "not connected", "not logged in"]:
+                self.deal_with_block(action="unfollow")
+                return self
+
             self.logger.info("--> Total people unfollowed : {}\n".format(unfollowed))
             self.unfollowed += unfollowed
 
@@ -4043,7 +4047,7 @@ class InstaPy:
                                         liked_img,
                                     )
                                     if like_state is False and msg == "block on likes":
-                                        self.deal_with_like_block()
+                                        self.deal_with_block()
 
                                     if like_state is True:
                                         liked_img += 1
@@ -4839,7 +4843,7 @@ class InstaPy:
                             liked_img,
                         )
                         if like_state is False and msg == "block on likes":
-                            self.deal_with_like_block()
+                            self.deal_with_block()
 
                         if like_state is True:
                             liked_img += 1
@@ -5407,7 +5411,7 @@ class InstaPy:
                         self.liked_img,
                     )
                     if image_like_state is False and msg == "block on likes":
-                        self.deal_with_like_block()
+                        self.deal_with_block()
 
                     if image_like_state is True:
                         like_failures_tracker["consequent"]["post_likes"] = 0
@@ -5681,7 +5685,7 @@ class InstaPy:
             self.logger.error(
                 "You have too few comments, please set at least 10 distinct comments to avoid looking suspicious."
             )
-            return self
+            # return self
 
         user_link = "https://www.instagram.com/{}/".format(self.username)
         web_address_navigator(self.browser, user_link)
@@ -5724,8 +5728,7 @@ class InstaPy:
                         "read", postid, self.share_times, self.logger
                     )
                     if (
-                        datetime.now() - post_datetime < timedelta(hours=12, minutes=30)
-                        and not share_restricted
+                        not share_restricted
                     ):
                         my_recent_post_ids.append(postid)
                         if share_my_post_with_pods(
@@ -5918,6 +5921,16 @@ class InstaPy:
                     self.stories_watched += 1
                     self.reels_watched += reels
 
-    def deal_with_like_block(self):
-        self.logger.warning("set do_like to False, because of LikeBlock")
-        self.set_do_like(enabled=False)
+    def deal_with_block(self, action="like"):
+        if action == "like":
+            self.logger.warning("set do_like to False, because of LikeBlock")
+            self.set_do_like(enabled=False)
+        elif action == "follow":
+            self.logger.warning("set set_do_follow to False, because of FollowBlock")
+            self.set_do_follow(enabled=False)
+        elif action == "unfollow":
+            self.logger.warning("set do_unfollow to False, because of UnfollowBlock")
+            self.set_do_unfollow(enabled=False)
+
+    def set_do_unfollow(self, enabled):
+        os.environ["enable_unfollow"] = enabled

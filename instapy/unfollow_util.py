@@ -538,6 +538,7 @@ def unfollow(
                             "There is a serious issue: '{}'!\t~leaving "
                             "Unfollow-Users activity".format(msg)
                         )
+                        return msg
                         break
 
                 else:
@@ -740,6 +741,7 @@ def unfollow(
                             "There is a serious issue: '{}'!\t~leaving "
                             "Unfollow-Users activity".format(msg)
                         )
+                        return msg
                         break
 
                     # To only sleep once until there is the next unfollow
@@ -1696,6 +1698,8 @@ def verify_action(
     retry_count = 0
 
     if action in ["follow", "unfollow"]:
+        reload_webpage(browser)
+        sleep(4)
 
         # assuming button_change testing is relevant to those actions only
         button_change = False
