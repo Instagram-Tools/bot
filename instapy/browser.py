@@ -103,12 +103,12 @@ def set_selenium_local_session(
             # this setting can improve pageload & save bandwidth
             firefox_profile.set_preference("permissions.default.image", 2)
 
-        if proxy_address and proxy_port:
-            firefox_profile.set_preference("network.proxy.type", 1)
-            firefox_profile.set_preference("network.proxy.http", proxy_address)
-            firefox_profile.set_preference("network.proxy.http_port", proxy_port)
-            firefox_profile.set_preference("network.proxy.ssl", proxy_address)
-            firefox_profile.set_preference("network.proxy.ssl_port", proxy_port)
+    if proxy_address and proxy_port:
+        firefox_profile.set_preference("network.proxy.type", 1)
+        firefox_profile.set_preference("network.proxy.http", proxy_address)
+        firefox_profile.set_preference("network.proxy.http_port", int(proxy_port))
+        firefox_profile.set_preference("network.proxy.ssl", proxy_address)
+        firefox_profile.set_preference("network.proxy.ssl_port", int(proxy_port))
 
         # mute audio while watching stories
         firefox_profile.set_preference("media.volume_scale", "0.0")
