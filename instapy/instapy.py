@@ -5735,6 +5735,8 @@ class InstaPy:
                             share_with_pods_restriction(
                                 "write", postid, None, self.logger
                             )
+                        else:
+                            break
                 except Exception as err:
                     self.logger.error(
                         "Failed for {} with Error {}".format(post_link, err)
