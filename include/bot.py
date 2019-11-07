@@ -188,6 +188,8 @@ class Bot(InstaPy):
                                          "groups! Now lean back and let us do the work! :)\n\nP.S.: Please make "
                                          "sure your Instagram 2-factor-authorization is switched off, as our service "
                                          "might have problems logging in to your account. ")
+                self.send_start_bot()
+
 
         except (ConnectionRefusedError, RemoteDisconnected) as exc:
             return self.try_again(count, exc)
@@ -204,6 +206,19 @@ class Bot(InstaPy):
                 self.logger.warning("API missing, failed: send_stop_bot")
         except Exception as exc:
             print("Exception in send_stop_bot(): %s \n %s" % (exc, traceback.format_exc()))
+
+    def send_start_bot(self):
+        try:
+            api = os.environ.get("API")
+            if api:
+                import requests
+                url = "%s/api/bot/start/%s" % (api, self.username)
+                get = requests.get(url)
+                self.logger.warning("GET %s" % url)
+            else:
+                self.logger.warning("API missing, failed: send_stop_bot")
+        except Exception as exc:
+            print("Exception in send_start_bot(): %s \n %s" % (exc, traceback.format_exc()))
 
     def deal_with_block(self, action="like"):
         super().deal_with_block(action=action)
