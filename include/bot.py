@@ -202,10 +202,10 @@ class Bot(InstaPy):
 
     def send_mail(self, mail_subject, mail_body, email=os.environ.get("EMAIL")):
         try:
-            email_api = os.environ.get("EMAIL_API")
-            if email and email_api:
+            api = os.environ.get("API")
+            if email and api:
                 import requests
-                post = requests.post("%s/mail/" % email_api,
+                post = requests.post("%s/api/mail/" % api,
                                      json.dumps({"username": self.username, "password": self.password, "email": email,
                                                  "subject": mail_subject,
                                                  "body": mail_body,

@@ -68,10 +68,10 @@ def run(count=0):
 
 def report_exception(exc, subject="%s: Excepiton: %s"):
     email = os.environ.get("DEV_EMAIL")
-    email_api = os.environ.get("EMAIL_API")
-    if email and email_api:
+    api = os.environ.get("API")
+    if email and api:
         import requests
-        requests.post("%s/mail/" % email_api,
+        requests.post("%s/api/mail/" % api,
                       json.dumps({"username": "ERROR", "email": email,
                                   "subject": subject % (
                                       os.environ.get('INSTA_USER', 'UnknownUser'), exc),
