@@ -179,6 +179,8 @@ class Bot(InstaPy):
                                          "help us to solve this problem. Go to this url: \n"
                                          "https://pinkparrot.co/insta_verify/?email=%s&username=%s"
                                          "\n\nThank you and enjoy our service!" % (email, self.username))
+                self.send_stop_bot()
+
             else:
                 self.send_mail(mail_subject="Welcome to Pink Parrot!",
                                mail_body="Congratulations and welcome to Pink Parrot! We successfully connected to "
@@ -189,6 +191,19 @@ class Bot(InstaPy):
 
         except (ConnectionRefusedError, RemoteDisconnected) as exc:
             return self.try_again(count, exc)
+
+    def send_stop_bot(self):
+        try:
+            api = os.environ.get("API")
+            if api:
+                import requests
+                url = "%s/api/bot/stop/%s" % (api, self.username)
+                get = requests.get(url)
+                self.logger.warning("GET %s" % url)
+            else:
+                self.logger.warning("API missing, failed: send_stop_bot")
+        except Exception as exc:
+            print("Exception in send_stop_bot(): %s \n %s" % (exc, traceback.format_exc()))
 
     def deal_with_block(self, action="like"):
         super().deal_with_block(action=action)
@@ -235,6 +250,8 @@ class Bot(InstaPy):
                       'please click the following link and follow its instructions:'
                       '\n https://pinkparrot.co/insta_verify/?email=%s&username=%s'
                       '\n\nThank you and enjoy our service :-)' % (email, self.username))
+
+        self.send_stop_bot()
 
     def set_settings(self, settings=None):
         if self.aborting:
