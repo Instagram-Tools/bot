@@ -228,7 +228,7 @@ class Bot(InstaPy):
                                         self.logger,
                                         self.logfolder)
         email = os.environ.get("DEV_EMAIL")
-        self.send_mail(mail_subject="LikeBlock: %s" % self.username, mail_body=activity, email=email)
+        self.send_mail(mail_subject="%s Block: %s" % (action, self.username), mail_body=activity, email=email)
 
     def send_mail(self, mail_subject, mail_body, email=os.environ.get("EMAIL")):
         try:
